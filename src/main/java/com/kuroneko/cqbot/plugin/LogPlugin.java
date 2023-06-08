@@ -37,15 +37,17 @@ public class LogPlugin {
         String rawMessage = event.getRawMessage();
         log.info(rawMessage);
     }
+
     @Order(Integer.MIN_VALUE)
     @GuildMessageHandler
-    public void guildMessageLog(Bot bot, GuildMessageEvent event, Matcher matcher){
+    public void guildMessageLog(Bot bot, GuildMessageEvent event, Matcher matcher) {
         String rawMessage = event.getRawMessage();
         log.info(rawMessage);
     }
+
     @Order(Integer.MIN_VALUE)
     @GroupMsgDeleteNoticeHandler
-    public void groupMsgDeleteNoticeLog(Bot bot, GroupMsgDeleteNoticeEvent event, Matcher matcher){
+    public void groupMsgDeleteNoticeLog(Bot bot, GroupMsgDeleteNoticeEvent event, Matcher matcher) {
         log.info(event.toString());
     }
 }
