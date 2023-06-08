@@ -1,0 +1,51 @@
+server:
+  port: 8081
+
+
+
+shiro:
+  # 注解方式编写的插件无需在插件列表（plugin-list）定义
+  # 插件列表为顺序执行，如果前一个插件返回了 MESSAGE_BLOCK 将不会执行后续插件
+  plugin-list:
+#    - com.mikuac.example.plugins.PluginOne
+  # 拦截器
+#  interceptor: com.mikuac.example.interceptor.InterceptorExample
+  # WebSocket 配置
+  ws-config:
+    # 反向 Websocket 连接地址，无需该配置字段可删除，将使用默认值 "/ws/shiro"
+    ws-url: "/ws/cq/"
+    # 访问密钥，强烈推荐在公网的服务器设置
+    access-token: ""
+    # 超时回收，默认10秒
+    timeout: 10
+    # 二进制消息的最大长度
+    max-binary-message-buffer-size: 512000
+    # 最大空闲时间，超过这个时间将关闭会话
+    max-session-idle-timeout: 900000
+    # 最大文本消息缓冲区
+    max-text-message-buffer-size: 512000
+  # 限速器（令牌桶算法）
+  limiter:
+    # 是否启用限速器
+    enable: false
+    # 补充速率（每秒补充的令牌数量）
+    rate: 1
+    # 令牌桶容量
+    capacity: 1
+    # 如果该值为 false 时，当令牌获取失败则会直接丢次本次请求
+    # 如果该值为 true 时，当令牌获取失败则会阻塞当前线程，后续任务将被添加到等待队列
+    awaitTask: true
+    # 等待超时
+    timeout: 10
+  # 线程池配置
+  task-pool:
+    # 核心线程数（默认线程数）
+    core-pool-size: 10
+    # 缓冲队列大小
+    queue-capacity: 200
+    # 允许线程空闲时间（单位：默认为秒）
+    keep-alive-time: 10
+    # 最大线程数
+    max-pool-size: 30
+    # 线程池名前缀
+    thread-name-prefix: "ShiroTaskPool-"
