@@ -27,22 +27,19 @@ public class LogPlugin {
     @Order(Integer.MIN_VALUE)
     @GroupMessageHandler
     public void groupMessageLog(Bot bot, GroupMessageEvent event, Matcher matcher) {
-        String rawMessage = event.getRawMessage();
-        log.info(rawMessage);
+        log.info(event.getMessage());
     }
 
     @Order(Integer.MIN_VALUE)
     @PrivateMessageHandler
     public void privateMessageLog(Bot bot, PrivateMessageEvent event, Matcher matcher) {
-        String rawMessage = event.getRawMessage();
-        log.info(rawMessage);
+        log.info(event.getMessage());
     }
 
     @Order(Integer.MIN_VALUE)
     @GuildMessageHandler
     public void guildMessageLog(Bot bot, GuildMessageEvent event, Matcher matcher) {
-        String rawMessage = event.getRawMessage();
-        log.info(rawMessage);
+        log.info(event.getMessage());
     }
 
     @Order(Integer.MIN_VALUE)
