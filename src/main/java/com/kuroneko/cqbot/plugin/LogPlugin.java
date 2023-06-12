@@ -27,13 +27,14 @@ public class LogPlugin {
     @Order(Integer.MIN_VALUE)
     @GroupMessageHandler
     public void groupMessageLog(Bot bot, GroupMessageEvent event, Matcher matcher) {
-        log.info(event.getMessage());
+        log.info("->群:({})内:{}({}):{}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getRawMessage());
     }
 
     @Order(Integer.MIN_VALUE)
     @PrivateMessageHandler
     public void privateMessageLog(Bot bot, PrivateMessageEvent event, Matcher matcher) {
-        log.info(event.getMessage());
+        log.info("->私:{}({}):{}", event.getPrivateSender().getNickname(), event.getPrivateSender().getUserId(), event.getRawMessage());
+
     }
 
     @Order(Integer.MIN_VALUE)
