@@ -1,4 +1,4 @@
-package com.kuroneko.cqbot;
+package com.kuroneko.cqbot.shiro;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.mikuac.shiro.enums.ActionPath;
