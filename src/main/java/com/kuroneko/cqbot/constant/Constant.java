@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Constant {
     public static String XN = "\n";
-    public static String DAILY_URL = "https://v2.alapi.cn/api/zaobao?format=json&token={1}";
+    public static String DAILY_URL = "https://api.vvhan.com/api/60s?type=json";
     public static String DAILY_URL_2 = "https://api.vvhan.com/api/60s";
     /**
      * <a href="http://www.alapi.cn/">age</a>

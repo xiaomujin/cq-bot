@@ -16,13 +16,13 @@ import java.util.List;
 public class HelpPlugin extends BotPlugin {
 
     private MsgUtils getMsg() {
-        StringBuilder stringBuffer = new StringBuilder();
-        stringBuffer.append("指令列表").append(Constant.XN);
-        List<String> allCmd = CmdConst.getAllCmd();
-        for (int i = 1; i <= allCmd.size(); i++) {
-            stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
-        }
-        return MsgUtils.builder().text(stringBuffer.toString());
+//        StringBuilder stringBuffer = new StringBuilder();
+//        stringBuffer.append("指令列表").append(Constant.XN);
+//        List<String> allCmd = CmdConst.getAllCmd();
+//        for (int i = 1; i <= allCmd.size(); i++) {
+//            stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
+//        }
+        return MsgUtils.builder().text("还没做呢！");
     }
 
     @Override

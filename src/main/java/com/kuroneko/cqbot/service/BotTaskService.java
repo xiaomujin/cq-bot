@@ -37,7 +37,7 @@ public class BotTaskService {
     public void doDaily() {
         DailyVo dailyVo = (DailyVo) Constant.CONFIG_CACHE.get(Constant.DAILY_KEY);
 //        Msg msg = Msg.builder().image(Constant.DAILY_URL_2);
-        MsgUtils msg = MsgUtils.builder().img(dailyVo.getData().getImage());
+        MsgUtils msg = MsgUtils.builder().img(dailyVo.getImgUrl());
 
         Map<Long, Bot> bots = botContainer.robots;
         bots.forEach((id, bot) -> {
@@ -63,10 +63,11 @@ public class BotTaskService {
 
     public void refreshDaily() {
         DailyVo dailyVo = getDailyVo();
-        if (dailyVo == null || dailyVo.getCode() != 200) {
+        if (dailyVo == null || !dailyVo.isSuccess()) {
             log.error("刷新日报图片 失败");
             return;
         }
+        dailyVo.setImgUrl(dailyVo.getImgUrl() + "?t=" + System.currentTimeMillis());
         Constant.CONFIG_CACHE.put(Constant.DAILY_KEY, dailyVo);
         log.info("刷新日报图片 成功");
     }

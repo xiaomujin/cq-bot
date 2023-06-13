@@ -24,7 +24,7 @@ public class DailyPlugin extends BotPlugin {
                 bot.sendMsg(event, CmdConst.RI_BAO + Constant.GET_FAIL, false);
                 return MESSAGE_BLOCK;
             }
-            MsgUtils msg = MsgUtils.builder().img(dailyVo.getData().getImage());
+            MsgUtils msg = MsgUtils.builder().img(dailyVo.getImgUrl());
 //            MsgUtils msg = MsgUtils.builder().img(Constant.DAILY_URL_2);
 
             bot.sendMsg(event, msg.build(), false);

@@ -17,7 +17,7 @@ public class MyActionHandler extends ActionHandler {
     @Override
     public JSONObject action(WebSocketSession session, ActionPath action, Map<String, Object> params) {
         JSONObject jsonObject = super.action(session, action, params);
-        if (jsonObject != null && jsonObject.getJSONObject("data").containsKey("message_id")) {
+        if (jsonObject != null && jsonObject.getJSONObject("data") != null && jsonObject.getJSONObject("data").containsKey("message_id")) {
             jsonObject.getJSONObject("data").put("message_id", 1);
         }
         return jsonObject;
