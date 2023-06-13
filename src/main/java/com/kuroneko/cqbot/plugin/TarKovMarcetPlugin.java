@@ -40,7 +40,7 @@ public class TarKovMarcetPlugin extends BotPlugin {
             String text = getText(event.getRawMessage());
             MsgUtils msg = getMsg(text, event.getUserId());
 
-            bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
+            bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         }
         return MESSAGE_IGNORE;

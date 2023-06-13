@@ -7,7 +7,7 @@ spring:
     name: @project.artifactId@
   data:
     redis:
-      host: localhost
+      host: 127.0.0.1
 
 shiro:
   # 注解方式编写的插件无需在插件列表（plugin-list）定义
