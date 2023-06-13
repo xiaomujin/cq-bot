@@ -68,6 +68,7 @@ public class CmdConst {
     public static String CLOSE = "关闭";
     public static String ZI_DAN = "子弹数据";
     public static String UPDATE_ZI_DAN = "更新子弹数据";
+    public static String TAKOV_DYNAMICS = "塔科夫动态";
     /**
      * 提问ai
      */

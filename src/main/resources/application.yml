@@ -13,7 +13,14 @@ shiro:
   # 注解方式编写的插件无需在插件列表（plugin-list）定义
   # 插件列表为顺序执行，如果前一个插件返回了 MESSAGE_BLOCK 将不会执行后续插件
   plugin-list:
-#    - com.mikuac.example.plugins.PluginOne
+    - com.kuroneko.cqbot.plugin.LogPlugin
+    - com.kuroneko.cqbot.plugin.HelpPlugin
+    - com.kuroneko.cqbot.plugin.AgePlugin
+    - com.kuroneko.cqbot.plugin.AiPlugin
+    - com.kuroneko.cqbot.plugin.BiLiPlugin
+    - com.kuroneko.cqbot.plugin.DailyPlugin
+    - com.kuroneko.cqbot.plugin.OvoOaPlugin
+    - com.kuroneko.cqbot.plugin.RainbowSixPlugin
   # 拦截器
 #  interceptor: com.mikuac.example.interceptor.InterceptorExample
   # WebSocket 配置
