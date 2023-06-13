@@ -1,7 +1,13 @@
 server:
   port: 8081
-
-
+spring:
+  main:
+    banner-mode: log
+  application:
+    name: @project.artifactId@
+  data:
+    redis:
+      host: localhost
 
 shiro:
   # 注解方式编写的插件无需在插件列表（plugin-list）定义

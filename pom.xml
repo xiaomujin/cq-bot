@@ -18,6 +18,8 @@
         <shiro.version>2.0.5</shiro.version>
         <fastjson2.version>2.0.33</fastjson2.version>
         <hutool.version>5.8.19</hutool.version>
+        <zip4j.version>2.11.5</zip4j.version>
+        <jvppeteer.version>1.1.5</jvppeteer.version>
     </properties>
     <dependencies>
         <dependency>
@@ -27,6 +29,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
@@ -42,6 +52,25 @@
                 <exclusion>
                     <groupId>com.alibaba.fastjson2</groupId>
                     <artifactId>fastjson2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>${zip4j.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.github.fanyong920/jvppeteer -->
+        <dependency>
+            <groupId>io.github.fanyong920</groupId>
+            <artifactId>jvppeteer</artifactId>
+            <version>${jvppeteer.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.lingala.zip4j</groupId>
+                    <artifactId>zip4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
