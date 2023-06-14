@@ -121,12 +121,12 @@ public class TarKovMapPlugin extends BotPlugin {
                 }
             }
             return MESSAGE_BLOCK;
-        } else if (event.getRawMessage().contains("任务流程图")) {
+        } else if (event.getRawMessage().startsWith("任务流程图")) {
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/任务流程.jpg";
             MsgUtils msg = MsgUtils.builder().img("http://localhost:8081/getJpgImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset()));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
-        } else if (event.getRawMessage().contains("塔科夫服务器")) {
+        } else if (event.getRawMessage().startsWith("塔科夫服务器")) {
             Map<String, Object> serverInfo = CastUtils.cast(Constant.CONFIG_CACHE.get(Constant.TKF_SERVER_INFO));
             String content = (String) serverInfo.get("content");
             MsgUtils msg = MsgUtils.builder().text(content);
