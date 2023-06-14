@@ -63,6 +63,7 @@ public class CmdConst {
      */
     public static String TIAO_ZAO = "跳蚤";
     public static String RAINBOW_KD = "r6战绩";
+    public static String THREE_HUNDRED_KD = "300战绩";
     public static String MAP = "地图";
     public static String OPEN = "开启";
     public static String CLOSE = "关闭";

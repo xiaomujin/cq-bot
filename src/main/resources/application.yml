@@ -26,6 +26,7 @@ shiro:
     - com.kuroneko.cqbot.plugin.TarKovMapPlugin
     - com.kuroneko.cqbot.plugin.TarKovMarcetPlugin
     - com.kuroneko.cqbot.plugin.ZeroMagnetPlugin
+    - com.kuroneko.cqbot.plugin.ThreeHundredPlugin
   # 拦截器
 #  interceptor: com.mikuac.example.interceptor.InterceptorExample
   # WebSocket 配置

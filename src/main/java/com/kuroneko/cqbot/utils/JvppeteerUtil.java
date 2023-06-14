@@ -11,6 +11,7 @@ import com.ruiyun.jvppeteer.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -91,16 +92,37 @@ public class JvppeteerUtil {
      * @return base64
      */
     public static String screenshot(String url, String path, String selector, String css) {
+        return screenshot(url, path, selector, css, "");
+    }
+
+    /**
+     * 截取选择的元素
+     *
+     * @param url      链接
+     * @param path     保存路径
+     * @param selector 选择器
+     * @param css      css属性 用于隐藏元素
+     * @param selectorOrFunctionOrTimeout      选择器, 方法 或者 超时时间
+     * @return base64
+     */
+    public static String screenshot(String url, String path, String selector, String css, String selectorOrFunctionOrTimeout) {
         long start = System.currentTimeMillis();
         Page page = getBrowser().newPage();
         page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36");
         String screenshot = "";
         try {
-            page.goTo(url);
+            PageNavigateOptions pageNavigateOptions = new PageNavigateOptions();
+            pageNavigateOptions.setTimeout(30000);
+            pageNavigateOptions.setWaitUntil(List.of("networkidle0"));
+            page.goTo(url,pageNavigateOptions);
             //添加css
             if (StringUtil.isNotBlank(css)) {
                 StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, css);
                 page.addStyleTag(styleTagOptions);
+            }
+            //添加css
+            if (StringUtil.isNotBlank(selectorOrFunctionOrTimeout)) {
+                page.waitFor(selectorOrFunctionOrTimeout);
             }
             ScreenshotOptions screenshotOptions = new ScreenshotOptions();
             if (StringUtil.isBlank(selector)) {
