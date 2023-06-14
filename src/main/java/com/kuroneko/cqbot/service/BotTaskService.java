@@ -36,14 +36,20 @@ public class BotTaskService {
 
     public void doDaily() {
         DailyVo dailyVo = (DailyVo) Constant.CONFIG_CACHE.get(Constant.DAILY_KEY);
-//        Msg msg = Msg.builder().image(Constant.DAILY_URL_2);
         MsgUtils msg = MsgUtils.builder().img(dailyVo.getImgUrl());
 
         Map<Long, Bot> bots = botContainer.robots;
         bots.forEach((id, bot) -> {
             ActionList<GroupInfoResp> groupList = bot.getGroupList();
             if (groupList != null) {
-                groupList.getData().forEach(group -> bot.sendGroupMsg(group.getGroupId(), msg.build(), false));
+                groupList.getData().forEach(group -> {
+                    bot.sendGroupMsg(group.getGroupId(), msg.build(), false);
+                    try {
+                        Thread.sleep(3600);
+                    } catch (InterruptedException e) {
+                        log.error("sleep err", e);
+                    }
+                });
             }
         });
 
@@ -145,7 +151,14 @@ public class BotTaskService {
         if (!list.isEmpty()) {
             botContainer.robots.forEach((id, bot) -> {
                 MsgUtils msg = biLiService.buildDynamicMsg(path, dynamicId);
-                list.forEach(groupId -> bot.sendGroupMsg(groupId.longValue(), msg.build(), false));
+                list.forEach(groupId -> {
+                    bot.sendGroupMsg(groupId.longValue(), msg.build(), false);
+                    try {
+                        Thread.sleep(3600);
+                    } catch (InterruptedException e) {
+                        log.error("sleep err", e);
+                    }
+                });
             });
 
         }
@@ -157,7 +170,14 @@ public class BotTaskService {
         if (!list.isEmpty()) {
             botContainer.robots.forEach((id, bot) -> {
                 MsgUtils msg = MsgUtils.builder().text("三兄弟位置变更" + Constant.XN).text(oldThreeDog.getLocation() + " -> " + threeDog.getLocation() + Constant.XN).text(threeDog.getLastReported());
-                list.forEach(groupId -> bot.sendGroupMsg(groupId.longValue(), msg.build(), false));
+                list.forEach(groupId -> {
+                    bot.sendGroupMsg(groupId.longValue(), msg.build(), false);
+                    try {
+                        Thread.sleep(3600);
+                    } catch (InterruptedException e) {
+                        log.error("sleep err", e);
+                    }
+                });
             });
 
         }
