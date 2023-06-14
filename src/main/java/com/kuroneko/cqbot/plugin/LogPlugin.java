@@ -2,6 +2,8 @@ package com.kuroneko.cqbot.plugin;
 
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
+import com.mikuac.shiro.dto.action.common.ActionData;
+import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.GuildMessageEvent;
 import com.mikuac.shiro.dto.event.message.PrivateMessageEvent;
@@ -23,7 +25,9 @@ public class LogPlugin extends BotPlugin {
 
     @Override
     public int onGroupMessage(Bot bot, GroupMessageEvent event) {
-        log.info("->群:({})内:{}({}):{}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getRawMessage());
+        ActionData<GroupInfoResp> groupInfo = bot.getGroupInfo(event.getGroupId(), false);
+        String groupName = groupInfo.getData().getGroupName();
+        log.info("->群:{}({})内:{}({}):{}", groupName, event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getRawMessage());
         return MESSAGE_IGNORE;
     }
 
