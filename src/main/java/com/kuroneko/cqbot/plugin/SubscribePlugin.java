@@ -36,6 +36,11 @@ public class SubscribePlugin extends BotPlugin {
                 MsgUtils msg = MsgUtils.builder().text("成功订阅塔科夫动态推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
+            } else if (message.contains("塔科夫服务器")) {
+                pushMapPut("TKF_INFO", event.getGroupId());
+                MsgUtils msg = MsgUtils.builder().text("成功订阅塔科夫服务器状态推送");
+                bot.sendMsg(event, msg.build(), false);
+                return MESSAGE_BLOCK;
             }
 
         } else if (message.startsWith(CMD2)) {
@@ -48,6 +53,10 @@ public class SubscribePlugin extends BotPlugin {
                 return MESSAGE_BLOCK;
             } else if (message.contains("塔科夫动态")) {
                 MsgUtils msg = getRemoveMsg("TKF_DT", event.getGroupId(), "取消订阅塔科夫动态推送", "本群没有订阅塔科夫动态推送");
+                bot.sendMsg(event, msg.build(), false);
+                return MESSAGE_BLOCK;
+            } else if (message.contains("塔科夫服务器")) {
+                MsgUtils msg = getRemoveMsg("TKF_INFO", event.getGroupId(), "取消订阅塔科夫服务器状态推送", "本群没有订阅塔科夫动态推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             }
