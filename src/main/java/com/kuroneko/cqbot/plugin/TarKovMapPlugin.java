@@ -9,6 +9,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.ruiyun.jvppeteer.core.page.ElementHandle;
+import com.ruiyun.jvppeteer.core.page.Frame;
 import com.ruiyun.jvppeteer.core.page.Page;
 import com.ruiyun.jvppeteer.options.PageNavigateOptions;
 import com.ruiyun.jvppeteer.options.ScreenshotOptions;
@@ -81,21 +82,20 @@ public class TarKovMapPlugin extends BotPlugin {
                 pageNavigateOptions.setWaitUntil(List.of("domcontentloaded"));
                 Viewport viewport = new Viewport();
                 viewport.setWidth(1650);
-                viewport.setHeight(900);
+                viewport.setHeight(12000);
                 page.setViewport(viewport);
                 page.goTo("https://escapefromtarkov.fandom.com/wiki/Ballistics", pageNavigateOptions, true);
-                StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, "#WikiaBar {display: none !important;} .fandom-sticky-header.is-visible {display: none !important;} .notifications-placeholder {display: none !important;} .global-navigation {display: none !important;} .is-gamepedia {overflow: auto !important;}");
-                page.addStyleTag(styleTagOptions);
+//                StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, "#WikiaBar {visibility: hidden !important;} .fandom-sticky-header.is-visible {visibility: hidden !important;} .notifications-placeholder {visibility: hidden !important;} .global-navigation {visibility: hidden !important;}");
+//                page.addStyleTag(styleTagOptions);
                 ElementHandle b = page.$("div._2O--J403t2VqCuF8XJAZLK");
                 if (b != null) {
                     b.click();
                 }
-                ElementHandle elementHandle1 = page.$("table.wikitable.sortable.stickyheader.jquery-tablesorter");
+                ElementHandle elementHandle1 = page.$("table.wikitable.sortable.stickyheader");
                 ScreenshotOptions screenshotOptions = new ScreenshotOptions();
                 String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "子弹数据.png";
                 screenshotOptions.setPath(imgPath);
-                page.waitFor("6000");
-                elementHandle1.screenshot(screenshotOptions);
+                elementHandle1.screenshot(screenshotOptions, false);
             } catch (Exception e) {
                 log.error("子弹数据更新失败", e);
                 MsgUtils msg = MsgUtils.builder().text("子弹数据更新失败" + e.getMessage());
