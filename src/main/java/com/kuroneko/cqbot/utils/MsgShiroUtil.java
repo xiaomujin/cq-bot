@@ -17,7 +17,7 @@ public class MsgShiroUtil {
     }
 
     public static String getText(List<ArrayMsg> arrayMsg) {
-        return MsgShiroUtil.getText(arrayMsg, ",");
+        return MsgShiroUtil.getText(arrayMsg, ",").trim();
     }
 
     public static String getText(List<ArrayMsg> arrayMsg, String join) {
