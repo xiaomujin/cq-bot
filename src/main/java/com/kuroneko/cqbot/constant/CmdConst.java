@@ -74,6 +74,10 @@ public class CmdConst {
      * 提问ai
      */
     public static String TIWAN_AI = "提问";
+    /**
+     * 添加色图管理员
+     */
+    public static String ADD_SE_TU_SYSTEM = "添加涩图用户";
 
     @SneakyThrows
     public static List<String> getAllCmd() {
