@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.constant.Constant;
+import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.utils.JsonUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
@@ -96,7 +97,7 @@ public class TarKovMarketService {
     private void pushTkfServerInfo(Map<String, Object> info) {
         String content = (String) info.get("content");
         MsgUtils msg = MsgUtils.builder().text(content);
-        Set<Number> list = redisUtil.members("TKF_INFO");
+        Set<Number> list = redisUtil.members(RedisKey.TKF_INFO);
         log.info("TKF_INFO 推送群聊：{}", list);
         if (!list.isEmpty()) {
             botContainer.robots.forEach((id, bot) -> {

@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
+import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -27,17 +28,17 @@ public class SubscribePlugin extends BotPlugin {
 
             //三兄弟位置推送
             if (message.contains("三兄弟") || message.contains("三狗")) {
-                pushMapPut("THREE_DOG", event.getGroupId());
+                pushMapPut(RedisKey.THREE_DOG, event.getGroupId());
                 MsgUtils msg = MsgUtils.builder().text("成功订阅三兄弟位置推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             } else if (message.contains("塔科夫动态")) {
-                pushMapPut("TKF_DT", event.getGroupId());
+                pushMapPut(RedisKey.TKF_DT, event.getGroupId());
                 MsgUtils msg = MsgUtils.builder().text("成功订阅塔科夫动态推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             } else if (message.contains("塔科夫服务器")) {
-                pushMapPut("TKF_INFO", event.getGroupId());
+                pushMapPut(RedisKey.TKF_INFO, event.getGroupId());
                 MsgUtils msg = MsgUtils.builder().text("成功订阅塔科夫服务器状态推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
@@ -48,15 +49,15 @@ public class SubscribePlugin extends BotPlugin {
 
             //三兄弟位置推送
             if (message.contains("三兄弟") || message.contains("三狗")) {
-                MsgUtils msg = getRemoveMsg("THREE_DOG", event.getGroupId(), "取消订阅三兄弟位置推送", "本群没有订阅三兄弟位置推送");
+                MsgUtils msg = getRemoveMsg(RedisKey.THREE_DOG, event.getGroupId(), "取消订阅三兄弟位置推送", "本群没有订阅三兄弟位置推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             } else if (message.contains("塔科夫动态")) {
-                MsgUtils msg = getRemoveMsg("TKF_DT", event.getGroupId(), "取消订阅塔科夫动态推送", "本群没有订阅塔科夫动态推送");
+                MsgUtils msg = getRemoveMsg(RedisKey.TKF_DT, event.getGroupId(), "取消订阅塔科夫动态推送", "本群没有订阅塔科夫动态推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             } else if (message.contains("塔科夫服务器")) {
-                MsgUtils msg = getRemoveMsg("TKF_INFO", event.getGroupId(), "取消订阅塔科夫服务器状态推送", "本群没有订阅塔科夫动态推送");
+                MsgUtils msg = getRemoveMsg(RedisKey.TKF_INFO, event.getGroupId(), "取消订阅塔科夫服务器状态推送", "本群没有订阅塔科夫动态推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             }

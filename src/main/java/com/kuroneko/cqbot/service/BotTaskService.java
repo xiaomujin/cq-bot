@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.constant.Constant;
+import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.AgeListVo;
 import com.kuroneko.cqbot.vo.DailyVo;
@@ -114,8 +115,8 @@ public class BotTaskService {
                 df.setTimeZone(TimeZone.getDefault());
                 threeDog.setLastReported(df.format(after));
 
-                ThreeDog dog = (ThreeDog) Constant.CONFIG_CACHE.get("THREE_DOG");
-                Constant.CONFIG_CACHE.put("THREE_DOG", threeDog);
+                ThreeDog dog = (ThreeDog) Constant.CONFIG_CACHE.get(RedisKey.THREE_DOG);
+                Constant.CONFIG_CACHE.put(RedisKey.THREE_DOG, threeDog);
                 //推送
                 if (dog != null && !dog.getLocation().equals(threeDog.getLocation())) {
                     pushMsg(dog, threeDog);
@@ -132,8 +133,8 @@ public class BotTaskService {
         String uid = "152065343";
         try {
             String dynamicId = biLiService.getNew(uid);
-            String oldDynamicId = (String) Constant.CONFIG_CACHE.get("TKF_DT");
-            Constant.CONFIG_CACHE.put("TKF_DT", dynamicId);
+            String oldDynamicId = (String) Constant.CONFIG_CACHE.get(RedisKey.TKF_DT);
+            Constant.CONFIG_CACHE.put(RedisKey.TKF_DT, dynamicId);
             //推送
             if (oldDynamicId != null && !dynamicId.equals(oldDynamicId)) {
                 pushTKFDTMsg(dynamicId, uid);
@@ -146,7 +147,7 @@ public class BotTaskService {
 
     public void pushTKFDTMsg(String dynamicId, String uid) {
         String path = biLiService.getNewScreenshot(dynamicId, uid);
-        Set<Number> list = redisUtil.members("TKF_DT");
+        Set<Number> list = redisUtil.members(RedisKey.TKF_DT);
         log.info("TKF_DT 推送群聊：{}", list);
         if (!list.isEmpty()) {
             botContainer.robots.forEach((id, bot) -> {
@@ -165,7 +166,7 @@ public class BotTaskService {
     }
 
     public void pushMsg(ThreeDog oldThreeDog, ThreeDog threeDog) {
-        Set<Number> list = redisUtil.members("THREE_DOG");
+        Set<Number> list = redisUtil.members(RedisKey.THREE_DOG);
         log.info("THREE_DOG 推送群聊：{}", list);
         if (!list.isEmpty()) {
             botContainer.robots.forEach((id, bot) -> {

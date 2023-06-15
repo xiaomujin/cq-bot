@@ -2,6 +2,7 @@ package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
+import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.utils.JvppeteerUtil;
 import com.kuroneko.cqbot.vo.ThreeDog;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -114,7 +115,7 @@ public class TarKovMapPlugin extends BotPlugin {
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().contains("在哪")) {
             if (event.getRawMessage().contains("三兄弟") || event.getRawMessage().contains("三狗")) {
-                ThreeDog threeDog = (ThreeDog) Constant.CONFIG_CACHE.get("THREE_DOG");
+                ThreeDog threeDog = (ThreeDog) Constant.CONFIG_CACHE.get(RedisKey.THREE_DOG);
                 if (threeDog != null) {
                     MsgUtils msg = MsgUtils.builder().text(threeDog.getLocation() + Constant.XN).text(threeDog.getLastReported());
                     bot.sendMsg(event, msg.build(), false);
