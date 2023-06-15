@@ -10,7 +10,7 @@ spring:
       database: 0
       host: 127.0.0.1
       port: 6379
-      password: 1234
+      password: 
 
 shiro:
   # 注解方式编写的插件无需在插件列表（plugin-list）定义
