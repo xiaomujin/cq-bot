@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.service.SeTuService;
+import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.utils.RegexUtil;
 import com.kuroneko.cqbot.vo.SeTuData;
 import com.kuroneko.cqbot.vo.SeTuUrls;
@@ -12,16 +13,23 @@ import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import io.micrometer.common.util.StringUtils;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.internal.StringUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SeTuPlugin extends BotPlugin {
     private final SeTuService seTuService;
+
+    private final RedisUtil redisUtil;
     private static final String CMD1 = CmdConst.SE_TU;
     private static final String CMD2 = CmdConst.HIGH_SE_TU;
 
@@ -37,6 +45,24 @@ public class SeTuPlugin extends BotPlugin {
     private Two getMsg(String tag, Long qq, boolean high) {
         boolean isPid = RegexUtil.isNumber(tag);
         Two two = new Two();
+//        redisUtil.set("setuSystem","728109103");
+        String s = redisUtil.get("setuSystem");
+        boolean flag = false;
+        if (!StringUtils.isBlank(s)){
+            List<String> qqList = Arrays.asList(s.split(","));
+            for (String s1 : qqList) {
+                if (s1.equals(qq.toString())){
+                    flag = true;
+                }
+            }
+        }
+
+        if (!flag){
+            MsgUtils msg = MsgUtils.builder().text("暂无查看涩图权限");
+            two.setMsg(msg);
+            return two;
+        }
+
         if (isPid) {
             SeTuData seTuData = new SeTuData();
             seTuData.setPid(Long.parseLong(tag));
