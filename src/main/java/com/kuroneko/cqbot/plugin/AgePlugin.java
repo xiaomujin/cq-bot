@@ -44,14 +44,14 @@ public class AgePlugin extends BotPlugin {
             });
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith(CmdConst.TODAY_FANJU)) {
-            log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.NEW_FANJU);
+            log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.TODAY_FANJU);
             String imgPath = Constant.BASE_IMG_PATH + "TODAY_FANJU.png";
             String screenshot = JvppeteerUtil.screenshot(Constant.AGE_HOST_URL, imgPath, "#container > div.div_right.baseblock > div.blockcontent");
             if (ObjectUtils.isEmpty(screenshot)) {
                 bot.sendMsg(event, CmdConst.TODAY_FANJU + Constant.GET_FAIL, false);
                 return MESSAGE_BLOCK;
             }
-            MsgUtils msg = MsgUtils.builder().img("http://localhost:8081/getImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset()));
+            MsgUtils msg = MsgUtils.builder().img("http://localhost:8081/getImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).text(Constant.AGE_HOST_URL);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         }

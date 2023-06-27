@@ -1,10 +1,24 @@
 {
-	"dataList":[],
-	"envList":[],
+	"dataList":[
+		{
+			"hostGroup":[
+				{
+					"env":"local",
+					"url":"http://localhost:8081"
+				}
+			],
+			"name":"cq-bot"
+		}
+	],
+	"envList":[
+		"local"
+	],
 	"headerList":[],
 	"postScript":"",
 	"preScript":"",
-	"projectList":[],
+	"projectList":[
+		"cq-bot"
+	],
 	"syncModel":{
 		"branch":"master",
 		"domain":"https://github.com",
