@@ -50,7 +50,7 @@ public class BiLiService {
     public String getNewScreenshot(String dynamicId, String uid) {
         Page page = JvppeteerUtil.getBrowser().newPage();
         try {
-            String path = imgPath + uid + ".png";
+            String path = imgPath + dynamicId + ".png";
             JvppeteerUtil.screenshot("https://t.bilibili.com/" + dynamicId, path, "#app > div.content > div > div > div.bili-dyn-item__main", ".v-popover {display: none !important;} .van-popover {display: none !important;} .international-header {display: none !important;}");
             return path;
         } catch (Exception e) {

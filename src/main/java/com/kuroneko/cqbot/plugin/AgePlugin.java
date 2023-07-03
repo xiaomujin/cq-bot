@@ -6,6 +6,7 @@ import com.kuroneko.cqbot.utils.JvppeteerUtil;
 import com.kuroneko.cqbot.vo.AgeListVo;
 import com.kuroneko.cqbot.vo.AniPreUP;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
@@ -51,7 +52,8 @@ public class AgePlugin extends BotPlugin {
                 bot.sendMsg(event, CmdConst.TODAY_FANJU + Constant.GET_FAIL, false);
                 return MESSAGE_BLOCK;
             }
-            MsgUtils msg = MsgUtils.builder().img("http://localhost:8081/getImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).text(Constant.AGE_HOST_URL);
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).cache(false);
+            MsgUtils msg = MsgUtils.builder().img(media).text(Constant.AGE_HOST_URL);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         }

@@ -5,6 +5,7 @@ import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.JvppeteerUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
@@ -84,7 +85,8 @@ public class ThreeHundredPlugin extends BotPlugin {
 //                .text("title:" +zeroMagnetVo.getTitle() + Constant.XN)
 //                .text(zeroMagnetVo.getMagnet() + Constant.XN)
 //                .text("size:" + zeroMagnetVo.getSize());
-        return MsgUtils.builder().img("http://localhost:8081/getImage?path=" + URLEncoder.encode(path, Charset.defaultCharset()));
+        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + URLEncoder.encode(path, Charset.defaultCharset())).cache(false);
+        return MsgUtils.builder().img(media);
     }
 
     @Override
