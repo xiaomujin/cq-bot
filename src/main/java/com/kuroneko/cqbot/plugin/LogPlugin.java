@@ -25,7 +25,12 @@ public class LogPlugin extends BotPlugin {
 
     @Override
     public int onGroupMessage(Bot bot, GroupMessageEvent event) {
-        log.info("->群:({})内:{}({}):{}", event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getRawMessage());
+        ActionData<GroupInfoResp> groupInfo = bot.getGroupInfo(event.getGroupId(), false);
+        String groupName = "未知";
+        if (groupInfo.getRetCode().equals(0)) {
+            groupName = groupInfo.getData().getGroupName();
+        }
+        log.info("->群:{}({})内:{}({}):{} ({})", groupName, event.getGroupId(), event.getSender().getNickname(), event.getSender().getUserId(), event.getRawMessage(), event.getMessageId());
         return MESSAGE_IGNORE;
     }
 
