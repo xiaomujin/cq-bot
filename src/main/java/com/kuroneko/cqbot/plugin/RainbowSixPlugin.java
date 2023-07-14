@@ -2,7 +2,7 @@ package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.JvppeteerUtil;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
@@ -60,7 +60,7 @@ public class RainbowSixPlugin extends BotPlugin {
 
     private MsgUtils getMsg(String text, Long qq) {
         MsgUtils msg = MsgUtils.builder();
-        Page page = JvppeteerUtil.getBrowser().newPage();
+        Page page = PuppeteerUtil.getBrowser().newPage();
         try {
             PageNavigateOptions pageNavigateOptions = new PageNavigateOptions();
             pageNavigateOptions.setTimeout(30000);
@@ -89,7 +89,7 @@ public class RainbowSixPlugin extends BotPlugin {
                 page.close();
             } catch (InterruptedException e) {
                 log.error("page关闭失败", e);
-                JvppeteerUtil.close();
+                PuppeteerUtil.close();
             }
         }
         return msg;

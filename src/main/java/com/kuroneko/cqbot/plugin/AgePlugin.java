@@ -2,7 +2,7 @@ package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.JvppeteerUtil;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.AgeListVo;
 import com.kuroneko.cqbot.vo.AniPreUP;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -47,7 +47,7 @@ public class AgePlugin extends BotPlugin {
         } else if (event.getRawMessage().startsWith(CmdConst.TODAY_FANJU)) {
             log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.TODAY_FANJU);
             String imgPath = Constant.BASE_IMG_PATH + "TODAY_FANJU.png";
-            String screenshot = JvppeteerUtil.screenshot(Constant.AGE_HOST_URL, imgPath, "#container > div.div_right.baseblock > div.blockcontent");
+            String screenshot = PuppeteerUtil.screenshot(Constant.AGE_HOST_URL, imgPath, "#container > div.div_right.baseblock > div.blockcontent");
             if (ObjectUtils.isEmpty(screenshot)) {
                 bot.sendMsg(event, CmdConst.TODAY_FANJU + Constant.GET_FAIL, false);
                 return MESSAGE_BLOCK;

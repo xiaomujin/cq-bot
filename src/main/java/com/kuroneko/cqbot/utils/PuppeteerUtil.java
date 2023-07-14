@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-public class JvppeteerUtil {
+public class PuppeteerUtil {
     private static volatile Browser browser;
 
     private static final AtomicInteger renderNum = new AtomicInteger(0);
@@ -26,7 +26,7 @@ public class JvppeteerUtil {
 
     public static Browser getBrowser() {
         if (browser == null || !browser.isConnected()) {
-            synchronized (JvppeteerUtil.class) {
+            synchronized (PuppeteerUtil.class) {
                 if (browser == null || !browser.isConnected()) {
                     init();
                 }
@@ -35,11 +35,8 @@ public class JvppeteerUtil {
         return browser;
     }
 
-//    static {
-//        init();
-//    }
 
-    private JvppeteerUtil() {
+    private PuppeteerUtil() {
     }
 
     private static void init() {
@@ -83,6 +80,42 @@ public class JvppeteerUtil {
     }
 
     /**
+     * 截取整个页面
+     *
+     * @param page 页面
+     * @param path 保存路径
+     * @return base64
+     */
+    public static String screenshot(Page page, String path) {
+        return screenshot(page, path, "");
+    }
+
+
+    /**
+     * 截取选择的元素
+     *
+     * @param url      链接
+     * @param path     保存路径
+     * @param selector 选择器
+     * @return base64
+     */
+    public static String screenshot(String url, String path, String selector) {
+        return screenshot(url, path, selector, "");
+    }
+
+    /**
+     * 截取选择的元素
+     *
+     * @param page     页面
+     * @param path     保存路径
+     * @param selector 选择器
+     * @return base64
+     */
+    public static String screenshot(Page page, String path, String selector) {
+        return screenshot(page, path, selector, "");
+    }
+
+    /**
      * 截取选择的元素
      *
      * @param url      链接
@@ -98,29 +131,54 @@ public class JvppeteerUtil {
     /**
      * 截取选择的元素
      *
+     * @param page     页面
+     * @param path     保存路径
+     * @param selector 选择器
+     * @param css      css属性 用于隐藏元素
+     * @return base64
+     */
+    public static String screenshot(Page page, String path, String selector, String css) {
+        return screenshot(page, path, selector, css, "");
+    }
+
+    /**
+     * 截取选择的元素
+     *
      * @param url      链接
      * @param path     保存路径
      * @param selector 选择器
      * @param css      css属性 用于隐藏元素
-     * @param selectorOrFunctionOrTimeout      选择器, 方法 或者 超时时间
      * @return base64
      */
     public static String screenshot(String url, String path, String selector, String css, String selectorOrFunctionOrTimeout) {
+        Page page = getNewPage(url);
+        return screenshot(page, path, selector, css, selectorOrFunctionOrTimeout);
+    }
+
+    /**
+     * 截取选择的元素
+     *
+     * @param page                        页面
+     * @param path                        保存路径
+     * @param selector                    选择器
+     * @param css                         css属性 用于隐藏元素
+     * @param selectorOrFunctionOrTimeout 选择器, 方法 或者 超时时间
+     *                                    <p>如果 selectorOrFunctionOrTimeout 是 string, 那么认为是 css 选择器或者一个xpath, 根据是不是'//'开头, 这时候此方法是 page.waitForSelector 或 page.waitForXPath的简写</p>
+     *                                    <p>如果 selectorOrFunctionOrTimeout 是 function, 那么认为是一个predicate，这时候此方法是page.waitForFunction()的简写</p>
+     *                                    <p>如果 selectorOrFunctionOrTimeout 是 number, 那么认为是超时时间，单位是毫秒，返回的是Promise对象,在指定时间后resolve</p>
+     *                                    <p>否则会报错
+     * @return base64
+     */
+    public static String screenshot(Page page, String path, String selector, String css, String selectorOrFunctionOrTimeout) {
         long start = System.currentTimeMillis();
-        Page page = getBrowser().newPage();
-        page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36");
         String screenshot = "";
         try {
-            PageNavigateOptions pageNavigateOptions = new PageNavigateOptions();
-            pageNavigateOptions.setTimeout(30000);
-            pageNavigateOptions.setWaitUntil(List.of("networkidle0"));
-            page.goTo(url,pageNavigateOptions);
             //添加css
             if (StringUtil.isNotBlank(css)) {
                 StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, css);
                 page.addStyleTag(styleTagOptions);
             }
-            //添加css
+            //添加 选择器, 方法 或者 超时时间
             if (StringUtil.isNotBlank(selectorOrFunctionOrTimeout)) {
                 page.waitFor(selectorOrFunctionOrTimeout);
             }
@@ -137,35 +195,64 @@ public class JvppeteerUtil {
                 screenshotOptions.setPath(path);
                 screenshot = elementHandle.screenshot(screenshotOptions);
             }
-
             long cost = System.currentTimeMillis() - start;
-            log.info("图片生成成功,耗时：{} ,url:{} ,path:{} ,selector:[{}] ,selector:[{}] ", cost, url, path, selector, css);
+            log.info("图片生成成功,耗时：{} ,url:{} ,path:{} ,selector:[{}] ,selector:[{}] ", cost, page.mainFrame().getUrl(), path, selector, css);
         } catch (Exception e) {
             log.error("图片生成失败", e);
         } finally {
-            try {
-                page.close();
-            } catch (Exception e) {
-                log.error("标签页关闭失败", e);
-                log.info("正在重新启动 Chrome");
-                restart();
-            }
+            safeClosePage(page);
         }
         renderNum.incrementAndGet();
         timesRestart();
         return screenshot;
     }
 
+
+    public static Page getNewPage(String url) {
+        return getNewPage(url, 1920, 1080);
+    }
+
+    public static Page getNewPage(String url, Integer width, Integer height) {
+        return getNewPage(url, "load", 30000, width, height);
+    }
+
     /**
-     * 截取选择的元素
-     *
-     * @param url      链接
-     * @param path     保存路径
-     * @param selector 选择器
-     * @return base64
+     * @param url       链接
+     * @param waitUntil load - domcontentloaded - networkidle0 - networkidle2
+     * @param width     宽度
+     * @param height    高度
+     * @param timeout   超时时间
+     * @return 页面
      */
-    public static String screenshot(String url, String path, String selector) {
-        return screenshot(url, path, selector, "");
+    public static Page getNewPage(String url, String waitUntil, Integer timeout, Integer width, Integer height) {
+        long start = System.currentTimeMillis();
+        Page page = getBrowser().newPage();
+        Viewport viewport = new Viewport();
+        viewport.setWidth(width);
+        viewport.setHeight(height);
+        page.setViewport(viewport);
+        PageNavigateOptions pageNavigateOptions = new PageNavigateOptions();
+        pageNavigateOptions.setTimeout(timeout);
+        pageNavigateOptions.setWaitUntil(List.of(waitUntil));
+        try {
+            page.goTo(url, pageNavigateOptions);
+        } catch (Exception e) {
+            log.error("页面打开失败", e);
+            safeClosePage(page);
+        }
+        long cost = System.currentTimeMillis() - start;
+        log.info("打开页面成功,耗时：{} ,url:{}", cost, page.mainFrame().getUrl());
+        return page;
+    }
+
+    public static void safeClosePage(Page page) {
+        try {
+            page.close();
+        } catch (Exception e) {
+            log.error("标签页关闭失败", e);
+            log.info("正在重新启动 Chrome");
+            restart();
+        }
     }
 
     private static void timesRestart() {

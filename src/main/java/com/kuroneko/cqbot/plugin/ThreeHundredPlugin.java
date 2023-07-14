@@ -3,13 +3,12 @@ package com.kuroneko.cqbot.plugin;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.JvppeteerUtil;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -78,7 +77,7 @@ public class ThreeHundredPlugin extends BotPlugin {
                 """;
         String format = String.format(fun, i);
         String path = imgPath + roleID + ".png";
-        JvppeteerUtil.screenshot("https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0", path, "#app", "#app {height: 1200px;}", format);
+        PuppeteerUtil.screenshot("https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0", path, "#app", "#app {height: 1200px;}", format);
         log.info(roleID);
 //        ZeroMagnetVo zeroMagnetVo = threeHundredService.getZeroMagnetVo(query, index);
 //        return MsgUtils.builder()

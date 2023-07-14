@@ -1,7 +1,7 @@
 package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.JvppeteerUtil;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.ruiyun.jvppeteer.core.page.Page;
@@ -48,10 +48,10 @@ public class BiLiService {
      * @return 文件路径
      */
     public String getNewScreenshot(String dynamicId, String uid) {
-        Page page = JvppeteerUtil.getBrowser().newPage();
+        Page page = PuppeteerUtil.getBrowser().newPage();
         try {
             String path = imgPath + dynamicId + ".png";
-            JvppeteerUtil.screenshot("https://t.bilibili.com/" + dynamicId, path, "#app > div.content > div > div > div.bili-dyn-item__main", ".v-popover {display: none !important;} .van-popover {display: none !important;} .international-header {display: none !important;}");
+            PuppeteerUtil.screenshot("https://t.bilibili.com/" + dynamicId, path, "#app > div.content > div > div > div.bili-dyn-item__main", ".v-popover {display: none !important;} .van-popover {display: none !important;} .international-header {display: none !important;}");
             return path;
         } catch (Exception e) {
             log.error("动态截图异常", e);
@@ -60,7 +60,7 @@ public class BiLiService {
                 page.close();
             } catch (InterruptedException e) {
                 log.error("page关闭失败", e);
-                JvppeteerUtil.close();
+                PuppeteerUtil.close();
             }
         }
         return "";
