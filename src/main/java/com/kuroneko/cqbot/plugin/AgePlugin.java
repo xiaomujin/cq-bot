@@ -10,6 +10,7 @@ import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -47,7 +48,12 @@ public class AgePlugin extends BotPlugin {
         } else if (event.getRawMessage().startsWith(CmdConst.TODAY_FANJU)) {
             log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.TODAY_FANJU);
             String imgPath = Constant.BASE_IMG_PATH + "TODAY_FANJU.png";
-            String screenshot = PuppeteerUtil.screenshot(Constant.AGE_HOST_URL, imgPath, "#container > div.div_right.baseblock > div.blockcontent");
+            Page newPage = PuppeteerUtil.getNewPage(Constant.AGE_HOST_URL);
+            String screenshot = PuppeteerUtil.screenshot(newPage
+                    , "1.png"
+                    , "div.text_list_box.weekly_list.mb-4"
+                    , ".global_notice_wrapper {display: none !important;} .head_content_wrapper {display: none !important;}"
+            );
             if (ObjectUtils.isEmpty(screenshot)) {
                 bot.sendMsg(event, CmdConst.TODAY_FANJU + Constant.GET_FAIL, false);
                 return MESSAGE_BLOCK;

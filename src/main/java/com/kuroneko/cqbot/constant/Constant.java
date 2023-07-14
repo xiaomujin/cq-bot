@@ -17,7 +17,7 @@ public class Constant {
     public static Map<String, Object> CONFIG_CACHE = new ConcurrentHashMap<>();
     public static String AGE_LIST_KEY = "ageListVo";
     public static String AGE_LIST_URL = "https://api.agefans.app/v2/home-list?update={1}&recommend={2}";
-    public static String AGE_HOST_URL = "https://www.agedm.tv";
+    public static String AGE_HOST_URL = "https://www.agemys.org";
     public static String BASE_IMG_PATH = "/opt/bot_img/";
 
 
