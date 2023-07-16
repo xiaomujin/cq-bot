@@ -40,25 +40,25 @@ public class TarKovMapPlugin extends BotPlugin {
             String rawMessage = event.getRawMessage();
 
             if (rawMessage.contains("储备站")) {
-                imgPath += "储备站.jpg";
+                imgPath += "Reserve.jpg";
             } else if (rawMessage.contains("灯塔")) {
-                imgPath += "灯塔.jpg";
+                imgPath += "Lighthouse.jpg";
             } else if (rawMessage.contains("工厂")) {
-                imgPath += "工厂.jpg";
+                imgPath += "Factory.jpg";
             } else if (rawMessage.contains("海岸线")) {
-                imgPath += "海岸线.jpg";
+                imgPath += "Shoreline.jpg";
             } else if (rawMessage.contains("海关")) {
-                imgPath += "海关.jpg";
+                imgPath += "Customs.jpg";
             } else if (rawMessage.contains("街区")) {
-                imgPath += "街区.jpg";
+                imgPath += "StreetsOfTarKov.jpg";
             } else if (rawMessage.contains("立交桥")) {
-                imgPath += "立交桥.jpg";
+                imgPath += "Interchange.jpg";
             } else if (rawMessage.contains("森林")) {
-                imgPath += "森林.jpg";
+                imgPath += "Woods.jpg";
             } else if (rawMessage.contains("实验室")) {
-                imgPath += "实验室.jpg";
+                imgPath += "TheLab.jpg";
             } else if (rawMessage.contains("疗养院")) {
-                imgPath += "疗养院.jpg";
+                    imgPath += "ShorelineHose.jpg";
             } else {
                 return MESSAGE_IGNORE;
             }
@@ -68,7 +68,7 @@ public class TarKovMapPlugin extends BotPlugin {
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().equals(CmdConst.ZI_DAN)) {
-            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "子弹数据.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "BulletData.png";
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
@@ -94,7 +94,7 @@ public class TarKovMapPlugin extends BotPlugin {
                 }
                 ElementHandle elementHandle1 = page.$("table.wikitable.sortable.stickyheader");
                 ScreenshotOptions screenshotOptions = new ScreenshotOptions();
-                String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "子弹数据.png";
+                String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "BulletData.png";
                 screenshotOptions.setPath(imgPath);
                 elementHandle1.screenshot(screenshotOptions, false);
             } catch (Exception e) {
@@ -109,7 +109,7 @@ public class TarKovMapPlugin extends BotPlugin {
                     log.error("页面关闭失败", e);
                 }
             }
-            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "子弹数据.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "BulletData.png";
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media).text("子弹数据更新成功");
             bot.sendMsg(event, msg.build(), false);
@@ -124,7 +124,7 @@ public class TarKovMapPlugin extends BotPlugin {
             }
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("任务流程图")) {
-            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/任务流程.jpg";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/TaskProcess.jpg";
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getJpgImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
