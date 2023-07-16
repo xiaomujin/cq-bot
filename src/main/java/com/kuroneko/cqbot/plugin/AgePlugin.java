@@ -50,7 +50,7 @@ public class AgePlugin extends BotPlugin {
             String imgPath = Constant.BASE_IMG_PATH + "TODAY_FANJU.png";
             Page newPage = PuppeteerUtil.getNewPage(Constant.AGE_HOST_URL);
             String screenshot = PuppeteerUtil.screenshot(newPage
-                    , "1.png"
+                    , imgPath
                     , "div.text_list_box.weekly_list.mb-4"
                     , ".global_notice_wrapper {display: none !important;} .head_content_wrapper {display: none !important;}"
             );
