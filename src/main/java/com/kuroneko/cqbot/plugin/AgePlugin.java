@@ -58,7 +58,7 @@ public class AgePlugin extends BotPlugin {
                 bot.sendMsg(event, CmdConst.TODAY_FANJU + Constant.GET_FAIL, false);
                 return MESSAGE_BLOCK;
             }
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).cache(false);
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media).text(Constant.AGE_HOST_URL);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;

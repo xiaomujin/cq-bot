@@ -63,13 +63,13 @@ public class TarKovMapPlugin extends BotPlugin {
                 return MESSAGE_IGNORE;
             }
 
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getJpgImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).cache(false);
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getJpgImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().equals(CmdConst.ZI_DAN)) {
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "子弹数据.png";
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).cache(false);
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
@@ -110,7 +110,7 @@ public class TarKovMapPlugin extends BotPlugin {
                 }
             }
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "子弹数据.png";
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).cache(false);
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media).text("子弹数据更新成功");
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
@@ -125,7 +125,7 @@ public class TarKovMapPlugin extends BotPlugin {
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("任务流程图")) {
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/任务流程.jpg";
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getJpgImage?path=" + URLEncoder.encode(imgPath, Charset.defaultCharset())).cache(false);
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getJpgImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;

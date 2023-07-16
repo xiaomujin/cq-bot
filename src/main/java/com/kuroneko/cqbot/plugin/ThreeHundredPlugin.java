@@ -9,6 +9,7 @@ import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -58,7 +60,7 @@ public class ThreeHundredPlugin extends BotPlugin {
             default -> "2";
         };
 
-        String entity = "AccountID=0&Guid=0&RoleName=" + URLEncoder.encode(query, Charset.defaultCharset());
+        String entity = "AccountID=0&Guid=0&RoleName=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<String> requestEntity = new HttpEntity<>(entity, headers);
@@ -77,14 +79,16 @@ public class ThreeHundredPlugin extends BotPlugin {
                 """;
         String format = String.format(fun, i);
         String path = imgPath + roleID + ".png";
-        PuppeteerUtil.screenshot("https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0", path, "#app", "#app {height: 1200px;}", format);
+        String url = "https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0";
+        Page newPage = PuppeteerUtil.getNewPage(url, "networkidle0", 30000);
+        PuppeteerUtil.screenshot(newPage, path, "#app", "#app {height: 1200px;}", format);
         log.info(roleID);
 //        ZeroMagnetVo zeroMagnetVo = threeHundredService.getZeroMagnetVo(query, index);
 //        return MsgUtils.builder()
 //                .text("title:" +zeroMagnetVo.getTitle() + Constant.XN)
 //                .text(zeroMagnetVo.getMagnet() + Constant.XN)
 //                .text("size:" + zeroMagnetVo.getSize());
-        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + URLEncoder.encode(path, Charset.defaultCharset())).cache(false);
+        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + path).cache(false);
         return MsgUtils.builder().img(media);
     }
 

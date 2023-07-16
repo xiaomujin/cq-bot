@@ -3,6 +3,9 @@ server:
 spring:
   main:
     banner-mode: log
+  devtools:
+    restart:
+      enabled: false
   application:
     name: @project.artifactId@
   data:

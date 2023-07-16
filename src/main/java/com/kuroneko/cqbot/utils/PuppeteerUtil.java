@@ -216,6 +216,10 @@ public class PuppeteerUtil {
         return getNewPage(url, "load", 30000, width, height);
     }
 
+    public static Page getNewPage(String url, String waitUntil, Integer timeout) {
+        return getNewPage(url, waitUntil, timeout, 1920, 1080);
+    }
+
     /**
      * @param url       链接
      * @param waitUntil load - domcontentloaded - networkidle0 - networkidle2

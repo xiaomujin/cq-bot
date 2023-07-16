@@ -67,7 +67,7 @@ public class BiLiService {
     }
 
     public MsgUtils buildDynamicMsg(String path, String dynamicId) {
-        return MsgUtils.builder().img("http://localhost:8081/getImage?path=" + URLEncoder.encode(path, Charset.defaultCharset())).text("https://t.bilibili.com/" + dynamicId);
+        return MsgUtils.builder().img("http://localhost:8081/getImage?path=" + path).text("https://t.bilibili.com/" + dynamicId);
     }
 
 }
