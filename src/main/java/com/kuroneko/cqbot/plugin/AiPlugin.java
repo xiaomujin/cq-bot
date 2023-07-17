@@ -34,7 +34,7 @@ public class AiPlugin extends BotPlugin {
     private MsgUtils getMsg(long groupId, String text) {
         String answer = "你想问什么呢";
         if (!ObjectUtils.isEmpty(text)) {
-            answer = aiService.getWuGuoKai(groupId, text);
+            answer = aiService.getFreeGpt(groupId, text);
         }
         log.info("问题：{} 的ai回答 {}", text, answer);
         return MsgUtils.builder().text(answer);
