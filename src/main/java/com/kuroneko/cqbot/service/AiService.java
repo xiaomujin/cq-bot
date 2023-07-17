@@ -38,13 +38,13 @@ public class AiService {
         map.put("usingContext", true);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("authority", "chat2.wuguokai.cn");
+        headers.set("authority", "ai-api.wuguokai.xyz");
         headers.set("method", "POST");
         headers.set("path", "/api/chat-process");
         headers.set("scheme", "https");
-        headers.set("referer", "https://chat.wuguokai.cn/");
+        headers.set("referer", "https://chat.wuguokai.xyz/");
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-        ResponseEntity<Resource> entity = restTemplate.postForEntity("https://chat2.wuguokai.cn/api/chat-process", requestEntity, Resource.class);
+        ResponseEntity<Resource> entity = restTemplate.postForEntity("https://ai-api.wuguokai.xyz/api/chat-process", requestEntity, Resource.class);
         byte[] bytes;
         try {
             assert entity.getBody() != null;
