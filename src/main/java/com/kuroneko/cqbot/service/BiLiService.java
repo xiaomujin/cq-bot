@@ -4,6 +4,7 @@ import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.Objects;
 
 @Service
@@ -67,7 +66,8 @@ public class BiLiService {
     }
 
     public MsgUtils buildDynamicMsg(String path, String dynamicId) {
-        return MsgUtils.builder().img("http://localhost:8081/getImage?path=" + path).text("https://t.bilibili.com/" + dynamicId);
+        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + path).cache(false);
+        return MsgUtils.builder().img(media).text("https://t.bilibili.com/" + dynamicId);
     }
 
 }
