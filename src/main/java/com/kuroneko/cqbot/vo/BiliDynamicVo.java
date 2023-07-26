@@ -26,6 +26,19 @@ public class BiliDynamicVo {
     @Data
     public static class BiliDynamicDesc {
         private String dynamic_id_str;
+        private UserProfile user_profile;
+
+    }
+    @Data
+    public static class UserProfile {
+        private BUserInfo info;
+
+    }
+    @Data
+    public static class BUserInfo {
+        private String uid;
+        private String uname;
+        private String face;
 
     }
 }
