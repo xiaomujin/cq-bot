@@ -191,7 +191,7 @@ public class PuppeteerUtil {
                 screenshot = page.screenshot(screenshotOptions);
             } else {
                 //设置截图范围
-                ElementHandle elementHandle = page.waitForSelector(selector);
+                ElementHandle elementHandle = page.$(selector);
                 screenshotOptions.setPath(path);
                 screenshot = elementHandle.screenshot(screenshotOptions);
             }
@@ -243,6 +243,7 @@ public class PuppeteerUtil {
         } catch (Exception e) {
             log.error("页面打开失败", e);
             safeClosePage(page);
+            throw new RuntimeException("页面打开失败");
         }
         long cost = System.currentTimeMillis() - start;
         log.info("打开页面成功,耗时：{} ,url:{}", cost, page.mainFrame().getUrl());
@@ -256,6 +257,7 @@ public class PuppeteerUtil {
             log.error("标签页关闭失败", e);
             log.info("正在重新启动 Chrome");
             restart();
+            throw new RuntimeException("标签页关闭失败");
         }
     }
 
