@@ -7,6 +7,7 @@ import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
 import com.ruiyun.jvppeteer.core.page.ElementHandle;
 import com.ruiyun.jvppeteer.core.page.Page;
 import com.ruiyun.jvppeteer.options.*;
+import com.ruiyun.jvppeteer.protocol.network.CookieParam;
 import com.ruiyun.jvppeteer.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +24,7 @@ public class PuppeteerUtil {
     private static final int restartNum = 100;
     private static final String savePath = "/opt";
     private static final String VERSION = Constant.VERSION;
+    private static final List<CookieParam> COOKIES;
 
     public static Browser getBrowser() {
         if (browser == null || !browser.isConnected()) {
@@ -67,6 +69,18 @@ public class PuppeteerUtil {
         }
     }
 
+    static {
+        List<CookieParam> cookies = new ArrayList<>();
+        CookieParam cookieParam = new CookieParam();
+        cookieParam.setUrl("https://t.bilibili.com");
+        cookieParam.setName("buvid3");
+        cookieParam.setValue("4FA1248C-BF0D-A763-E831-8A93A5F8BFD758493infoc");
+        cookieParam.setDomain(".bilibili.com");
+        cookieParam.setPath("/");
+        cookieParam.setExpires(1990454302000L);
+        cookies.add(cookieParam);
+        COOKIES = cookies;
+    }
 
     /**
      * 截取整个页面
@@ -191,7 +205,7 @@ public class PuppeteerUtil {
                 screenshot = page.screenshot(screenshotOptions);
             } else {
                 //设置截图范围
-                ElementHandle elementHandle = page.$(selector);
+                ElementHandle elementHandle = page.waitForSelector(selector);
                 screenshotOptions.setPath(path);
                 screenshot = elementHandle.screenshot(screenshotOptions);
             }
@@ -199,6 +213,7 @@ public class PuppeteerUtil {
             log.info("图片生成成功,耗时：{} ,url:{} ,path:{} ,selector:[{}] ,selector:[{}] ", cost, page.mainFrame().getUrl(), path, selector, css);
         } catch (Exception e) {
             log.error("图片生成失败", e);
+            throw new RuntimeException("图片生成失败");
         } finally {
             safeClosePage(page);
         }
@@ -239,6 +254,7 @@ public class PuppeteerUtil {
         pageNavigateOptions.setTimeout(timeout);
         pageNavigateOptions.setWaitUntil(List.of(waitUntil));
         try {
+            page.setCookie(COOKIES);
             page.goTo(url, pageNavigateOptions);
         } catch (Exception e) {
             log.error("页面打开失败", e);
