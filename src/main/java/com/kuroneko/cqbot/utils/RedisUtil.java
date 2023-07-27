@@ -1,7 +1,6 @@
 package com.kuroneko.cqbot.utils;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +23,8 @@ public class RedisUtil {
      */
     private static final String CACHE_KEY_PREFIX = "Cache:";
 
-    public void add(String key, Object value) {
-        redisTemplate.boundSetOps(CACHE_KEY_PREFIX + key).add(value);
+    public Long add(String key, Object value) {
+        return redisTemplate.boundSetOps(CACHE_KEY_PREFIX + key).add(value);
     }
 
     public Long remove(String key, Object value) {
@@ -64,32 +63,32 @@ public class RedisUtil {
         redisTemplate.delete(withPrefixKeys);
     }
 
-    public Collection<String> getAllKeys() {
-        Set<String> keys = redisTemplate.keys(CACHE_KEY_PREFIX + "*");
+    public Collection<String> getAllKeys(String subKey) {
+        Set<String> keys = redisTemplate.keys(CACHE_KEY_PREFIX + subKey + ":*");
         if (keys != null) {
             // 去掉缓存key的common prefix前缀
-            return keys.stream().map(key -> StrUtil.removePrefix(key, CACHE_KEY_PREFIX)).collect(Collectors.toSet());
+            return keys.stream().map(key -> StrUtil.removePrefix(key, CACHE_KEY_PREFIX + subKey + ":")).collect(Collectors.toSet());
         } else {
             return CollUtil.newHashSet();
         }
     }
 
-    public Collection<Object> getAllValues() {
-        Set<String> keys = redisTemplate.keys(CACHE_KEY_PREFIX + "*");
-        if (keys != null) {
-            return redisTemplate.opsForValue().multiGet(keys);
-        } else {
-            return CollUtil.newArrayList();
-        }
-    }
+//    public Collection<Object> getAllValues() {
+//        Set<String> keys = redisTemplate.keys(CACHE_KEY_PREFIX + "*");
+//        if (keys != null) {
+//            return redisTemplate.opsForValue().multiGet(keys);
+//        } else {
+//            return CollUtil.newArrayList();
+//        }
+//    }
 
-    public Map<String, Object> getAllKeyValues() {
-        Collection<String> allKeys = this.getAllKeys();
-        HashMap<String, Object> results = MapUtil.newHashMap();
-        for (String key : allKeys) {
-            results.put(key, this.get(key));
-        }
-        return results;
-    }
+//    public Map<String, Object> getAllKeyValues(String subKey) {
+//        Collection<String> allKeys = this.getAllKeys(subKey);
+//        HashMap<String, Object> results = MapUtil.newHashMap();
+//        for (String key : allKeys) {
+//            results.put(key, this.get(key));
+//        }
+//        return results;
+//    }
 
 }

@@ -71,6 +71,7 @@ public class CmdConst {
     public static String UPDATE_ZI_DAN = "更新子弹数据";
     public static String TAKOV_DYNAMICS = "塔科夫动态";
     public static String BILI_SUBSCRIBE = "哔哩订阅";
+    public static String BILI_SUBSCRIBE_CANCEL = "哔哩取消订阅";
     public static String BILI_DYNAMICS = "哔哩动态";
     /**
      * 提问ai

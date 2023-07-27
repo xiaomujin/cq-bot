@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.service.BiLiService;
+import com.kuroneko.cqbot.utils.MsgShiroUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -49,9 +50,9 @@ public class BiLiPlugin extends BotPlugin {
         String message = event.getRawMessage();
         if (message.startsWith(CmdConst.BILI_DYNAMICS)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_DYNAMICS);
-            Optional<String> uidOp = getUid(event.getRawMessage());
+            Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
             if (uidOp.isEmpty()) {
-                return MESSAGE_BLOCK;
+                return MESSAGE_IGNORE;
             }
             String uid = uidOp.get();
             MsgUtils msg = MsgUtils.builder();
@@ -75,12 +76,4 @@ public class BiLiPlugin extends BotPlugin {
         return MESSAGE_IGNORE;
     }
 
-    private Optional<String> getUid(String msg) {
-        Optional<String> text = Optional.empty();
-        if (msg.trim().length() > CmdConst.BILI_DYNAMICS.length()) {
-            text = Optional.of(msg.substring(CmdConst.BILI_DYNAMICS.length()).trim());
-        }
-        log.info("uid:{}", text);
-        return text;
-    }
 }

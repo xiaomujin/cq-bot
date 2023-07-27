@@ -1,15 +1,23 @@
 package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
+import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
+import com.kuroneko.cqbot.service.BiLiService;
+import com.kuroneko.cqbot.utils.MsgShiroUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
+import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Slf4j
 @Component
@@ -18,6 +26,7 @@ public class SubscribePlugin extends BotPlugin {
     private static final String CMD1 = CmdConst.OPEN;
     private static final String CMD2 = CmdConst.CLOSE;
     private final RedisUtil redisUtil;
+    private final BiLiService biLiService;
 
 
     @Override
@@ -81,4 +90,48 @@ public class SubscribePlugin extends BotPlugin {
     }
 
 
+    @Override
+    public int onGroupMessage(Bot bot, GroupMessageEvent event) {
+        String message = event.getRawMessage();
+        if (message.startsWith(CmdConst.BILI_SUBSCRIBE)) {
+            log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE);
+            Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
+            if (uidOp.isEmpty()) return MESSAGE_IGNORE;
+            MsgUtils msg = MsgUtils.builder();
+            String uid = uidOp.get();
+            Optional<BiliDynamicVo.BiliDynamicCard> firstCard = biLiService.getFirstCard(uid);
+            if (firstCard.isEmpty()) {
+                msg.text("订阅失败或UID不存在！");
+                bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
+                return MESSAGE_BLOCK;
+            }
+            BiliDynamicVo.BiliDynamicCard dynamicCard = firstCard.get();
+            BiliDynamicVo.BUserInfo userInfo = dynamicCard.getDesc().getUser_profile().getInfo();
+            //添加到持久化
+            redisUtil.add(RedisKey.BILI_SUB + ":" + uid, event.getGroupId());
+
+            OneBotMedia media = OneBotMedia.builder().file(userInfo.getFace()).cache(false);
+            msg.img(media)
+                    .text("UID: " + userInfo.getUid() + Constant.XN)
+                    .text("昵称: " + userInfo.getUname() + Constant.XN)
+                    .text("订阅成功~");
+            bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
+            return MESSAGE_BLOCK;
+        } else if (message.startsWith(CmdConst.BILI_SUBSCRIBE_CANCEL)) {
+            log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE_CANCEL);
+            Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_SUBSCRIBE_CANCEL, message);
+            if (uidOp.isEmpty()) return MESSAGE_IGNORE;
+            MsgUtils msg = MsgUtils.builder();
+            String uid = uidOp.get();
+            Long remove = redisUtil.remove(RedisKey.BILI_SUB + ":" + uid, event.getGroupId());
+            if (remove > 0) {
+                msg.text(uid + " 取消订阅成功");
+            } else {
+                msg.text(uid + " 未订阅");
+            }
+            bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
+            return MESSAGE_BLOCK;
+        }
+        return MESSAGE_IGNORE;
+    }
 }
