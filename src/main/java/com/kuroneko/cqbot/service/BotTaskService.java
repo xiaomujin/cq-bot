@@ -2,11 +2,10 @@ package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
+import com.kuroneko.cqbot.event.BiliSubscribeEvent;
+import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.kuroneko.cqbot.utils.RedisUtil;
-import com.kuroneko.cqbot.vo.AgeListVo;
-import com.kuroneko.cqbot.vo.DailyVo;
-import com.kuroneko.cqbot.vo.RiLiVo;
-import com.kuroneko.cqbot.vo.ThreeDog;
+import com.kuroneko.cqbot.vo.*;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
@@ -20,10 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -182,5 +178,27 @@ public class BotTaskService {
             });
 
         }
+    }
+
+    public void refreshBiliSubscribe() {
+        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
+        allKeys.forEach(uid -> {
+            Optional<BiliDynamicVo.BiliDynamicCard> firstCard = biLiService.getFirstCard(uid);
+            if (firstCard.isPresent()) {
+                BiliDynamicVo.BiliDynamicCard dynamicCard = firstCard.get();
+                BiliDynamicVo.BiliDynamicCard card = Constant.BILI_DYNAMIC.get(uid);
+                Constant.BILI_DYNAMIC.put(uid, dynamicCard);
+                if (card != null && !card.getDesc().getDynamic_id_str().equals(dynamicCard.getDesc().getDynamic_id_str())) {
+                    BiliSubscribeEvent event = new BiliSubscribeEvent(dynamicCard);
+                    ApplicationContextHandler.publishEvent(event);
+                }
+
+            }
+            try {
+                Thread.sleep(3600);
+            } catch (InterruptedException e) {
+                log.error("sleep err", e);
+            }
+        });
     }
 }

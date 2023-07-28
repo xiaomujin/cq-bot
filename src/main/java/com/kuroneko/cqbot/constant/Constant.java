@@ -1,5 +1,7 @@
 package com.kuroneko.cqbot.constant;
 
+import com.kuroneko.cqbot.vo.BiliDynamicVo;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -120,5 +122,5 @@ public class Constant {
 
     public static String TKF_SERVER_INFO = "TkfServerInfo";
 
-
+    public static Map<String, BiliDynamicVo.BiliDynamicCard> BILI_DYNAMIC = new ConcurrentHashMap<>();
 }

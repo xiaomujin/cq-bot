@@ -1,6 +1,8 @@
 package com.kuroneko.cqbot.controller;
 
 import com.kuroneko.cqbot.constant.RedisKey;
+import com.kuroneko.cqbot.event.BiliSubscribeEvent;
+import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.kuroneko.cqbot.utils.RedisUtil;
@@ -30,6 +32,17 @@ public class TestController {
 //        redisUtil.add(RedisKey.BILI_SUB+":12345",1234);
 //        redisUtil.remove(RedisKey.BILI_SUB + ":12345", 1234);
         Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
+        return allKeys;
+    }
+
+    @RequestMapping(value = "/testListener")
+    public Collection<String> testListener() {
+//        redisUtil.add(RedisKey.BILI_SUB+":123456",123123);
+//        redisUtil.add(RedisKey.BILI_SUB+":123456",1234);
+//        redisUtil.add(RedisKey.BILI_SUB+":12345",1234);
+//        redisUtil.remove(RedisKey.BILI_SUB + ":12345", 1234);
+        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
+        ApplicationContextHandler.publishEvent(new BiliSubscribeEvent(new BiliDynamicVo.BiliDynamicCard()));
         return allKeys;
     }
 
