@@ -180,7 +180,7 @@ public class BotTaskService {
         }
     }
 
-    public void refreshBiliSubscribe() {
+    public void refreshBiliSubscribe(boolean initSend) {
         Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
         allKeys.forEach(uid -> {
             Optional<BiliDynamicVo.BiliDynamicCard> firstCard = biLiService.getFirstCard(uid);
@@ -188,9 +188,11 @@ public class BotTaskService {
                 BiliDynamicVo.BiliDynamicCard dynamicCard = firstCard.get();
                 BiliDynamicVo.BiliDynamicCard card = Constant.BILI_DYNAMIC.get(uid);
                 Constant.BILI_DYNAMIC.put(uid, dynamicCard);
-                if (card != null && !card.getDesc().getDynamic_id_str().equals(dynamicCard.getDesc().getDynamic_id_str())) {
-                    BiliSubscribeEvent event = new BiliSubscribeEvent(dynamicCard);
-                    ApplicationContextHandler.publishEvent(event);
+                if (!initSend) {
+                    if (card == null || !card.getDesc().getDynamic_id_str().equals(dynamicCard.getDesc().getDynamic_id_str())) {
+                        BiliSubscribeEvent event = new BiliSubscribeEvent(dynamicCard);
+                        ApplicationContextHandler.publishEvent(event);
+                    }
                 }
 
             }

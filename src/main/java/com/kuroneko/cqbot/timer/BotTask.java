@@ -48,6 +48,7 @@ public class BotTask {
         botTaskService.refreshDaily();
         log.info("刷新日报图片 结束");
     }
+
     @Scheduled(cron = "0 6 0/1 * * ? ")
     public void refreshRiLi() {
         log.info("刷新日历图片 开始");
@@ -72,7 +73,7 @@ public class BotTask {
     @Scheduled(cron = "0 1/8 * * * ? ")
     public void refreshBiliSubscribe() {
         log.info("刷新塔科夫服务器状态 开始");
-        botTaskService.refreshBiliSubscribe();
+        botTaskService.refreshBiliSubscribe(false);
         log.info("刷新塔科夫服务器状态 结束");
     }
 
