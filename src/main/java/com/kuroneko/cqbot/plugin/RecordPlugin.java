@@ -1,24 +1,17 @@
 package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
-import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.MsgShiroUtil;
-import com.kuroneko.cqbot.utils.PuppeteerUtil;
-import com.kuroneko.cqbot.vo.AgeListVo;
-import com.kuroneko.cqbot.vo.AniPreUP;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
