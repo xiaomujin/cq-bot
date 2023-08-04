@@ -31,6 +31,7 @@ shiro:
     - com.kuroneko.cqbot.plugin.ZeroMagnetPlugin
     - com.kuroneko.cqbot.plugin.ThreeHundredPlugin
     - com.kuroneko.cqbot.plugin.AddSetuSystemPlugin
+    - com.kuroneko.cqbot.plugin.RecordPlugin
   # 拦截器
 #  interceptor: com.mikuac.example.interceptor.InterceptorExample
   # WebSocket 配置

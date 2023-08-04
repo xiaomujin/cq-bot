@@ -56,12 +56,12 @@ public class BotTask {
         log.info("刷新日历图片 结束");
     }
 
-    @Scheduled(cron = "0 3 0/1 * * ? ")
-    public void refreshAgeListVo() {
-        log.info("刷新age番剧 开始");
-        botTaskService.refreshAgeListVo();
-        log.info("刷新age番剧 结束");
-    }
+//    @Scheduled(cron = "0 3 0/1 * * ? ")
+//    public void refreshAgeListVo() {
+//        log.info("刷新age番剧 开始");
+//        botTaskService.refreshAgeListVo();
+//        log.info("刷新age番剧 结束");
+//    }
 
     @Scheduled(cron = "0 0/13 * * * ? ")
     public void refreshTkfServerInfo() {

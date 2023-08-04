@@ -98,7 +98,7 @@ public class BotTaskService {
 
     public void refreshThreeDog() {
         try {
-            ThreeDog threeDog = restTemplate.getForObject("http://5381277a14a44777a01a7f54d4046166.apig.ap-southeast-3.huaweicloudapis.com/kuro/sxd", ThreeDog.class);
+            ThreeDog threeDog = restTemplate.getForObject("https://t0t.co/proxy/congested-valleygirl-9254455.herokuapp.com/goonDetectors/current", ThreeDog.class);
             if (threeDog != null) {
                 String lastReported = threeDog.getLastReported();
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
