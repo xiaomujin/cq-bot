@@ -278,8 +278,8 @@ public class PuppeteerUtil {
     }
 
     private static void timesRestart() {
-        if (renderNum.get() >= restartNum) {
-            log.info("到达重启次数:{}", restartNum);
+        if (renderNum.get() % restartNum == 0) {
+            log.info("到达重启次数:{}", renderNum.get());
             restart();
         }
     }
