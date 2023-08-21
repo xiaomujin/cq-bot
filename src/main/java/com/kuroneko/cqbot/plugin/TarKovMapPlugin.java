@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
+import com.kuroneko.cqbot.service.BulletService;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.ThreeDog;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -11,25 +12,23 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.ruiyun.jvppeteer.core.page.ElementHandle;
+import com.ruiyun.jvppeteer.core.page.JSHandle;
 import com.ruiyun.jvppeteer.core.page.Page;
-import com.ruiyun.jvppeteer.options.PageNavigateOptions;
-import com.ruiyun.jvppeteer.options.ScreenshotOptions;
-import com.ruiyun.jvppeteer.options.Viewport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Component;
 
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class TarKovMapPlugin extends BotPlugin {
     private static final String CMD = CmdConst.MAP;
+    private final BulletService bulletService;
 
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
@@ -58,7 +57,7 @@ public class TarKovMapPlugin extends BotPlugin {
             } else if (rawMessage.contains("实验室")) {
                 imgPath += "TheLab.jpg";
             } else if (rawMessage.contains("疗养院")) {
-                    imgPath += "ShorelineHose.jpg";
+                imgPath += "ShorelineHose.jpg";
             } else {
                 return MESSAGE_IGNORE;
             }
@@ -74,40 +73,67 @@ public class TarKovMapPlugin extends BotPlugin {
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().equals(CmdConst.UPDATE_ZI_DAN)) {
-            Page page = PuppeteerUtil.getBrowser().newPage();
             try {
                 MsgUtils msg = MsgUtils.builder().text("开始更新子弹数据，大约需要60秒。");
                 bot.sendMsg(event, msg.build(), false);
-                PageNavigateOptions pageNavigateOptions = new PageNavigateOptions();
-                pageNavigateOptions.setTimeout(120000);
-                pageNavigateOptions.setWaitUntil(List.of("domcontentloaded"));
-                Viewport viewport = new Viewport();
-                viewport.setWidth(1650);
-                viewport.setHeight(12000);
-                page.setViewport(viewport);
-                page.goTo("https://escapefromtarkov.fandom.com/wiki/Ballistics", pageNavigateOptions, true);
-//                StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, "#WikiaBar {visibility: hidden !important;} .fandom-sticky-header.is-visible {visibility: hidden !important;} .notifications-placeholder {visibility: hidden !important;} .global-navigation {visibility: hidden !important;}");
-//                page.addStyleTag(styleTagOptions);
+
+                Page page = PuppeteerUtil.getNewPage("https://escapefromtarkov.fandom.com/wiki/Ballistics", "domcontentloaded", 120000, 1650, 12000);
                 ElementHandle b = page.$("div._2O--J403t2VqCuF8XJAZLK");
                 if (b != null) {
-                    b.click();
+                    try {
+                        b.click();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-                ElementHandle elementHandle1 = page.$("table.wikitable.sortable.stickyheader");
-                ScreenshotOptions screenshotOptions = new ScreenshotOptions();
+
+                String fun = """
+                        ()=>{
+                            let list = document.querySelectorAll(".sortable.stickyheader tr");
+                            let data_list = [];
+                            let caliber = "";
+                            for (let i = 0; i < list.length; i++) {
+                                let line_data = list[i];
+                                if(!line_data) continue;
+                                let td_list = line_data.querySelectorAll("td");
+                                if(!td_list) continue;
+                                let td_data_list = [];
+                                for (let j = 0; j < td_list.length; j++) {
+                                    let td_line_data = td_list[j];
+                                    if(j == 0 && td_list.length == 16){
+                                        caliber = td_line_data.innerText;
+                                    } else if(j == 0 && td_list.length == 15){
+                                        td_data_list.push(caliber);
+                                    }
+                                    if (j === (td_list.length - 15)) {
+                                        td_data_list.push(td_line_data.querySelector("a").innerText);
+                                        let b = [];
+                                        let b_list = td_line_data.querySelectorAll("b");
+                                        if (b_list) {
+                                            for (let k = 0; k < b_list.length; k++) {
+                                                b.push(b_list[k].innerText);
+                                            }
+                                            td_data_list.push(b);
+                                        }
+                                    } else {
+                                        td_data_list.push(td_line_data.innerText);
+                                    }
+                                }
+                                data_list.push(td_data_list);
+                            }
+                            return data_list;
+                        }
+                        """;
+                JSHandle jsHandle = page.waitFor(fun);
+                ArrayList<Object> jsonValue = CastUtils.cast(jsHandle.jsonValue());
+                new Thread(() -> bulletService.updateAllBullet(jsonValue)).start();
                 String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "BulletData.png";
-                screenshotOptions.setPath(imgPath);
-                elementHandle1.screenshot(screenshotOptions, false);
+                PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader");
             } catch (Exception e) {
                 log.error("子弹数据更新失败", e);
                 MsgUtils msg = MsgUtils.builder().text("子弹数据更新失败" + e.getMessage());
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
-            } finally {
-                try {
-                    page.close();
-                } catch (InterruptedException e) {
-                    log.error("页面关闭失败", e);
-                }
             }
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "BulletData.png";
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);

@@ -10,7 +10,49 @@ spring:
       database: 0
       host: 127.0.0.1
       port: 6379
-      password: 
+      password:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/bot?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      validation-query: select 'x'
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 30000
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: false
+      filters: stat,wall,slf4j
+      max-pool-prepared-statement-per-connection-size: -1
+      use-global-data-source-stat: true
+      web-stat-filter:
+        # 是否启用StatFilter
+        enabled: false
+        # 添加过滤规则
+        url-pattern: /*
+        # 忽略过滤的格式
+        exclusions: /druid/*,*.js,*.gif,*.jpg,*.png,*.css,*.ico
+      stat-view-servlet:
+        # 是否启用StatViewServlet
+        enabled: false
+        # 访问路径为/druid时，跳转到StatViewServlet
+        url-pattern: /druid/*
+        # 是否能够重置数据
+        reset-enable: false
+        # 需要账号密码才能访问控制台，默认为root
+        login-username: druid
+        login-password: druid
+        # IP白名单
+        allow:
+        # IP黑名单（共同存在时，deny优先于allow）
+        deny:
 
 shiro:
   # 注解方式编写的插件无需在插件列表（plugin-list）定义
@@ -72,4 +114,11 @@ shiro:
     # 最大线程数
     max-pool-size: 30
     # 线程池名前缀
-    thread-name-prefix: "ShiroTaskPool-"
+    thread-name-prefix: "ShiroTPl-"
+
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  type-aliases-package: com.kuroneko.cqbot.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
