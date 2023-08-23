@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class MsgShiroUtil {
+    private MsgShiroUtil() {
+    }
+
     public static boolean isAtMe(List<ArrayMsg> arrayMsg, long id) {
         return MsgShiroUtil.getAtList(arrayMsg).contains(id);
     }
