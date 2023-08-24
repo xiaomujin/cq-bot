@@ -1,10 +1,14 @@
 package com.kuroneko.cqbot.service.impl;
 
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kuroneko.cqbot.entity.Bullet;
 import com.kuroneko.cqbot.mapper.BulletMapper;
 import com.kuroneko.cqbot.service.BulletService;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
+import com.ruiyun.jvppeteer.core.page.Page;
 import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +69,41 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
                 .toList();
         this.remove(null);
         this.saveBatch(list);
+    }
+
+    @Override
+    public int searchBulletSize(String name) {
+        Long count = getBulletWrapper(name).count();
+        int size = 0;
+        if (count <= 10) {
+            size = 550;
+        } else if (count <= 30) {
+            size = 1080;
+        } else if (count <= 60) {
+            size = 1600;
+        } else {
+            size = 2100;
+        }
+        return size;
+    }
+
+    @Override
+    public String screenshotBullet(String name, String path) {
+        int size = searchBulletSize(name);
+        if (size == 0) {
+            return "";
+        }
+        Page page = PuppeteerUtil.getNewPage("http://localhost:8081/Bullet/" + name, size, 900);
+        return PuppeteerUtil.screenshot(page, path, ".flex_div");
+    }
+
+    @Override
+    public List<Bullet> searchBulletList(String name) {
+        return getBulletWrapper(name).list();
+    }
+
+    private LambdaQueryChainWrapper<Bullet> getBulletWrapper(String name) {
+        return lambdaQuery().like(StrUtil.isNotBlank(name), Bullet::getName, name);
     }
 }
 

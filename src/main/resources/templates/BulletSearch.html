@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bullet</title>
+    <style>
+        :root {
+            --base-height: 180px;
+            --base-width: 510px;
+        }
+
+        .flex_div {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            /*border: 1px red solid;*/
+        }
+
+        .bullet_box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            width: var(--base-width);
+            height: var(--base-height);
+        }
+
+        .bullet_box_upward {
+            display: flex;
+            justify-content: space-between;
+            width: var(--base-width);
+            height: calc(var(--base-height) / 6 * 5);
+        }
+
+        .bullet_box_below {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: var(--base-width);
+            height: calc(var(--base-height) / 6);
+        }
+
+        .box_table {
+            /*display: flex;*/
+            text-align: center;
+            width: calc((var(--base-width) - var(--base-height) / 6 * 5));
+            height: calc(var(--base-height) / 6 * 5);
+        }
+
+        .box_table_ar {
+            width: calc((var(--base-width) - var(--base-height) / 6 * 5) / 5);
+            text-align: right;
+        }
+
+        .box_table_center {
+            width: calc((var(--base-width) - var(--base-height) / 6 * 5) / 5);
+            text-align: center;
+        }
+
+        .bullet_box_below_item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: calc(var(--base-width) / 6 * 0.75);
+            height: calc(var(--base-height) / 6 * 0.75);
+            border-radius: calc(var(--base-height) / 6 * 0.75 / 2);
+        }
+
+
+        .bullet_box_upward_lift {
+            display: flex;
+            width: calc(var(--base-height) / 6 * 5);
+            height: calc(var(--base-height) / 6 * 5);
+        }
+
+        .bullet_box_upward_right {
+            display: flex;
+            width: calc(var(--base-width) - var(--base-height) / 6 * 5);
+            height: calc(var(--base-height) / 6 * 5);
+        }
+
+        .red {
+            background: red;
+        }
+
+        .yellow {
+            background: yellow;
+        }
+
+        .gold {
+            background: gold;
+        }
+
+        .gray {
+            background: gray;
+        }
+    </style>
+</head>
+<body>
+<div class="flex_div">
+<!--    <div th:if="${bullets.isEmpty()}">-->
+<!--        无数据-->
+<!--    </div>-->
+    <div class="bullet_box" th:each="bullet : ${bullets}">
+        <div class="bullet_box_upward red">
+            <div class="bullet_box_upward_lift gold">
+                <!--                <img class="bullet_box_upward_lift" th:src="/" />-->
+            </div>
+            <div class="bullet_box_upward_right gray">
+                <table class="box_table">
+                    <tr>
+                        <td class="box_table_ar" colspan="1">名称</td>
+                        <td colspan="4" th:text="${bullet.name}">PS12B</td>
+                    </tr>
+                    <tr>
+                        <td class="box_table_ar">肉伤</td>
+                        <td class="box_table_center" th:text="${bullet.damage}">1</td>
+                        <td class="box_table_ar">精度</td>
+                        <td class="box_table_center" th:text="${bullet.accuracy >=0 ? '+':''} + ${bullet.accuracy}">+100</td>
+                        <td class="box_table_center"></td>
+                    </tr>
+                    <tr>
+                        <td class="box_table_ar">穿深</td>
+                        <td class="box_table_center" th:text="${bullet.penetrationPower}">1</td>
+                        <td class="box_table_ar">后座</td>
+                        <td class="box_table_center" th:text="${bullet.recoil >=0 ? '+':''} + ${bullet.recoil}">1</td>
+                        <td class="box_table_center" th:text="${bullet.noMarket == 1 ? '禁售': ''}">禁售</td>
+                    </tr>
+                    <tr>
+                        <td class="box_table_ar">甲伤</td>
+                        <td class="box_table_center" th:text="${bullet.armorDamage}">1</td>
+                        <td class="box_table_ar">碎弹</td>
+                        <td class="box_table_center" th:text="${bullet.fragChance} + '%'">1</td>
+                        <td class="box_table_center" th:text="${bullet.tracer == 1 ? '曳光': ''}">曳光</td>
+                    </tr>
+                    <tr>
+                        <td class="box_table_ar">小出血</td>
+                        <td class="box_table_center" th:text="${bullet.bleedLt} + '%'">1</td>
+                        <td class="box_table_ar">大出血</td>
+                        <td class="box_table_center" th:text="${bullet.bleedHvy} + '%'">1</td>
+                        <td class="box_table_center" th:text="${bullet.subsonic == 1 ? '亚音速': ''}">亚音速</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="bullet_box_below yellow">
+            <div class="bullet_box_below_item gray" th:text="${bullet.effectivenessLv1}">0</div>
+            <div class="bullet_box_below_item gray" th:text="${bullet.effectivenessLv2}">0</div>
+            <div class="bullet_box_below_item gray" th:text="${bullet.effectivenessLv3}">0</div>
+            <div class="bullet_box_below_item gray" th:text="${bullet.effectivenessLv4}">0</div>
+            <div class="bullet_box_below_item gray" th:text="${bullet.effectivenessLv5}">0</div>
+            <div class="bullet_box_below_item gray" th:text="${bullet.effectivenessLv6}">0</div>
+        </div>
+    </div>
+</div>
+<!--<table style="border: 1px red solid">-->
+<!--    <tr>-->
+<!--        <td>编号</td>-->
+<!--        <td>口径</td>-->
+<!--        <td>姓名</td>-->
+<!--    </tr>-->
+<!--    <tr th:each="bullet : ${bullets}">-->
+<!--        <td th:text="${bullet.id}"></td>-->
+<!--        <td th:text="${bullet.caliber}"></td>-->
+<!--        <td th:text="${bullet.name}"></td>-->
+<!--        <td th:text="${bullet.tracer == 1 }? '曳' : ''"></td>-->
+<!--    </tr>-->
+<!--</table>-->
+
+</body>
+</html>

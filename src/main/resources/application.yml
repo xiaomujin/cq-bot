@@ -53,6 +53,8 @@ spring:
         allow:
         # IP黑名单（共同存在时，deny优先于allow）
         deny:
+  thymeleaf:
+    cache: false
 
 shiro:
   # 注解方式编写的插件无需在插件列表（plugin-list）定义
