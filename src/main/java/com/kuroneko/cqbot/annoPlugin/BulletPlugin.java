@@ -9,6 +9,7 @@ import com.kuroneko.cqbot.service.BulletService;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.AllArgsConstructor;
@@ -39,7 +40,8 @@ public class BulletPlugin {
             bot.sendMsg(event, msg.text("没有找到").text(name).build(), false);
             return;
         }
-        msg.img("http://localhost:8081/getImage?path=" + imgPath);
+        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
+        msg.img(media);
         bot.sendMsg(event, msg.build(), false);
     }
 
