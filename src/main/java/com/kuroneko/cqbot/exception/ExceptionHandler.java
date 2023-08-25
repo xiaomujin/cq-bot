@@ -33,14 +33,14 @@ public class ExceptionHandler {
         } else if (event instanceof PrivateMessageEvent it) {
             bot.sendPrivateMsg(it.getUserId(), message, false);
         }
-        switch (event) {
-            case AnyMessageEvent it -> bot.sendMsg(it, message, false);
-            case GroupMessageEvent it -> bot.sendGroupMsg(it.getGroupId(), message, false);
-            case PrivateMessageEvent it -> bot.sendPrivateMsg(it.getUserId(), message, false);
-            case GuildMessageEvent it -> bot.sendGuildMsg(it.getGuildId(), it.getChannelId(), message);
-            default -> {
-            }
-        }
+//        switch (event) {
+//            case AnyMessageEvent it -> bot.sendMsg(it, message, false);
+//            case GroupMessageEvent it -> bot.sendGroupMsg(it.getGroupId(), message, false);
+//            case PrivateMessageEvent it -> bot.sendPrivateMsg(it.getUserId(), message, false);
+//            case GuildMessageEvent it -> bot.sendGuildMsg(it.getGuildId(), it.getChannelId(), message);
+//            default -> {
+//            }
+//        }
     }
 
 }
