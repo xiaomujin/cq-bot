@@ -1,28 +1,25 @@
 package com.kuroneko.cqbot.controller;
 
-import cn.hutool.core.util.NumberUtil;
+import com.kuroneko.cqbot.annoPlugin.BLPlugin;
 import com.kuroneko.cqbot.constant.RedisKey;
-import com.kuroneko.cqbot.entity.Bullet;
+import com.kuroneko.cqbot.dto.AntiBiliMiniAppDTO;
+import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.event.BiliSubscribeEvent;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.service.BulletService;
-import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
-import com.ruiyun.jvppeteer.core.page.ElementHandle;
-import com.ruiyun.jvppeteer.core.page.JSHandle;
-import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.CastUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
@@ -116,6 +113,14 @@ public class TestController {
 //        } catch (InterruptedException e) {
 //            throw new RuntimeException(e);
 //        }
+        return 1;
+    }
+
+    @RequestMapping(value = "/testBili")
+    public Integer testBili() {
+        BLPlugin bean = ApplicationContextHandler.getBean(BLPlugin.class);
+        String bv1MG411Z7Ed = bean.parseBidByShortURL("https://b23.tv/QAkdV9y");
+
         return 1;
     }
 

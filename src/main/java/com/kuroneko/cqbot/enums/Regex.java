@@ -6,4 +6,5 @@ package com.kuroneko.cqbot.enums;
 public class Regex {
     public static final String SEARCH_BULLET = "^(?i)查子弹(?<name>.+)";
     public static final String TKF_TIME = "^(?i)塔科夫时间$";
+    public static final String BILIBILI_BID = ".*(?<BVId>BV\\w+).*";
 }
