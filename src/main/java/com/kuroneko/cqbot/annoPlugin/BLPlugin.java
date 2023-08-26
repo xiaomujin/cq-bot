@@ -50,9 +50,10 @@ public class BLPlugin {
             Long id = ObjUtil.defaultIfNull(event.getGroupId(), event.getUserId());
             if (msg.contains("com.tencent.miniapp_01") && msg.contains("哔哩哔哩")) {
                 handleMiniApp(bot, event, id);
-            }
-            if (msg.contains("bilibili.com/video/BV")) {
+            } else if (msg.contains("bilibili.com/video/BV")) {
                 handleURL(bot, event, id);
+            } else if (msg.contains("b23.tv/")) {
+                handleShortURL(bot, event, id);
             }
 
             return "";
@@ -113,13 +114,18 @@ public class BLPlugin {
         handleRequest(bot, event, id, RegexUtil.group("BVId", event.getMessage(), Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败" + event.getMessage())));
     }
 
+    private void handleShortURL(Bot bot, AnyMessageEvent event, Long id) {
+        String sUrl = RegexUtil.group("sUrl", event.getMessage(), Regex.BILIBILI_SHORT_URL).orElseThrow(() -> new BotException("解析失败"));
+        handleRequest(bot, event, id, parseBidByShortURL("https://" + sUrl));
+    }
+
     private void handleRequest(Bot bot, AnyMessageEvent event, Long id, String bid) {
         String oldBid = expiringMap.get(id);
         if (Objects.equals(oldBid, bid)) {
             return;
         }
+        expiringMap.put(id, bid);
         AntiBiliMiniAppDTO request = request(bid);
         bot.sendMsg(event, buildMsg(request.getData()), false);
-        expiringMap.put(id, bid);
     }
 }
