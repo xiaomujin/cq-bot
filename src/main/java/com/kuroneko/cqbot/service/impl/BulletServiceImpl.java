@@ -74,8 +74,10 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
     @Override
     public int searchBulletSize(String name) {
         Long count = getBulletWrapper(name).count();
-        int size = 0;
-        if (count <= 10) {
+        int size;
+        if (count == 0) {
+            size = 0;
+        } else if (count <= 10) {
             size = 550;
         } else if (count <= 30) {
             size = 1080;
