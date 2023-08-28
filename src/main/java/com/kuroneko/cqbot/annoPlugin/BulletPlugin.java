@@ -32,9 +32,9 @@ public class BulletPlugin {
     @AnyMessageHandler(cmd = Regex.SEARCH_BULLET)
     public void handler(Bot bot, AnyMessageEvent event, Matcher matcher) {
         String name = matcher.group("name").trim();
-
+        String sName = name.replace(" ", "%").replace("-", "%").replace("*", "x");
         String imgPath = Constant.BASE_IMG_PATH + "SEARCH_BULLET" + event.getSender().getUserId() + ".png";
-        String screenshot = bulletService.screenshotBullet(name, imgPath);
+        String screenshot = bulletService.screenshotBullet(sName, imgPath);
         MsgUtils msg = MsgUtils.builder();
         if (StrUtil.isEmpty(screenshot)) {
             bot.sendMsg(event, msg.text("没有找到").text(name).build(), false);
