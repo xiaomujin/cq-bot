@@ -13,6 +13,8 @@ import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -95,7 +97,7 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
         if (size == 0) {
             return "";
         }
-        Page page = PuppeteerUtil.getNewPage("http://localhost:8081/Bullet/" + name, size, 900);
+        Page page = PuppeteerUtil.getNewPage("http://localhost:8081/Bullet/" + URLEncoder.encode(name, StandardCharsets.UTF_8), size, 900);
         return PuppeteerUtil.screenshot(page, path, ".flex_div");
     }
 
