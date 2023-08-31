@@ -4,6 +4,7 @@ import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.MsgShiroUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
@@ -35,7 +36,12 @@ public class OvoOaPlugin extends BotPlugin {
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TUI)) {
-            bot.sendMsg(event, MsgUtils.builder().img(Constant.OVO_OA_TUI_URL).build(), false);
+            OneBotMedia media = new OneBotMedia().file(Constant.VVHAN_GIRL_URL).cache(false);
+            bot.sendMsg(event, MsgUtils.builder().img(media).build(), false);
+            return MESSAGE_BLOCK;
+        } else if (text.startsWith(CmdConst.TAO)) {
+            OneBotMedia media = new OneBotMedia().file(Constant.VVHAN_TAO_URL).cache(false);
+            bot.sendMsg(event, MsgUtils.builder().img(media).build(), false);
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TGRJ)) {
             String object = restTemplate.getForObject(Constant.OVO_OA_TGRJ_URL, String.class);

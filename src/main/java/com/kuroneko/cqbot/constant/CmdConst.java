@@ -54,6 +54,7 @@ public class CmdConst {
      * 来份腿
      */
     public static String TUI = "来份腿";
+    public static String TAO = "买家秀";
     /**
      * 车牌
      */

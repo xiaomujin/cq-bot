@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Constant {
     public static String XN = "\n";
     public static String DAILY_URL = "https://api.vvhan.com/api/60s?type=json";
+    public static String VVHAN_GIRL_URL = "https://api.vvhan.com/api/girl";
+    public static String VVHAN_TAO_URL = "https://api.vvhan.com/api/tao";
     public static String DAILY_URL_2 = "https://api.vvhan.com/api/60s";
     /**
      * <a href="http://www.alapi.cn/">age</a>
