@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.handler;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
@@ -19,14 +20,12 @@ import org.springframework.stereotype.Component;
 @Lazy(false)
 public class ApplicationContextHandler implements ApplicationContextAware, DisposableBean {
 
-    private static ApplicationContext applicationContext = null;
-
     /**
-     * 取得存储在静态变量中的ApplicationContext.
+     * -- GETTER --
+     *  取得存储在静态变量中的ApplicationContext.
      */
-    public static ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
+    @Getter
+    private static ApplicationContext applicationContext = null;
 
     /**
      * 实现ApplicationContextAware接口, 注入Context到静态变量中.
