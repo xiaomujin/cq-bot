@@ -28,7 +28,7 @@ public class RecordPlugin extends BotPlugin {
                 return MESSAGE_IGNORE;
             }
             String text = oneParam.get();
-            OneBotMedia media = new OneBotMedia().file("https://artrajz-vits-simple-api.hf.space/voice/vits?text=" + URLEncoder.encode(text, StandardCharsets.UTF_8) + "&id=609").cache(false);
+            OneBotMedia media = new OneBotMedia().file("https://artrajz-vits-simple-api.hf.space/voice/vits?text=" + URLEncoder.encode(text, StandardCharsets.UTF_8) + "&id=155").cache(false);
             MsgUtils msg = MsgUtils.builder().voice(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
