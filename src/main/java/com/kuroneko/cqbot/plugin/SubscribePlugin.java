@@ -13,10 +13,13 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -92,12 +95,33 @@ public class SubscribePlugin extends BotPlugin {
 
     @Override
     public int onGroupMessage(Bot bot, GroupMessageEvent event) {
+        Long qq = event.getUserId();
+        MsgUtils msg = MsgUtils.builder();
         String message = event.getRawMessage();
+        String s = redisUtil.get("setuSystem");
+        boolean flag = false;
+        if (!StringUtils.isBlank(s)){
+            List<String> qqList = Arrays.asList(s.split(","));
+            for (String s1 : qqList) {
+                if (s1.equals(qq.toString())){
+                    flag = true;
+                }
+            }
+        }
+
+        if (!flag){
+            msg = MsgUtils.builder().text("暂无查看涩图权限");
+            bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
+
+            return MESSAGE_BLOCK;
+        }
+
+
         if (message.startsWith(CmdConst.BILI_SUBSCRIBE)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE);
             Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
             if (uidOp.isEmpty()) return MESSAGE_IGNORE;
-            MsgUtils msg = MsgUtils.builder();
+
             String uid = uidOp.get();
             Optional<BiliDynamicVo.BiliDynamicCard> firstCard = biLiService.getFirstCard(uid);
             if (firstCard.isEmpty()) {
@@ -121,7 +145,7 @@ public class SubscribePlugin extends BotPlugin {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE_CANCEL);
             Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_SUBSCRIBE_CANCEL, message);
             if (uidOp.isEmpty()) return MESSAGE_IGNORE;
-            MsgUtils msg = MsgUtils.builder();
+            msg = MsgUtils.builder();
             String uid = uidOp.get();
             Long remove = redisUtil.remove(RedisKey.BILI_SUB + ":" + uid, event.getGroupId());
             if (remove > 0) {

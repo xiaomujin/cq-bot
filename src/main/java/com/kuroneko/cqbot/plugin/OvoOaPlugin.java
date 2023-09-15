@@ -3,23 +3,28 @@ package com.kuroneko.cqbot.plugin;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.RedisUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class OvoOaPlugin extends BotPlugin {
+
+    private final RedisUtil redisUtil;
     private final RestTemplate restTemplate;
 
     private MsgUtils getMsg(String qq) {
@@ -36,10 +41,53 @@ public class OvoOaPlugin extends BotPlugin {
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TUI)) {
+            Long qq = event.getUserId();
+            MsgUtils msg = MsgUtils.builder();
+            String message = event.getRawMessage();
+            String s = redisUtil.get("setuSystem");
+            boolean flag = false;
+            if (!StringUtils.isBlank(s)){
+                List<String> qqList = Arrays.asList(s.split(","));
+                for (String s1 : qqList) {
+                    if (s1.equals(qq.toString())){
+                        flag = true;
+                    }
+                }
+            }
+
+            if (!flag){
+                msg = MsgUtils.builder().text("暂无使用权限");
+                bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
+
+                return MESSAGE_BLOCK;
+            }
+
+
             OneBotMedia media = new OneBotMedia().file(Constant.VVHAN_GIRL_URL).cache(false);
             bot.sendMsg(event, MsgUtils.builder().img(media).build(), false);
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TAO)) {
+            Long qq = event.getUserId();
+            MsgUtils msg = MsgUtils.builder();
+            String message = event.getRawMessage();
+            String s = redisUtil.get("setuSystem");
+            boolean flag = false;
+            if (!StringUtils.isBlank(s)){
+                List<String> qqList = Arrays.asList(s.split(","));
+                for (String s1 : qqList) {
+                    if (s1.equals(qq.toString())){
+                        flag = true;
+                    }
+                }
+            }
+
+            if (!flag){
+                msg = MsgUtils.builder().text("暂无使用权限");
+                bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
+
+                return MESSAGE_BLOCK;
+            }
+
             OneBotMedia media = new OneBotMedia().file(Constant.VVHAN_TAO_URL).cache(false);
             bot.sendMsg(event, MsgUtils.builder().img(media).build(), false);
             return MESSAGE_BLOCK;

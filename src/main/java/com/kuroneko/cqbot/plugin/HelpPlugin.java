@@ -9,6 +9,7 @@ import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -16,13 +17,36 @@ import java.util.List;
 public class HelpPlugin extends BotPlugin {
 
     private MsgUtils getMsg() {
-//        StringBuilder stringBuffer = new StringBuilder();
+        StringBuilder stringBuffer = new StringBuilder();
 //        stringBuffer.append("指令列表").append(Constant.XN);
-//        List<String> allCmd = CmdConst.getAllCmd();
-//        for (int i = 1; i <= allCmd.size(); i++) {
-//            stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
-//        }
-        return MsgUtils.builder().text("还没做呢！");
+        List<String> allCmd = new ArrayList<>();
+        allCmd.add(CmdConst.RI_BAO);
+        allCmd.add(CmdConst.RI_LI);
+        allCmd.add(CmdConst.NEW_FANJU);
+        allCmd.add(CmdConst.TODAY_FANJU);
+        allCmd.add(CmdConst.SE_TU);
+        allCmd.add(CmdConst.PA);
+        allCmd.add(CmdConst.TGRJ);
+        allCmd.add(CmdConst.TUI);
+        allCmd.add(CmdConst.TAO);
+        allCmd.add(CmdConst.CHE_PAI);
+        allCmd.add(CmdConst.TIAO_ZAO);
+        allCmd.add(CmdConst.RAINBOW_KD);
+        allCmd.add(CmdConst.THREE_HUNDRED_KD);
+        allCmd.add(CmdConst.MAP);
+        allCmd.add(CmdConst.ZI_DAN);
+        allCmd.add(CmdConst.TAKOV_DYNAMICS);
+        allCmd.add(CmdConst.BILI_SUBSCRIBE);
+        allCmd.add(CmdConst.BILI_SUBSCRIBE_CANCEL);
+        allCmd.add(CmdConst.RECORD_SAY);
+        allCmd.add(CmdConst.TIWAN_AI);
+        allCmd.add(CmdConst.RI_BAO);
+        allCmd.add(CmdConst.RI_BAO);
+        allCmd.add(CmdConst.RI_BAO);
+        for (int i = 1; i <= allCmd.size(); i++) {
+            stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
+        }
+        return MsgUtils.builder().text(stringBuffer.toString());
     }
 
     @Override
