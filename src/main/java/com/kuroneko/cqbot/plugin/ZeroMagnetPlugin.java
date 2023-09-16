@@ -45,14 +45,16 @@ public class ZeroMagnetPlugin extends BotPlugin {
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
 
-        if (qqUtil.verifyQq(event.getUserId())){
-            bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
-            return MESSAGE_BLOCK;
-        }
 
 
         if (event.getRawMessage().startsWith(CmdConst.CHE_PAI)) {
             log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.CHE_PAI);
+
+            if (qqUtil.verifyQq(event.getUserId())){
+                bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
+                return MESSAGE_BLOCK;
+            }
+
             MsgUtils msg = getMsg(event.getRawMessage());
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;

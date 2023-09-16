@@ -20,12 +20,12 @@ public class QqUtil {
 
     public boolean verifyQq(Long qq){
         String s = redisUtil.get("setuSystem");
-        boolean flag = false;
+        boolean flag = true;
         if (!StringUtils.isBlank(s)){
             List<String> qqList = Arrays.asList(s.split(","));
             for (String s1 : qqList) {
                 if (s1.equals(qq.toString())){
-                    flag = true;
+                    flag = false;
                 }
             }
         }

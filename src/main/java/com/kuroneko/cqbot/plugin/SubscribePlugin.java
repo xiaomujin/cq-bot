@@ -99,14 +99,15 @@ public class SubscribePlugin extends BotPlugin {
     public int onGroupMessage(Bot bot, GroupMessageEvent event) {
         MsgUtils msg = MsgUtils.builder();
         String message = event.getRawMessage();
-        if (qqUtil.verifyQq(event.getUserId())){
-            bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
-            return MESSAGE_BLOCK;
-        }
+
 
 
         if (message.startsWith(CmdConst.BILI_SUBSCRIBE)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE);
+            if (qqUtil.verifyQq(event.getUserId())){
+                bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
+                return MESSAGE_BLOCK;
+            }
             Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
             if (uidOp.isEmpty()) return MESSAGE_IGNORE;
 

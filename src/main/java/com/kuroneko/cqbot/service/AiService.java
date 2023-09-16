@@ -44,7 +44,8 @@ public class AiService {
         headers.set("method", "POST");
         headers.set("path", "/api/chat-process");
         headers.set("scheme", "https");
-        headers.set("referer", "https://chat.wuguokai.xyz/");
+//        headers.set("referer", "https://chat.wuguokai.xyz/");
+        headers.set("referer", "https://c.binjie.fun/");
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(map, headers);
         byte[] bytes;
         try {
