@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.QqUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
@@ -27,6 +28,8 @@ public class OvoOaPlugin extends BotPlugin {
     private final RedisUtil redisUtil;
     private final RestTemplate restTemplate;
 
+    private final QqUtil qqUtil;
+
     private MsgUtils getMsg(String qq) {
         return MsgUtils.builder().img(Constant.OVO_OA_PA_URL + qq);
     }
@@ -41,24 +44,10 @@ public class OvoOaPlugin extends BotPlugin {
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TUI)) {
-            Long qq = event.getUserId();
-            MsgUtils msg = MsgUtils.builder();
-            String message = event.getRawMessage();
-            String s = redisUtil.get("setuSystem");
-            boolean flag = false;
-            if (!StringUtils.isBlank(s)){
-                List<String> qqList = Arrays.asList(s.split(","));
-                for (String s1 : qqList) {
-                    if (s1.equals(qq.toString())){
-                        flag = true;
-                    }
-                }
-            }
 
-            if (!flag){
-                msg = MsgUtils.builder().text("暂无使用权限");
+            if (qqUtil.verifyQq(event.getUserId())){
+                MsgUtils msg = MsgUtils.builder().text("暂无使用权限");
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
-
                 return MESSAGE_BLOCK;
             }
 
@@ -67,24 +56,10 @@ public class OvoOaPlugin extends BotPlugin {
             bot.sendMsg(event, MsgUtils.builder().img(media).build(), false);
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TAO)) {
-            Long qq = event.getUserId();
-            MsgUtils msg = MsgUtils.builder();
-            String message = event.getRawMessage();
-            String s = redisUtil.get("setuSystem");
-            boolean flag = false;
-            if (!StringUtils.isBlank(s)){
-                List<String> qqList = Arrays.asList(s.split(","));
-                for (String s1 : qqList) {
-                    if (s1.equals(qq.toString())){
-                        flag = true;
-                    }
-                }
-            }
 
-            if (!flag){
-                msg = MsgUtils.builder().text("暂无使用权限");
+            if (qqUtil.verifyQq(event.getUserId())){
+                MsgUtils msg = MsgUtils.builder().text("暂无使用权限");
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
-
                 return MESSAGE_BLOCK;
             }
 

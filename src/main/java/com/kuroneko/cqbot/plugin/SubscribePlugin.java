@@ -5,6 +5,7 @@ import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.QqUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -30,6 +31,7 @@ public class SubscribePlugin extends BotPlugin {
     private static final String CMD2 = CmdConst.CLOSE;
     private final RedisUtil redisUtil;
     private final BiLiService biLiService;
+    private final QqUtil qqUtil;
 
 
     @Override
@@ -95,24 +97,10 @@ public class SubscribePlugin extends BotPlugin {
 
     @Override
     public int onGroupMessage(Bot bot, GroupMessageEvent event) {
-        Long qq = event.getUserId();
         MsgUtils msg = MsgUtils.builder();
         String message = event.getRawMessage();
-        String s = redisUtil.get("setuSystem");
-        boolean flag = false;
-        if (!StringUtils.isBlank(s)){
-            List<String> qqList = Arrays.asList(s.split(","));
-            for (String s1 : qqList) {
-                if (s1.equals(qq.toString())){
-                    flag = true;
-                }
-            }
-        }
-
-        if (!flag){
-            msg = MsgUtils.builder().text("暂无查看涩图权限");
-            bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
-
+        if (qqUtil.verifyQq(event.getUserId())){
+            bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
             return MESSAGE_BLOCK;
         }
 

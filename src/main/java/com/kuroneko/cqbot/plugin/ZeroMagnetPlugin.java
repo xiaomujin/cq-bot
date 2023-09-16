@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.service.ZeroMagnetService;
+import com.kuroneko.cqbot.utils.QqUtil;
 import com.kuroneko.cqbot.vo.ZeroMagnetVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ZeroMagnetPlugin extends BotPlugin {
     private final ZeroMagnetService zeroMagnetService;
+
+    private final QqUtil qqUtil;
 
     private MsgUtils getMsg(String text) {
         String query = "";
@@ -41,6 +44,13 @@ public class ZeroMagnetPlugin extends BotPlugin {
 
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
+
+        if (qqUtil.verifyQq(event.getUserId())){
+            bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
+            return MESSAGE_BLOCK;
+        }
+
+
         if (event.getRawMessage().startsWith(CmdConst.CHE_PAI)) {
             log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.CHE_PAI);
             MsgUtils msg = getMsg(event.getRawMessage());
