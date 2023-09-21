@@ -40,6 +40,12 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add(CmdConst.BILI_SUBSCRIBE_CANCEL);
         allCmd.add(CmdConst.RECORD_SAY);
         allCmd.add(CmdConst.TIWAN_AI);
+        allCmd.add("任务流程图");
+        allCmd.add("任务物品图");
+        allCmd.add("信誉栏位图");
+        allCmd.add("boss刷新率");
+        allCmd.add("boss丢包时间");
+        allCmd.add(CmdConst.TIWAN_AI);
         for (int i = 1; i <= allCmd.size(); i++) {
             stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
         }
