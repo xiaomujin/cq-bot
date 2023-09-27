@@ -28,7 +28,7 @@ public class BotTask {
         log.info("日报-60s读懂世界 结束");
     }
 
-    @Scheduled(cron = "0 0/7 * * * ? ")
+//    @Scheduled(cron = "0 0/7 * * * ? ")
     public void refreshThreeDog() {
         log.info("刷新三兄弟位置 开始");
         botTaskService.refreshThreeDog();
