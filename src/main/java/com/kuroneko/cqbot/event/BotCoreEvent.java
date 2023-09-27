@@ -24,6 +24,7 @@ public class BotCoreEvent extends CoreEvent {
         if (sysUpdate == null) {
             return;
         }
+        redisUtil.delete("SYS_UPDATE");
         UpdateCache updateCache = sysUpdate.to(UpdateCache.class);
         long startTime = updateCache.getStartTime();
         long now = Instant.now().getEpochSecond();
