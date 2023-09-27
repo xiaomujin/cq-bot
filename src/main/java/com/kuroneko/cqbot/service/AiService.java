@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.service;
 
 import cn.hutool.crypto.digest.DigestUtil;
+import com.alibaba.fastjson2.JSON;
 import com.kuroneko.cqbot.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -28,28 +29,36 @@ public class AiService {
 
 
     public String getWuGuoKai(long groupId, String text) {
-        Long room = Constant.AI_ROOM.getOrDefault(groupId, System.currentTimeMillis());
-        if (room + 3600000 < System.currentTimeMillis()) {
-            room = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
+        Long room = Constant.AI_ROOM.getOrDefault(groupId, now);
+        if (room + 3600000 < now) {
+            room = now;
         }
         Constant.AI_ROOM.put(groupId, room);
         HashMap<String, Object> map = new HashMap<>();
         map.put("prompt", text);
-        map.put("options", null);
         map.put("userId", "#/chat/" + room);
-        map.put("usingContext", true);
+        map.put("network", true);
+        map.put("system", "");
+        map.put("withoutContext", false);
+        map.put("stream", false);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("authority", "ai-api.wuguokai.xyz");
-        headers.set("method", "POST");
-        headers.set("path", "/api/chat-process");
-        headers.set("scheme", "https");
-//        headers.set("referer", "https://chat.wuguokai.xyz/");
-        headers.set("referer", "https://c.binjie.fun/");
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+//        headers.set("authority", "api.binjie.fun");
+//        headers.set("method", "POST");
+//        headers.set("path", "/api/generateStream");
+//        headers.set("scheme", "https");
+        headers.set("Connection", "keep-alive");
+        headers.set("Referer", "https://c.binjie.fun/");
+//        headers.set("Origin", "https://c.binjie.fun");
+        headers.setOrigin("https://c.binjie.fun");
+        headers.set(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36");
+
+        HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
         byte[] bytes;
         try {
-            ResponseEntity<Resource> entity = restTemplate.postForEntity("https://ai-api.wuguokai.xyz/api/chat-process", requestEntity, Resource.class);
+            ResponseEntity<Resource> entity = restTemplate.postForEntity("https://api.binjie.fun/api/generateStream", requestEntity, Resource.class);
             assert entity.getBody() != null;
             bytes = entity.getBody().getInputStream().readAllBytes();
         } catch (IOException e) {

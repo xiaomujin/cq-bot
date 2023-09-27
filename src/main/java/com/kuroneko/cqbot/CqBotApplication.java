@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CqBotApplication {
 
     public static void main(String[] args) {
+        System.setProperty("sun.net.http.allowRestrictedHeaders", "true");
         SpringApplication.run(CqBotApplication.class, args);
     }
 
