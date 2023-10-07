@@ -19,9 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -86,6 +84,8 @@ public class ThreeHundredPlugin extends BotPlugin {
         Page newPage = PuppeteerUtil.getNewPage(url, "networkidle0", 30000);
         try {
             newPage.waitForFunction(format);
+            //等待页面切换图片加载
+            newPage.waitFor("500");
         } catch (InterruptedException e) {
             log.error("300战绩查询失败", e);
             return MsgUtils.builder().text(roleName + "(" + roleID + ")" + "300战绩查询失败");
