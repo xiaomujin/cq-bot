@@ -1,10 +1,13 @@
 package com.kuroneko.cqbot.utils;
 
+import cn.hutool.core.util.StrUtil;
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,11 +37,28 @@ public class MsgShiroUtil {
     }
 
     public static Optional<String> getOneParam(String cmd, String msg) {
-        Optional<String> text = Optional.empty();
-        if (msg.trim().length() > cmd.length()) {
-            text = Optional.of(msg.substring(cmd.length()).trim());
+        List<String> params = getParams(cmd, msg, 1);
+        if (params.isEmpty()) {
+            return Optional.empty();
         }
-        log.info("{}:getOneParam:{}", cmd, text);
-        return text;
+        return Optional.of(params.get(0));
+    }
+
+    public static List<String> getParams(String cmd, String msg, int paramNum) {
+        if (StrUtil.isBlank(msg)) {
+            return List.of();
+        }
+        ArrayList<String> list = new ArrayList<>();
+        if (msg.trim().length() > cmd.length()) {
+            String mainMsg = msg.substring(cmd.length()).trim();
+            String[] split = mainMsg.split("\\s+", paramNum);
+            list.addAll(Arrays.asList(split));
+        }
+        log.info("{}:getParams:{}", cmd, list);
+        return list;
+    }
+
+    public static List<String> getParams(String cmd, String msg) {
+        return getParams(cmd, msg, 0);
     }
 }
