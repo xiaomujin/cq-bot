@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
+import com.kuroneko.cqbot.utils.MsgShiroUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
@@ -18,9 +19,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -37,18 +40,18 @@ public class ThreeHundredPlugin extends BotPlugin {
         }
     }
 
-    private MsgUtils getMsg(String text) {
-        String query = "";
+    public MsgUtils getMsg(String text) {
+        String roleName = "";
         String index = "排位赛";
-        if (text.length() > 3) {
-            query = text.substring(CmdConst.THREE_HUNDRED_KD.length()).trim();
-        }
-        String[] strings = query.split(" ");
-        switch (strings.length) {
-            case 2:
-                index = strings[1];
+        List<String> params = MsgShiroUtil.getParams(CmdConst.THREE_HUNDRED_KD, text);
+        switch (params.size()) {
+            case 2, 3, 4:
+                index = params.get(1);
             case 1:
-                query = strings[0];
+                roleName = params.get(0);
+                break;
+            case 0:
+                return MsgUtils.builder().text("名称不存在");
         }
         String i = switch (index) {
             case "竞技场" -> "0";
@@ -60,7 +63,7 @@ public class ThreeHundredPlugin extends BotPlugin {
             default -> "2";
         };
 
-        String entity = "AccountID=0&Guid=0&RoleName=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
+        String entity = "AccountID=0&Guid=0&RoleName=" + URLEncoder.encode(roleName, StandardCharsets.UTF_8);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<String> requestEntity = new HttpEntity<>(entity, headers);
@@ -78,17 +81,19 @@ public class ThreeHundredPlugin extends BotPlugin {
                 }
                 """;
         String format = String.format(fun, i);
-        String path = imgPath + roleID + ".png";
+        String path = imgPath + roleID + "_" + i + ".png";
         String url = "https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0";
         Page newPage = PuppeteerUtil.getNewPage(url, "networkidle0", 30000);
-        PuppeteerUtil.screenshot(newPage, path, "#app", "#app {height: 1200px;}", format);
-        log.info(roleID);
-//        ZeroMagnetVo zeroMagnetVo = threeHundredService.getZeroMagnetVo(query, index);
-//        return MsgUtils.builder()
-//                .text("title:" +zeroMagnetVo.getTitle() + Constant.XN)
-//                .text(zeroMagnetVo.getMagnet() + Constant.XN)
-//                .text("size:" + zeroMagnetVo.getSize());
-        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + path).cache(false);
+        try {
+            newPage.waitForFunction(format);
+        } catch (InterruptedException e) {
+            log.error("300战绩查询失败", e);
+            return MsgUtils.builder().text(roleName + "(" + roleID + ")" + "300战绩查询失败");
+        }
+        PuppeteerUtil.screenshot(newPage, path, "#app", "#app {height: 1200px;}");
+        String absolutePath = new File(path).toURI().toASCIIString();
+        log.info("{} 路径:{}", CmdConst.THREE_HUNDRED_KD, absolutePath);
+        OneBotMedia media = OneBotMedia.builder().file(absolutePath).cache(false);
         return MsgUtils.builder().img(media);
     }
 
