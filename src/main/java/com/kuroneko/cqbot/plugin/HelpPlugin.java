@@ -45,6 +45,8 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add("信誉栏位图");
         allCmd.add("boss刷新率");
         allCmd.add("boss丢包时间");
+        allCmd.add("3x4道具");
+        allCmd.add("耳机强度");
         allCmd.add(CmdConst.TIWAN_AI);
         for (int i = 1; i <= allCmd.size(); i++) {
             stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);

@@ -179,6 +179,18 @@ public class TarKovMapPlugin extends BotPlugin {
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
+        } else if (event.getRawMessage().startsWith("3x4道具")) {
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/3x4.png";
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
+            MsgUtils msg = MsgUtils.builder().img(media);
+            bot.sendMsg(event, msg.build(), false);
+            return MESSAGE_BLOCK;
+        }else if (event.getRawMessage().startsWith("耳机强度")) {
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/headset.png";
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
+            MsgUtils msg = MsgUtils.builder().img(media);
+            bot.sendMsg(event, msg.build(), false);
+            return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("塔科夫服务器")) {
             Map<String, Object> serverInfo = CastUtils.cast(Constant.CONFIG_CACHE.get(Constant.TKF_SERVER_INFO));
             String content = (String) serverInfo.get("content");
