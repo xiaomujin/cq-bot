@@ -104,7 +104,7 @@ public class SubscribePlugin extends BotPlugin {
 
         if (message.startsWith(CmdConst.BILI_SUBSCRIBE)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE);
-            if (qqUtil.verifyQq(event.getUserId())){
+            if (qqUtil.verifyQq(event)){
                 bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
                 return MESSAGE_BLOCK;
             }

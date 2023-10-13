@@ -83,6 +83,7 @@ public class CmdConst {
      * 添加色图管理员
      */
     public static String ADD_SE_TU_SYSTEM = "添加涩图用户";
+    public static String DEL_SE_TU_SYSTEM = "取消涩图用户";
 
     @SneakyThrows
     public static List<String> getAllCmd() {
