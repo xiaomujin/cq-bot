@@ -6,10 +6,13 @@ import com.kuroneko.cqbot.utils.MsgShiroUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
+import com.mikuac.shiro.dto.action.common.ActionRaw;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -22,7 +25,11 @@ public class AiPlugin extends BotPlugin {
 
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
-        if (MsgShiroUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
+        if (MsgShiroUtil.isReplyMe(event.getArrayMsg(), bot.getSelfId()) && "撤回消息".equals(event.getRawMessage())){
+            int replyId = MsgShiroUtil.getReplyId(event.getArrayMsg());
+            bot.deleteMsg(replyId);
+            return MESSAGE_BLOCK;
+        } else if (MsgShiroUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.TIWAN_AI);
             MsgUtils msg = getMsg(event.getGroupId(), MsgShiroUtil.getText(event.getArrayMsg()));
             bot.sendMsg(event, msg.build(), false);

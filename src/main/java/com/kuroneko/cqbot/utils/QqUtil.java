@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.utils;
 
+import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,18 +19,22 @@ public class QqUtil {
     }
 
 
-    public boolean verifyQq(Long qq){
-        String s = redisUtil.get("setuSystem");
-        boolean flag = true;
-        if (!StringUtils.isBlank(s)){
-            List<String> qqList = Arrays.asList(s.split(","));
-            for (String s1 : qqList) {
-                if (s1.equals(qq.toString())){
-                    flag = false;
+    public boolean verifyQq(GroupMessageEvent event){
+        if (event.getSender().getRole().equals("member")){
+            String s = redisUtil.get("setuSystem");
+            boolean flag = true;
+            if (!StringUtils.isBlank(s)){
+                List<String> qqList = Arrays.asList(s.split(","));
+                for (String s1 : qqList) {
+                    if (s1.equals(event.getUserId().toString())){
+                        flag = false;
+                    }
                 }
             }
+            return flag;
+        }else {
+            return false;
         }
 
-        return flag;
     }
 }

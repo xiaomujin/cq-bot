@@ -45,7 +45,7 @@ public class OvoOaPlugin extends BotPlugin {
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TUI)) {
 
-            if (qqUtil.verifyQq(event.getUserId())){
+            if (qqUtil.verifyQq(event)){
                 MsgUtils msg = MsgUtils.builder().text("暂无使用权限");
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
                 return MESSAGE_BLOCK;
@@ -57,7 +57,7 @@ public class OvoOaPlugin extends BotPlugin {
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TAO)) {
 
-            if (qqUtil.verifyQq(event.getUserId())){
+            if (qqUtil.verifyQq(event)){
                 MsgUtils msg = MsgUtils.builder().text("暂无使用权限");
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
                 return MESSAGE_BLOCK;

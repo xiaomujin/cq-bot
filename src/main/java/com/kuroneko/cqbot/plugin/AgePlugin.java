@@ -59,7 +59,7 @@ public class AgePlugin extends BotPlugin {
                 return MESSAGE_BLOCK;
             }
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
-            MsgUtils msg = MsgUtils.builder().img(media).text(Constant.AGE_HOST_URL);
+            MsgUtils msg = MsgUtils.builder().img(media).text("https://agefans.com/");
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         }

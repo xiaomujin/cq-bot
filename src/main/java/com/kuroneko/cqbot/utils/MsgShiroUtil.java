@@ -20,6 +20,15 @@ public class MsgShiroUtil {
     public static boolean isAtMe(List<ArrayMsg> arrayMsg, long id) {
         return MsgShiroUtil.getAtList(arrayMsg).contains(id);
     }
+    public static boolean isReplyMe(List<ArrayMsg> arrayMsg, long id) {
+        return MsgTypeEnum.reply.equals(arrayMsg.get(0).getType())
+                && MsgTypeEnum.at.equals(arrayMsg.get(1).getType())
+                && Long.parseLong((String)arrayMsg.get(1).getData().get("qq")) == id;
+    }
+
+    public static int getReplyId(List<ArrayMsg> arrayMsg) {
+        return Integer.parseInt(arrayMsg.get(0).getData().get("id"));
+    }
 
     public static List<Long> getAtList(List<ArrayMsg> arrayMsg) {
         return ShiroUtils.getAtList(arrayMsg);
