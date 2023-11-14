@@ -53,15 +53,20 @@ public class TarKovMarcetPlugin extends BotPlugin {
         if (search.isEmpty()) {
             return msg.text(" 没有找到").text(text);
         }
-        search.forEach(tarKovMarketVo -> {
-            msg.img(tarKovMarketVo.getEnImg());
-            msg.text(Constant.XN + "名称：").text(tarKovMarketVo.getCnName() + Constant.XN);
-            msg.text("占格：").text(tarKovMarketVo.getSize() + Constant.XN);
-            msg.text("商人价格：").text(tarKovMarketVo.getTraderPrice() + tarKovMarketVo.getTraderPriceCur() + Constant.XN);
-            msg.text("日价：").text(tarKovMarketVo.getAvgDayPrice() + Constant.XN);
-            msg.text("周价：").text(tarKovMarketVo.getAvgWeekPrice() + Constant.XN);
-            msg.text("单格日价：").text(tarKovMarketVo.getAvgDayPricePerSlot() + Constant.XN);
-            msg.text("单格周价：").text(tarKovMarketVo.getAvgWeekPricePerSlot() + Constant.XN);
+        search.forEach(it -> {
+            msg.img(it.getEnImg());
+            msg.text("\n名称：").text(it.getCnName() + "\n");
+            msg.text("波动 24h：").text(it.getChange24() + "%").text("  7d：").text(it.getChange7d() + "%\n");
+            msg.text("基础价格：").text(it.getBasePrice() + "₽" + "\n");
+            msg.text(it.getTraderName()).text("：").text(it.getTraderPrice() + it.getTraderPriceCur() + "\n");
+            if (it.isCanSellOnFlea()) {
+                msg.text("跳蚤日价：").text(it.getAvgDayPrice() + "₽" + "\n");
+                msg.text("跳蚤周价：").text(it.getAvgWeekPrice() + "₽" + "\n");
+                msg.text("单格：").text(it.getAvgDayPrice() / it.getSize() + "₽");
+            } else {
+                msg.text("单格：").text(it.getTraderPrice() / it.getSize() + it.getTraderPriceCur() + "\n");
+                msg.text("跳蚤禁售!");
+            }
         });
         return msg;
     }
