@@ -66,7 +66,7 @@ public class BotTaskService {
 
     public void refreshDaily() {
         DailyVo dailyVo = getDailyVo();
-        if (dailyVo == null || dailyVo.getCode().equals(200)) {
+        if (dailyVo == null || !dailyVo.getCode().equals(200)) {
             log.error("刷新日报图片 失败");
             return;
         }

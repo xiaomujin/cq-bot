@@ -21,7 +21,7 @@ public class BotTask {
      * 日报-60s读懂世界
      */
 //    @Scheduled(cron = "0 0/1 * * * ? ")
-//    @Scheduled(cron = "0 0 8 * * ? ")
+    @Scheduled(cron = "0 0 8 * * ? ")
     public void doDaily() {
         log.info("日报-60s读懂世界 开始");
         botTaskService.doDaily();
