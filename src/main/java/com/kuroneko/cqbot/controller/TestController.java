@@ -6,10 +6,12 @@ import com.kuroneko.cqbot.dto.AntiBiliMiniAppDTO;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.event.BiliSubscribeEvent;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
+import com.kuroneko.cqbot.plugin.ThreeHundredPlugin;
 import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.service.BulletService;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
+import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +29,7 @@ public class TestController {
     private final BiLiService biLiService;
     private final BulletService bulletService;
     private final RedisUtil redisUtil;
+    private final ThreeHundredPlugin threeHundredPlugin;
 
     @RequestMapping(value = "/testBiLi")
     public BiliDynamicVo.BiliDynamicCard testBiLi() {
@@ -117,11 +120,9 @@ public class TestController {
     }
 
     @RequestMapping(value = "/testBili")
-    public Integer testBili() {
-        BLPlugin bean = ApplicationContextHandler.getBean(BLPlugin.class);
-        String bv1MG411Z7Ed = bean.parseBidByShortURL("https://b23.tv/QAkdV9y");
-
-        return 1;
+    public String testBili() {
+        MsgUtils msg = threeHundredPlugin.getMsg("300战绩甘橙不是橙 竞技场");
+        return msg.build();
     }
 
 

@@ -66,11 +66,11 @@ public class BotTaskService {
 
     public void refreshDaily() {
         DailyVo dailyVo = getDailyVo();
-        if (dailyVo == null || !dailyVo.isSuccess()) {
+        if (dailyVo == null || dailyVo.getCode().equals(200)) {
             log.error("刷新日报图片 失败");
             return;
         }
-        dailyVo.setImgUrl(dailyVo.getImgUrl() + "?t=" + System.currentTimeMillis());
+        dailyVo.setImgUrl(dailyVo.getData().getImage() + "?t=" + System.currentTimeMillis());
         Constant.CONFIG_CACHE.put(Constant.DAILY_KEY, dailyVo);
         log.info("刷新日报图片 成功");
     }

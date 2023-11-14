@@ -20,7 +20,7 @@ public class StartedListener implements ApplicationListener<ApplicationStartedEv
     public void onApplicationEvent(ApplicationStartedEvent event) {
         log.info("系统启动成功");
         PuppeteerUtil.getBrowser();
-//        botTaskService.refreshDaily();
+        botTaskService.refreshDaily();
         botTaskService.refreshRiLi();
 //        botTaskService.refreshAgeListVo();
         botTaskService.refreshTKFDT();

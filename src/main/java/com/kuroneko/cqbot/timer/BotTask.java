@@ -42,7 +42,7 @@ public class BotTask {
         log.info("刷新塔科夫动态 结束");
     }
 
-//    @Scheduled(cron = "0 5 0/1 * * ? ")
+    @Scheduled(cron = "0 5 0/1 * * ? ")
     public void refreshDaily() {
         log.info("刷新日报图片 开始");
         botTaskService.refreshDaily();
