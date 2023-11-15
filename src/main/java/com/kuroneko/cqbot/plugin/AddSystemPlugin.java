@@ -41,17 +41,18 @@ public class AddSystemPlugin extends BotPlugin {
     }
     private MsgUtils getMsg(String addQq,Long qq) {
         MsgUtils msg;
-
+        log.info("tag:{}", "开始添加管理员");
         boolean flag = false;
         List<Long> list = Arrays.asList(1419229777L, 728109103L);
         if (list.contains(qq)) {
             flag = true;
         }
         if (!flag){
+            log.info("tag:{}", "验证失败");
             msg = MsgUtils.builder().text("只有主人才可以添加哦！");
             return msg;
         }
-
+        log.info("tag:{}", "通过验证");
 //        String setuSystem = redisUtil.get("setuSystem");
         String system = redisUtil.get("system");
 

@@ -29,6 +29,9 @@ public class SystemPlugin {
         Long qq = event.getSender().getUserId();
         List<Long> list = Arrays.asList(1419229777L, 728109103L);
         if (!list.contains(qq)) {
+            MsgUtils msg = MsgUtils.builder();
+            msg.text("只有主人才能更新哦！");
+            bot.sendMsg(event, msg.build(), false);
             return;
         }
         redisUtil.set("SYS_UPDATE", new UpdateCache(event.getGroupId(), qq));
