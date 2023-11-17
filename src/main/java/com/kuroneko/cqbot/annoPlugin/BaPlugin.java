@@ -57,7 +57,7 @@ public class BaPlugin {
             }
 
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "ba-token uuz:uuz");
+            headers.add("Authorization", "ba-token 1419229777:DjHOGwNOxOv2tcoLSwpqq99R77qsfXUm8vgJcj");
             HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
             ResponseEntity<String> seasonList = restTemplate.exchange("https://api.arona.icu/api/season/list", HttpMethod.GET, httpEntity, String.class);
             if (!seasonList.getStatusCode().is2xxSuccessful()) {
