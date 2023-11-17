@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.annoPlugin;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
@@ -90,7 +91,7 @@ public class BaPlugin {
             msg.text("\n数据更新于：\n");
             msg.text(format);
             msg.text("\n--------------------\n");
-            msg.text("排名 |   分数   | 难度");
+            msg.text("排名  |    分数    | 难度\n");
             for (int i = 6; i < javaList.size() + 6; i++) {
                 BaRankInfo rankInfo = javaList.get(i - 6);
                 msg.text(formatRank(rankInfo));
@@ -99,8 +100,8 @@ public class BaPlugin {
                     msg = MsgUtils.builder();
                 }
             }
-            for (BaRankInfo rankInfo : javaList) {
-                msg.text(formatRank(rankInfo));
+            if (StrUtil.isNotEmpty(msg.build())) {
+                list.add(msg.build());
             }
             list.forEach(s -> bot.sendMsg(event, s, false));
             expiringMap.put(Regex.BA_TOTAL_BATTLE, list);
