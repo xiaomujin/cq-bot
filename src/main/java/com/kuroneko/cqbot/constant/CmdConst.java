@@ -84,6 +84,9 @@ public class CmdConst {
      */
     public static String ADD_SE_TU_SYSTEM = "添加涩图用户";
     public static String DEL_SE_TU_SYSTEM = "取消涩图用户";
+    public static String ADD_SE_TU_ADMIN = "添加管理员";
+    public static String DEL_SE_TU_ADMIN = "删除管理员";
+
 
     @SneakyThrows
     public static List<String> getAllCmd() {
