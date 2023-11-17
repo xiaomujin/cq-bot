@@ -9,4 +9,5 @@ public class Regex {
     public static final String BILIBILI_BID = ".*(?<BVId>BV\\w+).*";
     public static final String BILIBILI_SHORT_URL = ".*(?<sUrl>b23.tv/\\w+).*";
     public static final String SYS_UPDATE = "^自我更新$";
+    public static final String BA_TOTAL_BATTLE = "^总力战$";
 }
