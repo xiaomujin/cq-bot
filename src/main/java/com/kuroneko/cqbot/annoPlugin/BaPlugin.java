@@ -90,6 +90,7 @@ public class BaPlugin {
             String format = DateTimeFormatter.ofPattern(LocalJavaTimeModule.NORM_DATETIME_PATTERN).format(LocalDateTime.now());
             msg.text("\n数据更新于：\n");
             msg.text(format);
+            msg.text("\n来源：https://arona.icu");
             msg.text("\n--------------------\n");
             msg.text("排名  |    分数    | 难度\n");
             for (int i = 6; i < javaList.size() + 6; i++) {
