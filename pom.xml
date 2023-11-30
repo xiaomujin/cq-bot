@@ -19,7 +19,7 @@
         <hutool.version>5.8.21</hutool.version>
         <zip4j.version>2.11.5</zip4j.version>
         <jvppeteer.version>1.1.5</jvppeteer.version>
-        <jsoup.version>1.16.1</jsoup.version>
+        <jsoup.version>1.17.1</jsoup.version>
         <mybatis-plus.version>3.5.3.2</mybatis-plus.version>
         <druid.version>1.2.18</druid.version>
         <expiringmap.version>0.5.10</expiringmap.version>

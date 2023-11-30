@@ -13,10 +13,14 @@ import com.mikuac.shiro.dto.action.common.ActionList;
 import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -98,29 +102,31 @@ public class BotTaskService {
 
     public void refreshThreeDog() {
         try {
-            ThreeDog threeDog = restTemplate.getForObject("https://t0t.co/proxy/congested-valleygirl-9254455.herokuapp.com/goonDetectors/current", ThreeDog.class);
-            if (threeDog != null) {
-                String lastReported = threeDog.getLastReported();
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-//设置时区UTC
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
-//格式化，转当地时区时间
-                Date after = df.parse(lastReported);
-                df.applyPattern("yyyy-MM-dd HH:mm:ss");
-//默认时区
-                df.setTimeZone(TimeZone.getDefault());
-                threeDog.setLastReported(df.format(after));
+            Document document;
+            document = Jsoup.connect("https://t0t.co/proxy/docs.google.com/spreadsheets/d/e/2PACX-1vRwLysnh2Tf7h2yHBc_bpZLQh6DiFZtDqyhHLYP022xolQUPUHkSModV31E5Y7cLh_8LZGexpXy2VuH/pubhtml/sheet?headers=false&gid=1420050773").get();
+            Elements td = document.getElementsByTag("td");
+            String mapName = td.get(2).text();
+            String time = td.get(3).text();
 
-                ThreeDog dog = (ThreeDog) Constant.CONFIG_CACHE.get(RedisKey.THREE_DOG);
-                Constant.CONFIG_CACHE.put(RedisKey.THREE_DOG, threeDog);
-                //推送
-                if (dog != null && !dog.getLocation().equals(threeDog.getLocation())) {
-                    pushMsg(dog, threeDog);
-                }
+            SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy H:mm:ss");
+            df.setTimeZone(TimeZone.getTimeZone("EST"));
+            Date after = df.parse(time);
+            df.applyPattern("yyyy-MM-dd HH:mm:ss");
+            df.setTimeZone(TimeZone.getDefault());
+            String format = df.format(after);
+            ThreeDog threeDog = new ThreeDog();
+            threeDog.setLocation(mapName);
+            threeDog.setLastReported(format);
 
-                log.info("刷新三兄弟在哪 成功");
+            ThreeDog dog = (ThreeDog) Constant.CONFIG_CACHE.get(RedisKey.THREE_DOG);
+            Constant.CONFIG_CACHE.put(RedisKey.THREE_DOG, threeDog);
+            //推送
+            if (dog != null && !dog.getLocation().equals(threeDog.getLocation())) {
+                pushMsg(dog, threeDog);
             }
-        } catch (ParseException e) {
+
+            log.info("刷新三兄弟在哪 成功");
+        } catch (ParseException | IOException e) {
             log.error("刷新三兄弟在哪 失败", e);
         }
     }
