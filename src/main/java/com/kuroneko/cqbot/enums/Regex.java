@@ -10,4 +10,5 @@ public class Regex {
     public static final String BILIBILI_SHORT_URL = ".*(?<sUrl>b23.tv/\\w+).*";
     public static final String SYS_UPDATE = "^自我更新$";
     public static final String BA_TOTAL_BATTLE = "^总力战$";
+    public static final String BA_IMAGE_BATTLE = "^(?i)ba (?<text>.+)";
 }

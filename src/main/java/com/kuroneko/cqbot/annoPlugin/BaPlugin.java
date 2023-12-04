@@ -9,12 +9,14 @@ import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.vo.BaRankInfo;
+import com.kuroneko.cqbot.vo.BaVo;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
@@ -35,9 +37,11 @@ import java.util.regex.Matcher;
 @Shiro
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BaPlugin {
     private final RestTemplate restTemplate;
+    private static final String ARONA_API_IMAGE = "https://arona.diyigemt.com/api/v2/image?name=";
+    private static final String ARONA_IMAGE = "https://arona.cdn.diyigemt.com/image/s";
     private final ExpiringMap<String, ArrayList<String>> expiringMap = ExpiringMap.builder()
             //允许更新过期时间值,如果不设置variableExpiration，不允许后面更改过期时间,一旦执行更改过期时间操作会抛异常UnsupportedOperationException
             .variableExpiration()
@@ -113,4 +117,42 @@ public class BaPlugin {
     private String formatRank(BaRankInfo rankInfo) {
         return "%-6d %-10d %-2s\n".formatted(rankInfo.getRank(), rankInfo.getBestRankingPoint(), rankInfo.getHard());
     }
+
+
+    @AnyMessageHandler(cmd = Regex.BA_IMAGE_BATTLE)
+    public void image(Bot bot, AnyMessageEvent event, Matcher matcher) {
+        ExceptionHandler.with(bot, event, () -> {
+            String text = matcher.group("text").trim();
+            BaVo baVo = restTemplate.getForObject(ARONA_API_IMAGE + text, BaVo.class);
+            if (baVo == null) {
+                throw new BotException("爱丽丝出错了");
+            }
+            List<BaVo.BaImage> baImages = baVo.getData().toJavaList(BaVo.BaImage.class);
+            if (baImages == null || baImages.isEmpty()) {
+                throw new BotException("爱丽丝什么都没有找到~");
+            }
+            if (baVo.getCode().equals(200)) {
+                for (BaVo.BaImage baImage : baImages) {
+                    MsgUtils msg = MsgUtils.builder();
+                    if (baImage.getType().equalsIgnoreCase("file")) {
+                        msg.img(ARONA_IMAGE + baImage.getContent());
+                    } else if (baImage.getType().equalsIgnoreCase("plain")) {
+                        msg.text(baImage.getContent());
+                    }
+                    bot.sendMsg(event, msg.build(), false);
+                }
+            } else if (baVo.getCode().equals(101)) {
+                MsgUtils msg = MsgUtils.builder();
+                msg.text("是想问什么呢：\n");
+                for (BaVo.BaImage baImage : baImages) {
+                    msg.text(baImage.getName() + "\n");
+                }
+                bot.sendMsg(event, msg.build(), false);
+            } else {
+                throw new BotException(baVo.getMessage());
+            }
+            return "";
+        });
+    }
+
 }
