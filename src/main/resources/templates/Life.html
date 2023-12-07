@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: rgb(188, 188, 229);
+        }
+
+        table {
+            table-layout: fixed;
+            border: 0;
+            border-spacing: 0;
+        }
+
+        tr {
+        }
+
+        td {
+            box-sizing: border-box;
+            font-size: 14px;
+            line-height: 15px;
+            vertical-align: top;
+            border: none;
+            border-bottom: 1px solid rgb(174, 246, 152);
+            padding: 0 5px;
+        }
+
+        .title {
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="title" th:text="${name} +' 的转世人生'">
+    无名 的转世人生
+</div>
+<table>
+    <tbody>
+    <tr th:each="data : ${dataList}">
+        <td th:text="${data.age} + '岁:'" style="width: 55px">0岁:</td>
+        <td>
+            <div th:each="item : ${data.content}" th:text=" (${item.type} == 'TLT') ? '天赋【'+${item.name}+'】发动：' + ${item.description} : ${item.description}">
+<!--                <span th:text="  ${item.description}">-->
+<!--                    你出生了-->
+<!--                </span>-->
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+
+</html>

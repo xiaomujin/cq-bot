@@ -6,12 +6,14 @@ import com.kuroneko.cqbot.config.module.LocalJavaTimeModule;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.service.BulletService;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -52,6 +54,18 @@ public class BulletPlugin {
         String time = dateTime.toLocalTime().format(DateTimeFormatter.ofPattern(LocalJavaTimeModule.NORM_TIME_PATTERN));
         String time2 = dateTime2.toLocalTime().format(DateTimeFormatter.ofPattern(LocalJavaTimeModule.NORM_TIME_PATTERN));
         MsgUtils msg = MsgUtils.builder().text(time2 + Constant.XN).text(time);
+        bot.sendMsg(event, msg.build(), false);
+    }
+
+
+    @AnyMessageHandler(cmd = Regex.LIFE_RESTART)
+    public void life(Bot bot, AnyMessageEvent event, Matcher matcher) {
+        String imgPath = Constant.BASE_IMG_PATH + "life/" + event.getGroupId() + "_" + event.getSender().getUserId() + ".png";
+        Page newPage = PuppeteerUtil.getNewPage("http://127.0.0.1:8081/Life/" + event.getSender().getNickname(), 500, 800);
+        PuppeteerUtil.screenshot(newPage, imgPath);
+        MsgUtils msg = MsgUtils.builder();
+        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
+        msg.img(media);
         bot.sendMsg(event, msg.build(), false);
     }
 }

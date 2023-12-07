@@ -11,4 +11,6 @@ public class Regex {
     public static final String SYS_UPDATE = "^自我更新$";
     public static final String BA_TOTAL_BATTLE = "^总力战$";
     public static final String BA_IMAGE_BATTLE = "^(?i)ba (?<text>.+)";
+
+    public static final String LIFE_RESTART = "^(转世人生|活一回|转世|转生)$";
 }
