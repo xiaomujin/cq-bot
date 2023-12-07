@@ -28,8 +28,8 @@ public class BulletCtrl {
     @RequestMapping(value = {"/Life/{name}"})
     public String Life(Model model, @PathVariable(required = false) String name) {
         ProcessBuilder pb = new ProcessBuilder("node", "test");
-        File file = new File("E:\\project\\WebstormProjects\\lifeRestart\\");
-//        File file = new File("/mnt/qqbot/life_restart");
+//        File file = new File("E:\\project\\WebstormProjects\\lifeRestart\\");
+        File file = new File("/mnt/qqbot/life_restart");
         pb.directory(file);
         String dataStr = "[]";
         try {
