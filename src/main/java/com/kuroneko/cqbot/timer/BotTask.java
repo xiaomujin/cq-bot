@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-//@EnableScheduling
+@EnableScheduling
 public class BotTask {
 
     private final BotTaskService botTaskService;
