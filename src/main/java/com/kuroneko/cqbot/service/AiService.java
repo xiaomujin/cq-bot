@@ -45,14 +45,9 @@ public class AiService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.set("authority", "api.binjie.fun");
-//        headers.set("method", "POST");
-//        headers.set("path", "/api/generateStream");
-//        headers.set("scheme", "https");
         headers.set("Connection", "keep-alive");
-        headers.set("Referer", "https://c.binjie.fun/");
-//        headers.set("Origin", "https://c.binjie.fun");
-        headers.setOrigin("https://c.binjie.fun");
+        headers.set("Referer", "https://chat18.aichatos.xyz/");
+        headers.setOrigin("https://chat18.aichatos.xyz");
         headers.set(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36");
 
         HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);

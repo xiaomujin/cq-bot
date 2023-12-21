@@ -25,11 +25,7 @@ public class AiPlugin extends BotPlugin {
 
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
-        if (MsgShiroUtil.isReplyMe(event.getArrayMsg(), bot.getSelfId()) && "撤回消息".equals(event.getRawMessage())){
-            int replyId = MsgShiroUtil.getReplyId(event.getArrayMsg());
-            bot.deleteMsg(replyId);
-            return MESSAGE_BLOCK;
-        } else if (MsgShiroUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
+        if (MsgShiroUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.TIWAN_AI);
             MsgUtils msg = getMsg(event.getGroupId(), MsgShiroUtil.getText(event.getArrayMsg()));
             bot.sendMsg(event, msg.build(), false);
