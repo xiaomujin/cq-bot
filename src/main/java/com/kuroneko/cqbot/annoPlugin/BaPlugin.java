@@ -15,7 +15,6 @@ import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.jodah.expiringmap.ExpirationPolicy;
@@ -63,6 +62,7 @@ public class BaPlugin {
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "ba-token 1419229777:DjHOGwNOxOv2tcoLSwpqq99R77qsfXUm8vgJcj");
+//            headers.add("Authorization", "ba-token uuz:uuz");
             HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
             ResponseEntity<String> seasonList = restTemplate.exchange("https://api.arona.icu/api/season/list", HttpMethod.GET, httpEntity, String.class);
             if (!seasonList.getStatusCode().is2xxSuccessful()) {
