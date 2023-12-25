@@ -67,7 +67,7 @@ public class BiLiService {
         Page page = PuppeteerUtil.getBrowser().newPage();
         try {
             String path = imgPath + dynamicId + ".png";
-            PuppeteerUtil.screenshot("https://t.bilibili.com/" + dynamicId, path, "#app > div.content > div > div > div.bili-dyn-item__main", ".v-popover {display: none !important;} .van-popover {display: none !important;} .international-header {display: none !important;} .lt-row {display: none !important;}");
+            PuppeteerUtil.screenshot("https://www.bilibili.com/opus/" + dynamicId, path, "#app > div.opus-detail > div.bili-opus-view", ".z-top-container { display: none }");
             return path;
         } catch (Exception e) {
             log.error("动态截图异常", e);
@@ -84,7 +84,7 @@ public class BiLiService {
 
     public MsgUtils buildDynamicMsg(String path, String dynamicId) {
         OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + path).cache(false);
-        return MsgUtils.builder().img(media).text("https://t.bilibili.com/" + dynamicId);
+        return MsgUtils.builder().img(media).text("https://www.bilibili.com/opus/" + dynamicId);
     }
 
 }
