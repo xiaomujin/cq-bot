@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -25,7 +24,10 @@ public class TemplateConfig {
 
     @Bean
     public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
-        return new SSLConfig();
+        SSLConfig sslConfig = new SSLConfig();
+        sslConfig.setConnectTimeout(60 * 1000);
+        sslConfig.setReadTimeout(60 * 1000);
+        return sslConfig;
     }
 
     @Bean
