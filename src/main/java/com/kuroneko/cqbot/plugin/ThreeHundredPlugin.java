@@ -81,7 +81,7 @@ public class ThreeHundredPlugin extends BotPlugin {
         String format = String.format(fun, i);
         String path = imgPath + roleID + "_" + i + ".png";
         String url = "https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0";
-        Page newPage = PuppeteerUtil.getNewPage(url, "networkidle0", 30000);
+        Page newPage = PuppeteerUtil.getNewPage(url, "networkidle0", 30000, 1920, 3000);
         try {
             newPage.waitForFunction(format);
             //等待页面切换图片加载
