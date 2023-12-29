@@ -93,6 +93,11 @@ public class Bullet extends BaseEntity implements Serializable {
     private Integer bleedHvy;
 
     /**
+     * 子弹速度
+     */
+    private Integer speed;
+
+    /**
      * 1级甲有效穿透等级
      */
     private Integer effectivenessLv1;

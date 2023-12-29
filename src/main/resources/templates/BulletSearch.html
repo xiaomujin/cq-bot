@@ -118,13 +118,15 @@
                         <td class="box_table_center" th:text="${bullet.damage}">1</td>
                         <td class="box_table_ar">精度</td>
                         <td class="box_table_center" th:text="${bullet.accuracy >=0 ? '+':''} + ${bullet.accuracy}">+100</td>
-                        <td class="box_table_center"></td>
+                        <td class="box_table_ar">速度</td>
+                        <td class="box_table_center" th:text="${bullet.speed}">100</td>
                     </tr>
                     <tr>
                         <td class="box_table_ar">穿深</td>
                         <td class="box_table_center" th:text="${bullet.penetrationPower}">1</td>
                         <td class="box_table_ar">后座</td>
                         <td class="box_table_center" th:text="${bullet.recoil >=0 ? '+':''} + ${bullet.recoil}">1</td>
+                        <td class="box_table_ar"></td>
                         <td class="box_table_center" th:text="${bullet.noMarket == 1 ? '禁售': ''}">禁售</td>
                     </tr>
                     <tr>
@@ -132,6 +134,7 @@
                         <td class="box_table_center" th:text="${bullet.armorDamage}">1</td>
                         <td class="box_table_ar">碎弹</td>
                         <td class="box_table_center" th:text="${bullet.fragChance} + '%'">1</td>
+                        <td class="box_table_ar"></td>
                         <td class="box_table_center" th:text="${bullet.tracer == 1 ? '曳光': ''}">曳光</td>
                     </tr>
                     <tr>
@@ -139,6 +142,7 @@
                         <td class="box_table_center" th:text="${bullet.bleedLt} + '%'">1</td>
                         <td class="box_table_ar">大出血</td>
                         <td class="box_table_center" th:text="${bullet.bleedHvy} + '%'">1</td>
+                        <td class="box_table_ar"></td>
                         <td class="box_table_center" th:text="${bullet.subsonic == 1 ? '亚音速': ''}">亚音速</td>
                     </tr>
                 </table>
