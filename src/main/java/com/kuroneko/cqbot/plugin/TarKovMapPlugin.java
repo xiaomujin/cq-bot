@@ -128,7 +128,7 @@ public class TarKovMapPlugin extends BotPlugin {
                 ArrayList<Object> jsonValue = CastUtils.cast(jsHandle.jsonValue());
                 new Thread(() -> bulletService.updateAllBullet(jsonValue)).start();
                 String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "BulletData.png";
-                PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader");
+                PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader","._1MLS_xjiUjam_u2qmURY4i { display: none }");
             } catch (Exception e) {
                 log.error("子弹数据更新失败", e);
                 MsgUtils msg = MsgUtils.builder().text("子弹数据更新失败" + e.getMessage());
