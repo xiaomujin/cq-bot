@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>什亭之匣-蔚蓝档案工具站</title>
-    <link rel="stylesheet" href="./res/index-c229a219.css">
-    <link rel="stylesheet" href="./res/Layout-16209892.css">
-    <link rel="stylesheet" href="./res/RaidRank-f5e28e7e.css">
+    <link rel="stylesheet" href="../../static/ba/res/index-c229a219.css" th:href="@{/ba/res/index-c229a219.css}">
+    <link rel="stylesheet" href="../../static/ba/res/Layout-16209892.css" th:href="@{/ba/res/Layout-16209892.css}">
+    <link rel="stylesheet" href="../../static/ba/res/RaidRank-f5e28e7e.css" th:href="@{/ba/res/RaidRank-f5e28e7e.css}">
 </head>
 <body>
 <div id="app" data-v-app="">
@@ -19,7 +19,8 @@
                 <div data-v-b10835a6="" data-v-c0b8ca8a="" class="module">
                     <div data-v-c0b8ca8a="" style="display: flex;">
                         <img data-v-c0b8ca8a=""
-                             src="./res/arona_title_new.webp"
+                             src="../../static/ba/res/arona_title_new.webp"
+                             th:src="@{/ba/res/arona_title_new.webp}"
                              alt="logo" width="36" height="36">
                         <div data-v-c0b8ca8a="" class="logo">什亭之匣</div>
                         <div data-v-b10835a6="" class="title">-总力战档线</div>
@@ -27,9 +28,9 @@
                     <div data-v-b10835a6="" class="segmentation"></div>
                     <div data-v-b10835a6="" class="filter">
                         <div data-v-b10835a6="" style="display: flex; align-items: center; flex-flow: wrap;">
-                            <div data-v-b10835a6="">官服</div>
+                            <div data-v-b10835a6="" th:text="${serverName}">官服</div>
                             <div data-v-b10835a6="" style="padding-left: 10px;padding-right: 10px;">|</div>
-                            <div data-v-b10835a6="">第9期 室内 鸡斯拉</div>
+                            <div data-v-b10835a6="">第10期 室内 佩洛洛斯拉</div>
                             <div data-v-b10835a6="" style="padding-left: 10px;padding-right: 10px;">|</div>
                             <div data-v-b10835a6="">更新时间: 2023-12-28 04:00:05</div>
                         </div>
