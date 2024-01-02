@@ -58,6 +58,8 @@ public class TarKovMapPlugin extends BotPlugin {
                 imgPath += "TheLab.jpg";
             } else if (rawMessage.contains("疗养院")) {
                 imgPath += "ShorelineHose.jpg";
+            } else if (rawMessage.contains("中心区")) {
+                imgPath += "Center.jpg";
             } else {
                 return MESSAGE_IGNORE;
             }
