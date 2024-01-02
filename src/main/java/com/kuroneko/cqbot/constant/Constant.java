@@ -125,4 +125,5 @@ public class Constant {
     public static String TKF_SERVER_INFO = "TkfServerInfo";
 
     public static Map<String, BiliDynamicVo.BiliDynamicCard> BILI_DYNAMIC = new ConcurrentHashMap<>();
+    public static String BA_TOKEN = "ba-token 1419229777:DjHOGwNOxOv2tcoLSwpqq99R77qsfXUm8vgJcj";
 }
