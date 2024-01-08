@@ -1,0 +1,68 @@
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>日历</title>
+    <link rel="stylesheet" type="text/css" href="../../static/ba/res/calendar.css" th:href="@{/ba/res/calendar.css}"/>
+</head>
+<body>
+
+<div class="calendar">
+    <div class="cal-bg for-calendar-mode">
+        <table class="cont-table" border-collapse="collapse">
+            <tr class="tr thead">
+                <td colspan="7" class="td month" th:each="tableHead : ${tableHeadList}"
+                    th:colspan="${#lists.size(tableHead.date)}" th:text="${tableHead.month} + '月'">1月
+                </td>
+            </tr>
+            <tr class="tr thead">
+                <div th:each="tableHead : ${tableHeadList}">
+                    <td class="td date" th:each="day,iterStat : ${tableHead.date}"
+                        th:class="${day == nowDate? 'td date current-date' : 'td date'}">
+                        <span class="date-num" th:text="${day} + '日'">25日</span>
+                        <span class="date-week" th:text="'周' + ${tableHead.week[iterStat.index]}">周4</span>
+                    </td>
+                </div>
+            </tr>
+            <tr class="tr">
+                <div th:each="tableHead : ${tableHeadList}">
+                    <td class="line" th:each="day : ${tableHead.date}"
+                        th:class="${day == nowDate? 'line current-date' : 'line'}">
+                    </td>
+                </div>
+            </tr>
+        </table>
+    </div>
+
+    <div class="cal-list char-num-0">
+
+        <div class="cal-item type-normal small-mode"
+             style="margin-left:0%;width:50%"
+             data-id="id"
+             data-type="type"
+             th:each="info : ${infos}"
+             th:style="'margin-left:'+ ${info.left} + '%;width:'+ ${info.width} +'%'">
+
+            <div class="banner" style="background-color: #557dd6"></div>
+            <div class="info">
+                <img src="../../static/ba/res/calendar-icon.png" th:src="@{/ba/res/calendar-icon.png}" class="cal-icon"
+                     alt=""/>
+                <strong th:text="${info.title}">title</strong>
+                <span th:text="${info.label}">label</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="now-line" style="left:50%" th:style="'left:'+ ${nowLeft} + '%'"></div>
+    <div class="now-line line2" style="left:50%" th:style="'left:' + ${nowLeft} + '%'"></div>
+</div>
+<div class="now-time">
+    <span th:text="'当前时间：' + ${nowTime}">当前时间：2024-01-02 09:12</span>
+</div>
+
+
+</body>
+</html>

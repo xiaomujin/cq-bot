@@ -46,18 +46,36 @@ public class BaPlugin {
     @AnyMessageHandler(cmd = Regex.BA_TOTAL_BATTLE)
     public void ba(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
-
             Collection<String> arrayList = expiringMap.get(Regex.BA_TOTAL_BATTLE);
             if (arrayList != null) {
                 arrayList.forEach(s -> bot.sendMsg(event, s, false));
                 return "";
             }
-            Page page = PuppeteerUtil.getNewPage("http://localhost:8081/ba", 880, 500);
-            String imgPath = Constant.BASE_IMG_PATH + "ba/ba.png";
+            Page page = PuppeteerUtil.getNewPage("http://localhost:8081/baRank", 880, 500);
+            String imgPath = Constant.BASE_IMG_PATH + "ba/baRank.png";
             PuppeteerUtil.screenshot(page, imgPath, "#app");
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             String msg = MsgUtils.builder().img(media).build();
             expiringMap.put(Regex.BA_TOTAL_BATTLE, List.of(msg));
+            bot.sendMsg(event, msg, false);
+            return "";
+        });
+    }
+
+    @AnyMessageHandler(cmd = Regex.BA_CALENDAR)
+    public void baCalendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
+        ExceptionHandler.with(bot, event, () -> {
+            Collection<String> arrayList = expiringMap.get(Regex.BA_CALENDAR);
+            if (arrayList != null) {
+                arrayList.forEach(s -> bot.sendMsg(event, s, false));
+                return "";
+            }
+            Page page = PuppeteerUtil.getNewPage("http://localhost:8081/baCalendar", 1000, 400);
+            String imgPath = Constant.BASE_IMG_PATH + "ba/baCalendar.png";
+            PuppeteerUtil.screenshot(page, imgPath, "html");
+            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
+            String msg = MsgUtils.builder().img(media).build();
+            expiringMap.put(Regex.BA_CALENDAR, List.of(msg));
             bot.sendMsg(event, msg, false);
             return "";
         });

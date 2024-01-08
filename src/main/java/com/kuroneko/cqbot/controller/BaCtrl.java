@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Controller
@@ -22,8 +25,8 @@ import java.util.Date;
 public class BaCtrl {
     private final RestTemplate restTemplate;
 
-    @RequestMapping(value = {"/ba"})
-    public String Bullet(Model model) {
+    @RequestMapping(value = {"/baRank"})
+    public String baRank(Model model) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", Constant.BA_TOKEN);
 //        headers.add("Authorization", "ba-token uuz:uuz");
@@ -83,6 +86,96 @@ public class BaCtrl {
         String updateTime = df.format(new Date(recordTime));
         model.addAttribute("updateTime", updateTime);
         return "ba/BaRank";
+    }
+
+    @RequestMapping(value = {"/baCalendar"})
+    public String baCalendar(Model model) {
+        String[] weekStr = new String[]{"", "一", "二", "三", "四", "五", "六", "日"};
+        LocalDate today = LocalDate.now();
+        LocalDate tempDay = today.minusDays(6);
+        JSONArray tableHeadList = new JSONArray();
+        ArrayList<Integer> dateList = new ArrayList<>();
+        ArrayList<String> weekList = new ArrayList<>();
+        LocalDateTime startTime = tempDay.atStartOfDay();
+        int tempDayMonthValue = tempDay.getMonthValue();
+        for (int i = 0; i < 13; i++) {
+            if (tempDayMonthValue != tempDay.getMonthValue()) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("month", tempDayMonthValue);
+                jsonObject.put("date", dateList);
+                jsonObject.put("week", weekList);
+                dateList = new ArrayList<>();
+                weekList = new ArrayList<>();
+
+                tableHeadList.add(jsonObject);
+                tempDayMonthValue = tempDay.getMonthValue();
+            }
+            dateList.add(tempDay.getDayOfMonth());
+            weekList.add(weekStr[tempDay.getDayOfWeek().getValue()]);
+            tempDay = tempDay.plusDays(1);
+        }
+        LocalDateTime endTime = tempDay.atStartOfDay().minusSeconds(1);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("month", tempDayMonthValue);
+        jsonObject.put("date", dateList);
+        jsonObject.put("week", weekList);
+        tableHeadList.add(jsonObject);
+        long startEpochMilli = startTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        long endEpochMilli = endTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        LocalDateTime nowTime = LocalDateTime.now();
+        long nowEpochMilli = nowTime.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+        long totalRange = endEpochMilli - startEpochMilli;
+        Double nowLeft = (nowEpochMilli - startEpochMilli) / (double) totalRange * 100;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("MM-dd HH:mm");
+
+        model.addAttribute("tableHeadList", tableHeadList);
+        model.addAttribute("nowLeft", nowLeft);
+        model.addAttribute("nowDate", nowTime.getDayOfMonth());
+        model.addAttribute("nowTime", nowTime.format(formatter));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", Constant.BA_TOKEN);
+//        headers.add("Authorization", "ba-token uuz:uuz");
+        JSONObject httpObject = new JSONObject();
+        httpObject.put("server", 1);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(httpObject, headers);
+        ResponseEntity<JSONObject> seasonList = restTemplate.exchange("https://api.arona.icu/api/events/v2/info", HttpMethod.POST, httpEntity, JSONObject.class);
+        JSONObject calendarListBody = seasonList.getBody();
+        if (!seasonList.getStatusCode().is2xxSuccessful() || calendarListBody == null || !calendarListBody.getInteger("code").equals(200)) {
+            throw new BotException("获取日历数据失败！");
+        }
+        JSONArray calendarBodyData = calendarListBody.getJSONArray("data");
+        JSONArray infos = new JSONArray();
+        for (int i = 0; i < calendarBodyData.size(); i++) {
+            JSONObject info = calendarBodyData.getJSONObject(i);
+            long infoEndTime = info.getLongValue("endTime");
+            if (infoEndTime < startEpochMilli + 1000 * 60 * 60 * 24 * 3) {
+                continue;
+            }
+            long infoStartTime = info.getLongValue("startTime");
+            if (infoStartTime > endEpochMilli + 1000 * 60 * 60 * 24 * 3) {
+                continue;
+            }
+            String infoStartStr = LocalDateTime.ofInstant(Instant.ofEpochMilli(infoStartTime), ZoneId.systemDefault()).format(formatter2);
+            String infoEndStr = LocalDateTime.ofInstant(Instant.ofEpochMilli(infoEndTime), ZoneId.systemDefault()).format(formatter2);
+            JSONObject newInfo = new JSONObject();
+            String title = info.getString("title");
+            newInfo.put("title", title);
+            infoStartTime = Math.max(infoStartTime, startEpochMilli);
+            Double left = (infoStartTime - startEpochMilli) / (double) totalRange * 100;
+            newInfo.put("left", left);
+            infoEndTime = Math.min(infoEndTime, endEpochMilli);
+            Double width = (infoEndTime - infoStartTime) / (double) totalRange * 100;
+            newInfo.put("width", width);
+            String label = String.format("(%s - %s)", infoStartStr, infoEndStr);
+            newInfo.put("label", label);
+
+            infos.add(newInfo);
+        }
+        model.addAttribute("infos", infos);
+        return "ba/BaCalendar";
     }
 
 }

@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.utils;
 
+import com.kuroneko.cqbot.exception.BotException;
 import com.ruiyun.jvppeteer.core.Constant;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.zip.ZipEntry;
@@ -215,8 +217,19 @@ public class PuppeteerUtil {
                 screenshotOptions.setPath(path);
                 screenshot = page.screenshot(screenshotOptions);
             } else {
+                // 超时处理
+                Thread thread = new Thread(() -> {
+                    try {
+                        Thread.sleep(15000);
+                    } catch (InterruptedException e) {
+                        return;
+                    }
+                    safeClosePage(page);
+                });
+                thread.start();
                 //设置截图范围
                 ElementHandle elementHandle = page.waitForSelector(selector);
+                thread.interrupt();
                 screenshotOptions.setPath(path);
                 screenshot = elementHandle.screenshot(screenshotOptions);
             }
@@ -224,6 +237,7 @@ public class PuppeteerUtil {
             log.info("图片生成成功,耗时：{} ,url:{} ,path:{} ,selector:[{}] ,css:[{}] ", cost, page.mainFrame().getUrl(), path, selector, css);
         } catch (Exception e) {
             log.error("图片生成失败", e);
+            throw new BotException("图片生成失败");
         } finally {
             safeClosePage(page);
         }
@@ -237,7 +251,7 @@ public class PuppeteerUtil {
     }
 
     public static Page getNewPage(String url, Integer width, Integer height) {
-        return getNewPage(url, "load", 30000, width, height);
+        return getNewPage(url, "load", 15000, width, height);
     }
 
     /**
