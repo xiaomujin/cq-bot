@@ -8,14 +8,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 public class ThreadPoolConfig {
-    public static final int cpuNum = Runtime.getRuntime().availableProcessors();
+//    public static final int cpuNum = Runtime.getRuntime().availableProcessors();
 
     @Bean("listenerExecutor")
     public ThreadPoolTaskExecutor listenerExecutor() {
         ThreadPoolTaskExecutor listenerExecutor = new ThreadPoolTaskExecutor();
         //设置线程池参数信息
-        listenerExecutor.setCorePoolSize(cpuNum);
-        listenerExecutor.setMaxPoolSize(cpuNum * 2);
+        listenerExecutor.setCorePoolSize(10);
+        listenerExecutor.setMaxPoolSize(40);
         listenerExecutor.setQueueCapacity(200);
         listenerExecutor.setKeepAliveSeconds(60);
         listenerExecutor.setThreadNamePrefix("listener-");
