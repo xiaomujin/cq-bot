@@ -1,27 +1,34 @@
 package com.kuroneko.cqbot.controller;
 
-import com.kuroneko.cqbot.annoPlugin.BLPlugin;
+import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
-import com.kuroneko.cqbot.dto.AntiBiliMiniAppDTO;
-import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.event.BiliSubscribeEvent;
+import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
-import com.kuroneko.cqbot.plugin.ThreeHundredPlugin;
+import com.kuroneko.cqbot.service.AiService;
 import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.service.BulletService;
+import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
-import com.mikuac.shiro.common.utils.MsgUtils;
+import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +36,8 @@ public class TestController {
     private final BiLiService biLiService;
     private final BulletService bulletService;
     private final RedisUtil redisUtil;
-    private final ThreeHundredPlugin threeHundredPlugin;
+    private final RestTemplate restTemplate;
+    private final AiService aiService;
 
     @RequestMapping(value = "/testBiLi")
     public BiliDynamicVo.BiliDynamicCard testBiLi() {
@@ -121,8 +129,30 @@ public class TestController {
 
     @RequestMapping(value = "/testBili")
     public String testBili() {
-        MsgUtils msg = threeHundredPlugin.getMsg("300战绩甘橙不是橙 竞技场");
-        return msg.build();
+//        Page newPage = PuppeteerUtil.getNewPage("http://127.0.0.1:8081/Life/智爷", 500, 800);
+//        PuppeteerUtil.screenshot(newPage, "/opt/bot_img/life/1.png");
+//        Page page = PuppeteerUtil.getNewPage("http://localhost:8081/baRank", 880, 500);
+//        String imgPath = Constant.BASE_IMG_PATH + "ba/ba.png";
+//        PuppeteerUtil.screenshot(page, imgPath, "#app");
+//        return aiService.getWuGuoKai(1, "吃了什么");
+//        HttpClient client = HttpClient.newHttpClient();
+//        URI uri = URI.create("https://www.bilibili.com/opus/887167886324400164");
+//        String scheme = uri.getScheme();
+//        HttpRequest request = HttpRequest.newBuilder().uri(uri).build();
+//        String urlBid;
+//        try {
+//            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+//            urlBid = send.headers().firstValue("location").orElse("");
+//        } catch (IOException | InterruptedException e) {
+//            throw new BotException(e.getMessage());
+//        } finally {
+//            client.close();
+//        }
+//        uri = URI.create(STR."\{scheme}:\{urlBid}");
+        long l = System.currentTimeMillis();
+        String redirect = HttpUtil.getRedirect("https://www.bilibili.com/opus/887167886324400164");
+        System.out.println(System.currentTimeMillis() - l);
+        return "redirect";
     }
 
 
