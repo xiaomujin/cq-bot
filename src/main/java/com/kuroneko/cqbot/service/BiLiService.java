@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.constant.Constant;
+import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -33,16 +34,17 @@ public class BiLiService {
 
     /**
      * 152065343 纱雾最可爱辣
-     *{
-     *   "code": 0,
-     *   "msg": "",
-     *   "message": "",
-     *   "data": {
-     *     "has_more": 0,
-     *     "next_offset": 0,
-     *     "_gt_": 0
-     *   }
+     * {
+     * "code": 0,
+     * "msg": "",
+     * "message": "",
+     * "data": {
+     * "has_more": 0,
+     * "next_offset": 0,
+     * "_gt_": 0
      * }
+     * }
+     *
      * @param uid B站Uid
      * @return 最新动态id
      */
@@ -64,20 +66,21 @@ public class BiLiService {
      * @return 文件路径
      */
     public String getNewScreenshot(String dynamicId, String uid) {
-        Page page = PuppeteerUtil.getBrowser().newPage();
         try {
             String path = imgPath + dynamicId + ".png";
-            PuppeteerUtil.screenshot("https://www.bilibili.com/opus/" + dynamicId, path, "#app > div.opus-detail > div.bili-opus-view", ".z-top-container { display: none }");
+            String redirect = HttpUtil.getRedirect("https://www.bilibili.com/opus/" + dynamicId);
+            String selector = null;
+            if (redirect.contains("bilibili.com/opus")) {
+                selector = "#app > div.opus-detail > div.bili-opus-view";
+            } else if (redirect.contains("t.bilibili.com")) {
+                selector = "#app > div.content > div.card > div.bili-dyn-item";
+            } else if (redirect.contains("bilibili.com/read")) {
+                selector = "#app > div > div.article-container";
+            }
+            PuppeteerUtil.screenshot(redirect, path, selector, ".z-top-container { display: none } .international-header { display: none } .van-popper { display: none }");
             return path;
         } catch (Exception e) {
             log.error("动态截图异常", e);
-        } finally {
-            try {
-                page.close();
-            } catch (InterruptedException e) {
-                log.error("page关闭失败", e);
-                PuppeteerUtil.close();
-            }
         }
         return "";
     }
