@@ -19,17 +19,6 @@ public class BotTask {
     private final BotTaskService botTaskService;
     private final TarKovMarketService tarKovMarketService;
 
-    /**
-     * 日报-60s读懂世界
-     */
-//    @Scheduled(cron = "0 0/1 * * * ? ")
-//    @Scheduled(cron = "0 0 8 * * ? ")
-    public void doDaily() {
-        log.info("日报-60s读懂世界 开始");
-        botTaskService.doDaily();
-        log.info("日报-60s读懂世界 结束");
-    }
-
     @Scheduled(cron = "0 0/10 * * * ? ")
     public void refreshThreeDog() {
         log.info("刷新三兄弟位置 开始");
@@ -44,19 +33,19 @@ public class BotTask {
         log.info("刷新塔科夫动态 结束");
     }
 
-    @Scheduled(cron = "0 5 0/1 * * ? ")
-    public void refreshDaily() {
-        log.info("刷新日报图片 开始");
-        botTaskService.refreshDaily();
-        log.info("刷新日报图片 结束");
-    }
+//    @Scheduled(cron = "0 5 0/1 * * ? ")
+//    public void refreshDaily() {
+//        log.info("刷新日报图片 开始");
+//        botTaskService.refreshDaily();
+//        log.info("刷新日报图片 结束");
+//    }
 
-    @Scheduled(cron = "0 6 0/1 * * ? ")
-    public void refreshRiLi() {
-        log.info("刷新日历图片 开始");
-        botTaskService.refreshRiLi();
-        log.info("刷新日历图片 结束");
-    }
+//    @Scheduled(cron = "0 6 0/1 * * ? ")
+//    public void refreshRiLi() {
+//        log.info("刷新日历图片 开始");
+//        botTaskService.refreshRiLi();
+//        log.info("刷新日历图片 结束");
+//    }
 
 //    @Scheduled(cron = "0 3 0/1 * * ? ")
 //    public void refreshAgeListVo() {

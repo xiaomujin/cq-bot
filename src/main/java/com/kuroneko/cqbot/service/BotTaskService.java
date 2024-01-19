@@ -35,69 +35,49 @@ public class BotTaskService {
     private final BiLiService biLiService;
     private final RedisUtil redisUtil;
 
-    public void doDaily() {
-        DailyVo dailyVo = (DailyVo) Constant.CONFIG_CACHE.get(Constant.DAILY_KEY);
-        MsgUtils msg = MsgUtils.builder().img(dailyVo.getImgUrl());
 
-        Map<Long, Bot> bots = botContainer.robots;
-        bots.forEach((id, bot) -> {
-            ActionList<GroupInfoResp> groupList = bot.getGroupList();
-            if (groupList != null) {
-                groupList.getData().forEach(group -> {
-                    bot.sendGroupMsg(group.getGroupId(), msg.build(), false);
-                    try {
-                        Thread.sleep(3600);
-                    } catch (InterruptedException e) {
-                        log.error("sleep err", e);
-                    }
-                });
-            }
-        });
+//    public DailyVo getDailyVo() {
+//        return restTemplate.getForObject(Constant.DAILY_URL, DailyVo.class, Constant.ALAPI_TOKEN);
+//    }
 
-    }
+//    public RiLiVo getRiLiVo() {
+//        return restTemplate.getForObject(Constant.MO_YU_RI_LI_URL, RiLiVo.class);
+//    }
 
-    public DailyVo getDailyVo() {
-        return restTemplate.getForObject(Constant.DAILY_URL, DailyVo.class, Constant.ALAPI_TOKEN);
-    }
+//    public ResponseEntity<AgeListVo> getAgeListVo() {
+//        return restTemplate.getForEntity(Constant.AGE_LIST_URL, AgeListVo.class, 1, 1);
+//    }
 
-    public RiLiVo getRiLiVo() {
-        return restTemplate.getForObject(Constant.MO_YU_RI_LI_URL, RiLiVo.class);
-    }
+//    public void refreshDaily() {
+//        DailyVo dailyVo = getDailyVo();
+//        if (dailyVo == null || !dailyVo.getCode().equals(200)) {
+//            log.error("刷新日报图片 失败");
+//            return;
+//        }
+//        dailyVo.setImgUrl(dailyVo.getData().getImage() + "?t=" + System.currentTimeMillis());
+//        Constant.CONFIG_CACHE.put(Constant.DAILY_KEY, dailyVo);
+//        log.info("刷新日报图片 成功");
+//    }
 
-    public ResponseEntity<AgeListVo> getAgeListVo() {
-        return restTemplate.getForEntity(Constant.AGE_LIST_URL, AgeListVo.class, 1, 1);
-    }
+//    public void refreshRiLi() {
+//        RiLiVo riLiVo = getRiLiVo();
+//        if (riLiVo == null || !riLiVo.isSuccess()) {
+//            log.error("刷新日历图片 失败");
+//            return;
+//        }
+//        Constant.CONFIG_CACHE.put(Constant.MO_YU_RI_LI_KEY, riLiVo.getUrl());
+//        log.info("刷新日历图片 成功");
+//    }
 
-    public void refreshDaily() {
-        DailyVo dailyVo = getDailyVo();
-        if (dailyVo == null || !dailyVo.getCode().equals(200)) {
-            log.error("刷新日报图片 失败");
-            return;
-        }
-        dailyVo.setImgUrl(dailyVo.getData().getImage() + "?t=" + System.currentTimeMillis());
-        Constant.CONFIG_CACHE.put(Constant.DAILY_KEY, dailyVo);
-        log.info("刷新日报图片 成功");
-    }
-
-    public void refreshRiLi() {
-        RiLiVo riLiVo = getRiLiVo();
-        if (riLiVo == null || !riLiVo.isSuccess()) {
-            log.error("刷新日历图片 失败");
-            return;
-        }
-        Constant.CONFIG_CACHE.put(Constant.MO_YU_RI_LI_KEY, riLiVo.getUrl());
-        log.info("刷新日历图片 成功");
-    }
-
-    public void refreshAgeListVo() {
-        ResponseEntity<AgeListVo> ageListVo = getAgeListVo();
-        if (!ageListVo.getStatusCode().is2xxSuccessful()) {
-            log.error("刷新age番剧 失败");
-            return;
-        }
-        Constant.CONFIG_CACHE.put(Constant.AGE_LIST_KEY, ageListVo.getBody());
-        log.info("刷新age番剧 成功");
-    }
+//    public void refreshAgeListVo() {
+//        ResponseEntity<AgeListVo> ageListVo = getAgeListVo();
+//        if (!ageListVo.getStatusCode().is2xxSuccessful()) {
+//            log.error("刷新age番剧 失败");
+//            return;
+//        }
+//        Constant.CONFIG_CACHE.put(Constant.AGE_LIST_KEY, ageListVo.getBody());
+//        log.info("刷新age番剧 成功");
+//    }
 
 
     public void refreshThreeDog() {
