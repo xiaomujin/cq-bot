@@ -50,7 +50,7 @@ public class DailyPlugin {
     @AnyMessageHandler(cmd = Regex.DAILY)
     public void daily(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
-            Collection<String> cacheMsg = CacheUtil.getOrPut(Regex.CALENDAR, 30, TimeUnit.MINUTES, () -> {
+            Collection<String> cacheMsg = CacheUtil.getOrPut(Regex.DAILY, 30, TimeUnit.MINUTES, () -> {
                 String zaobaoStr = HttpUtil.get("https://v2.alapi.cn/api/zaobao?format=json&token=eCKR3lL7uFtt9PIm");
                 JSONObject zaobaoObject = JSON.parseObject(zaobaoStr);
                 int code = zaobaoObject.getIntValue("code", 0);
