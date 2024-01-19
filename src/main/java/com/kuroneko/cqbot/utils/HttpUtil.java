@@ -49,7 +49,7 @@ public class HttpUtil {
     /**
      * get请求
      */
-    public static String get(HttpClient httpClient, String url, HashMap<String, String> headers) {
+    public static String get(HttpClient httpClient, String url) {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .timeout(Duration.ofMinutes(1))
@@ -71,4 +71,8 @@ public class HttpUtil {
         }
     }
 
+    public static String get(String url) {
+        HttpClient httpClient = getHttpClient();
+        return get(httpClient, url);
+    }
 }

@@ -65,7 +65,7 @@ shiro:
     - com.kuroneko.cqbot.plugin.AgePlugin
     # - com.kuroneko.cqbot.plugin.AiPlugin
     - com.kuroneko.cqbot.plugin.BiLiPlugin
-    - com.kuroneko.cqbot.plugin.DailyPlugin
+#    - com.kuroneko.cqbot.plugin.DailyPlugin
     - com.kuroneko.cqbot.plugin.OvoOaPlugin
     - com.kuroneko.cqbot.plugin.RainbowSixPlugin
     - com.kuroneko.cqbot.plugin.SeTuPlugin

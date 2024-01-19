@@ -14,4 +14,9 @@ public class Regex {
     public static final String BA_IMAGE_BATTLE = "^(?i)ba (?<text>.+)";
 
     public static final String LIFE_RESTART = "^(转世人生|活一回|转世|转生)$";
+
+    public static final String CALENDAR = "^日历$";
+
+    public static final String DAILY = "^日报$";
+
 }
