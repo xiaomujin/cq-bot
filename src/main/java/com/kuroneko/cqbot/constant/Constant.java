@@ -78,7 +78,8 @@ public class Constant {
      * 塔科夫
      * <a href="https://tarkov-market.com">跳蚤市场</a>
      */
-    public static String TAR_KOV_MARKET_URL = "https://api.tarkov-market.app/api/items?lang=cn&search={1}&tag=&sort=name&sort_direction=desc&trader=&skip=0&limit=3";
+//    public static String TAR_KOV_MARKET_URL = "https://api.tarkov-market.app/api/items?lang=cn&search={1}&tag=&sort=name&sort_direction=desc&trader=&skip=0&limit=3";
+    public static String TAR_KOV_MARKET_URL = "https://tarkov-market.com/api/be/items?lang=cn&search={1}&tag=&sort=name&sort_direction=desc&trader=&skip=0&limit=3";
 
     public static Map<Long, Long> TAR_KOV_MARKET_CD = new ConcurrentHashMap<>();
 
