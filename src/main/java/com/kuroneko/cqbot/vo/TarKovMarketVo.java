@@ -24,7 +24,7 @@ public class TarKovMarketVo {
     private int avgWeekPrice;
 //    private String wikiName;
 //    private String wikiUrl;
-//    private String wikiIcon;
+    private String wikiIcon;
 //    private String wikiImg;
     private Instant priceUpdated;
     private String shortName;

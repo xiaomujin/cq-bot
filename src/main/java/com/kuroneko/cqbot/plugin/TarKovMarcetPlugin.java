@@ -54,7 +54,7 @@ public class TarKovMarcetPlugin extends BotPlugin {
             return msg.text(" 没有找到").text(text);
         }
         search.forEach(it -> {
-            msg.img(it.getEnImg());
+            msg.img(it.getWikiIcon());
             msg.text("\n名称：").text(it.getCnName() + "\n");
             msg.text("波动 24h：").text(it.getChange24() + "%").text("  7d：").text(it.getChange7d() + "%\n");
             msg.text("基础价格：").text(it.getBasePrice() + "₽" + "\n");
