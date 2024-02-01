@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TarKovMarcetPlugin extends BotPlugin {
+public class TarKovMarketPlugin extends BotPlugin {
     private final TarKovMarketService tarKovMarketService;
     private static final String CMD = CmdConst.TIAO_ZAO;
 

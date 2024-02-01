@@ -193,12 +193,6 @@ public class TarKovMapPlugin extends BotPlugin {
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
-        } else if (event.getRawMessage().startsWith("塔科夫服务器")) {
-            Map<String, Object> serverInfo = CastUtils.cast(Constant.CONFIG_CACHE.get(Constant.TKF_SERVER_INFO));
-            String content = (String) serverInfo.get("content");
-            MsgUtils msg = MsgUtils.builder().text(content);
-            bot.sendMsg(event, msg.build(), false);
-            return MESSAGE_BLOCK;
         }
         return MESSAGE_IGNORE;
     }
