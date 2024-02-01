@@ -51,16 +51,16 @@ public class TarKovMarcetPlugin extends BotPlugin {
         }
         search.forEach(it -> {
             msg.img(it.getWikiIcon());
-            msg.text("\n名称：").text(it.getCnName() + "\n");
-            msg.text("波动 24h：").text(it.getChange24() + "%").text("  7d：").text(it.getChange7d() + "%\n");
-            msg.text("基础价格：").text(it.getBasePrice() + "₽" + "\n");
-            msg.text(it.getTraderName()).text("：").text(it.getTraderPrice() + it.getTraderPriceCur() + "\n");
+            msg.text("\n名称：").text(STR."\{it.getCnName()}\n");
+            msg.text("波动 24h：").text(STR."\{it.getChange24()}%").text("  7d：").text(STR."\{it.getChange7d()}%\n");
+            msg.text("基础价格：").text(STR."\{it.getBasePrice()}₽\n");
+            msg.text(it.getTraderName()).text("：").text(STR."\{it.getTraderPrice()}\{it.getTraderPriceCur()}\n");
             if (it.isCanSellOnFlea()) {
-                msg.text("跳蚤日价：").text(it.getAvgDayPrice() + "₽" + "\n");
-                msg.text("跳蚤周价：").text(it.getAvgWeekPrice() + "₽" + "\n");
-                msg.text("单格：").text(it.getAvgDayPrice() / it.getSize() + "₽");
+                msg.text("跳蚤日价：").text(STR."\{it.getAvgDayPrice()}₽\n");
+                msg.text("跳蚤周价：").text(STR."\{it.getAvgWeekPrice()}₽\n");
+                msg.text("单格：").text(STR."\{it.getAvgDayPrice() / it.getSize()}₽");
             } else {
-                msg.text("单格：").text(it.getTraderPrice() / it.getSize() + it.getTraderPriceCur() + "\n");
+                msg.text("单格：").text(STR."\{it.getTraderPrice() / it.getSize()}\{it.getTraderPriceCur()}\n");
                 msg.text("跳蚤禁售!");
             }
         });
