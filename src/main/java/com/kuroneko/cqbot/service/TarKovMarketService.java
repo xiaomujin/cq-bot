@@ -119,7 +119,12 @@ public class TarKovMarketService {
         Set<String> tkfServerStatusMsg = getTkfServerStatusMsg();
         CacheUtil.put(Regex.TKF_SERVER_INFO, tkfServerStatusMsg, 20, TimeUnit.MINUTES);
         //推送
-        if (msg != null && !msg.iterator().next().equals(tkfServerStatusMsg.iterator().next())) {
+        if (msg == null) {
+            return;
+        }
+        String old = msg.iterator().next().substring(20);
+        String now = tkfServerStatusMsg.iterator().next().substring(20);
+        if (!old.equals(now)) {
             pushTkfServerStatus(tkfServerStatusMsg);
         }
     }
