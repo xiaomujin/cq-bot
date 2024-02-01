@@ -1,7 +1,6 @@
 package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
-import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.service.TarKovMarketService;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
