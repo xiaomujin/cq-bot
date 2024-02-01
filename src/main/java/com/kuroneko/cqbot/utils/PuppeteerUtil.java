@@ -35,7 +35,7 @@ public class PuppeteerUtil {
 
     private static final AtomicInteger renderNum = new AtomicInteger(0);
 
-    private static final int restartNum = 200;
+    private static final int restartNum = 500;
     private static final String savePath = "/opt";
     private static final String VERSION = "1132420";
 

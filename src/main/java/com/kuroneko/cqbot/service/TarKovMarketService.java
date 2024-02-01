@@ -1,32 +1,38 @@
 package com.kuroneko.cqbot.service;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
-import com.kuroneko.cqbot.utils.JsonUtil;
-import com.kuroneko.cqbot.utils.RedisUtil;
+import com.kuroneko.cqbot.enums.Regex;
+import com.kuroneko.cqbot.utils.*;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.kuroneko.cqbot.vo.tarkov.TarKovRVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
-import com.mikuac.shiro.core.BotContainer;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.util.CastUtils;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TarKovMarketService {
 
     private final RestTemplate restTemplate;
-    private final BotContainer botContainer;
     private final RedisUtil redisUtil;
 
     public List<TarKovMarketVo> search(String text) {
@@ -61,56 +67,65 @@ public class TarKovMarketService {
         return JsonUtil.toList(json, TarKovMarketVo.class);
     }
 
-    public Map<String, Object> getTkfServerInfo() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.COOKIE, "auth=2308a45e7dd03b037c934dd8a3f4c9d91d42f77548e28f2a907b49ef91aee66b9728623-1685201483; PHPSESSID=hc88kfhp76a44rgmua6j59b9rb; _csrf_chuanyu=HR0GUBYNKMDgRHxlawz0qN_0QFEC-YHw");
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<List<HashMap<String, Object>>> re = restTemplate.exchange(
-                "https://www.kookapp.cn/api/v2/messages/1103179288889105?page_size=50",
-                HttpMethod.GET,
-                httpEntity,
-                new ParameterizedTypeReference<>() {
-                }
-        );
-        if (re.getStatusCode().is2xxSuccessful()) {
-            HashMap<String, Object> map = re.getBody().get(0);
-            return map;
+    public Set<String> getTkfServerStatusMsg() {
+        String respServices = HttpUtil.get("https://status.escapefromtarkov.com/api/services");
+        JSONArray jsonArray = JSON.parseArray(respServices);
+        StringBuilder sb = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formatTime = LocalDateTime.now().format(formatter);
+        sb.append(STR."\{formatTime}\n");
+        sb.append("服务器状态速报：\n");
+        jsonArray.forEach(item -> {
+            JSONObject jsonObject = (JSONObject) item;
+            String name = jsonObject.getString("name");
+            int status = jsonObject.getIntValue("status");
+            switch (name) {
+                case "Website" -> sb.append("游戏官网：");
+                case "Forum" -> sb.append("官方论坛：");
+                case "Authentication" -> sb.append("身份认证：");
+                case "Launcher" -> sb.append("   启动器：");
+                case "Group lobby" -> sb.append("组队功能：");
+                case "Trading" -> sb.append("交易功能：");
+                case "Matchmaking" -> sb.append("战局匹配：");
+                case "Friends and msg." -> sb.append("好友消息：");
+                case "Inventory operations" -> sb.append("库存操作：");
+            }
+            sb.append(STR."\{getCNStatus(status)}\n");
+        });
+        String respGlobal = HttpUtil.get("https://status.escapefromtarkov.com/api/global/status");
+        JSONObject jsonObject = JSON.parseObject(respGlobal);
+        int status = jsonObject.getIntValue("status");
+        sb.append(STR."\n总体状态：\{getCNStatus(status)}\n");
+        String message = jsonObject.getString("message");
+        if (!ObjectUtils.isEmpty(message)) {
+            sb.append(STR."信息：\{message}");
         }
-        return Map.of();
+        String build = MsgUtils.builder().text(sb.toString()).build();
+        return Collections.singleton(build);
     }
 
-    public Map<String, Object> cacheTkfServerInfo() {
-        Map<String, Object> info = getTkfServerInfo();
-        if (info.isEmpty()) {
-            return Map.of();
-        }
-        Map<String, Object> oldInfo = CastUtils.cast(Constant.CONFIG_CACHE.get(Constant.TKF_SERVER_INFO));
-        Constant.CONFIG_CACHE.put(Constant.TKF_SERVER_INFO, info);
+    private String getCNStatus(int status) {
+        return switch (status) {
+            case 0 -> "\uD83D\uDFE2服务正常";
+            case 1 -> "⚙️正在更新";
+            case 2 -> "\uD83D\uDFE1部分故障";
+            case 3 -> "\uD83D\uDD34服务不可用";
+            default -> "⚪未知";
+        };
+    }
+
+    public void cacheTkfServerStatusMsg() {
+        Collection<String> msg = CacheUtil.get(Regex.TKF_SERVER_INFO);
+        Set<String> tkfServerStatusMsg = getTkfServerStatusMsg();
+        CacheUtil.put(Regex.TKF_SERVER_INFO, tkfServerStatusMsg, 20, TimeUnit.MINUTES);
         //推送
-        if (oldInfo != null && !info.get("updated_at").equals(oldInfo.get("updated_at"))) {
-            pushTkfServerInfo(info);
+        if (msg != null && !msg.iterator().next().equals(tkfServerStatusMsg.iterator().next())) {
+            pushTkfServerStatus(tkfServerStatusMsg);
         }
-        return info;
     }
 
-    private void pushTkfServerInfo(Map<String, Object> info) {
-        String content = (String) info.get("content");
-        MsgUtils msg = MsgUtils.builder().text(content);
+    private void pushTkfServerStatus(Collection<String> msg) {
         Set<Number> list = redisUtil.members(RedisKey.TKF_INFO);
-        log.info("TKF_INFO 推送群聊：{}", list);
-        if (!list.isEmpty()) {
-            botContainer.robots.forEach((id, bot) -> {
-                list.forEach(groupId -> {
-                    bot.sendGroupMsg(groupId.longValue(), msg.build(), false);
-                    try {
-                        Thread.sleep(3600);
-                    } catch (InterruptedException e) {
-                        log.error("sleep err", e);
-                    }
-                });
-            });
-
-        }
+        MsgShiroUtil.sendToGroupList(list, msg);
     }
 }

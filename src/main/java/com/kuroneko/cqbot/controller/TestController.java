@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.controller;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
@@ -11,15 +12,19 @@ import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.kuroneko.cqbot.service.AiService;
 import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.service.BulletService;
+import com.kuroneko.cqbot.service.TarKovMarketService;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
+import com.kuroneko.cqbot.vo.TarKovMarketVo;
+import com.mikuac.shiro.common.utils.CommonUtils;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -33,9 +38,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -46,6 +50,7 @@ public class TestController {
     private final RedisUtil redisUtil;
     private final RestTemplate restTemplate;
     private final AiService aiService;
+    private final TarKovMarketService tarKovMarketService;
 
     @RequestMapping(value = "/testBiLi")
     public BiliDynamicVo.BiliDynamicCard testBiLi() {
@@ -157,9 +162,11 @@ public class TestController {
 //            client.close();
 //        }
 //        uri = URI.create(STR."\{scheme}:\{urlBid}");
-        long l = System.currentTimeMillis();
-        String redirect = HttpUtil.getRedirect("https://www.bilibili.com/opus/887167886324400164");
-        System.out.println(System.currentTimeMillis() - l);
+//        long l = System.currentTimeMillis();
+//        String redirect = HttpUtil.getRedirect("https://www.bilibili.com/opus/887167886324400164");
+//        System.out.println(System.currentTimeMillis() - l);
+//        List<TarKovMarketVo> btc = tarKovMarketService.search("btc");
+
         return "redirect";
     }
 

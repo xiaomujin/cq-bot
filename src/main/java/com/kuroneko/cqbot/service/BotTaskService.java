@@ -111,41 +111,6 @@ public class BotTaskService {
         }
     }
 
-    public void refreshTKFDT() {
-        String uid = "152065343";
-        try {
-            String dynamicId = biLiService.getNew(uid);
-            String oldDynamicId = (String) Constant.CONFIG_CACHE.get(RedisKey.TKF_DT);
-            Constant.CONFIG_CACHE.put(RedisKey.TKF_DT, dynamicId);
-            //推送
-            if (oldDynamicId != null && !dynamicId.equals(oldDynamicId)) {
-                pushTKFDTMsg(dynamicId, uid);
-            }
-            log.info("刷新" + uid + "动态 成功");
-        } catch (Exception e) {
-            log.error("刷新" + uid + "动态 失败", e);
-        }
-    }
-
-    public void pushTKFDTMsg(String dynamicId, String uid) {
-        String path = biLiService.getNewScreenshot(dynamicId, uid);
-        Set<Number> list = redisUtil.members(RedisKey.TKF_DT);
-        log.info("TKF_DT 推送群聊：{}", list);
-        if (!list.isEmpty()) {
-            botContainer.robots.forEach((id, bot) -> {
-                MsgUtils msg = biLiService.buildDynamicMsg(path, dynamicId);
-                list.forEach(groupId -> {
-                    bot.sendGroupMsg(groupId.longValue(), msg.build(), false);
-                    try {
-                        Thread.sleep(3600);
-                    } catch (InterruptedException e) {
-                        log.error("sleep err", e);
-                    }
-                });
-            });
-
-        }
-    }
 
     public void pushMsg(ThreeDog oldThreeDog, ThreeDog threeDog) {
         Set<Number> list = redisUtil.members(RedisKey.THREE_DOG);

@@ -1,15 +1,14 @@
 package com.kuroneko.cqbot.utils;
 
 import cn.hutool.core.util.StrUtil;
+import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.mikuac.shiro.common.utils.ShiroUtils;
+import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,10 +19,11 @@ public class MsgShiroUtil {
     public static boolean isAtMe(List<ArrayMsg> arrayMsg, long id) {
         return MsgShiroUtil.getAtList(arrayMsg).contains(id);
     }
+
     public static boolean isReplyMe(List<ArrayMsg> arrayMsg, long id) {
         return MsgTypeEnum.reply.equals(arrayMsg.get(0).getType())
                 && MsgTypeEnum.at.equals(arrayMsg.get(1).getType())
-                && Long.parseLong((String)arrayMsg.get(1).getData().get("qq")) == id;
+                && Long.parseLong((String) arrayMsg.get(1).getData().get("qq")) == id;
     }
 
     public static int getReplyId(List<ArrayMsg> arrayMsg) {
@@ -69,5 +69,22 @@ public class MsgShiroUtil {
 
     public static List<String> getParams(String cmd, String msg) {
         return getParams(cmd, msg, 0);
+    }
+
+    public static void sendToGroupList(Collection<Number> groupList, String msgList) {
+        sendToGroupList(groupList, Collections.singleton(msgList));
+    }
+
+
+    public static void sendToGroupList(Collection<Number> groupList, Collection<String> msgList) {
+        BotContainer botContainer = ApplicationContextHandler.getBean(BotContainer.class);
+        botContainer.robots.forEach((_, bot) -> {
+            groupList.forEach(group -> msgList.forEach(msg -> bot.sendGroupMsg(group.longValue(), msg, false)));
+            try {
+                Thread.sleep(2600);
+            } catch (InterruptedException e) {
+                log.error("sleep err", e);
+            }
+        });
     }
 }

@@ -26,13 +26,6 @@ public class BotTask {
         log.info("刷新三兄弟位置 结束");
     }
 
-    @Scheduled(cron = "0 0/5 * * * ? ")
-    public void refreshTKFDT() {
-        log.info("刷新塔科夫动态 开始");
-        botTaskService.refreshTKFDT();
-        log.info("刷新塔科夫动态 结束");
-    }
-
 //    @Scheduled(cron = "0 5 0/1 * * ? ")
 //    public void refreshDaily() {
 //        log.info("刷新日报图片 开始");
@@ -57,15 +50,16 @@ public class BotTask {
     @Scheduled(cron = "0 0/13 * * * ? ")
     public void refreshTkfServerInfo() {
         log.info("刷新塔科夫服务器状态 开始");
-        tarKovMarketService.cacheTkfServerInfo();
+//        tarKovMarketService.cacheTkfServerInfo();
+        tarKovMarketService.cacheTkfServerStatusMsg();
         log.info("刷新塔科夫服务器状态 结束");
     }
 
     @Scheduled(cron = "0 1/8 * * * ? ")
     public void refreshBiliSubscribe() {
-        log.info("刷新塔科夫服务器状态 开始");
+        log.info("刷新哔哩订阅 开始");
         botTaskService.refreshBiliSubscribe(false);
-        log.info("刷新塔科夫服务器状态 结束");
+        log.info("刷新哔哩订阅 结束");
     }
 
 

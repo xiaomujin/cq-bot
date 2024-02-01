@@ -18,5 +18,6 @@ public class Regex {
     public static final String CALENDAR = "^日历$";
 
     public static final String DAILY = "^日报$";
+    public static final String TKF_SERVER_INFO = "^(?i)((塔科夫|tkf)?服务器(状态)?)$";
 
 }
