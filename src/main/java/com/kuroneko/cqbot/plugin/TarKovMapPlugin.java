@@ -20,6 +20,7 @@ import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -30,41 +31,41 @@ public class TarKovMapPlugin extends BotPlugin {
     private static final String CMD = CmdConst.MAP;
     private final BulletService bulletService;
 
+    private static final Map<String, String> keywordToImageMap = new HashMap<>();
+
+    static {
+        keywordToImageMap.put("储备站", "Reserve.jpg");
+        keywordToImageMap.put("灯塔", "Lighthouse.jpg");
+        keywordToImageMap.put("工厂", "Factory.jpg");
+        keywordToImageMap.put("海岸线", "Shoreline.jpg");
+        keywordToImageMap.put("海关", "Customs.jpg");
+        keywordToImageMap.put("街区", "StreetsOfTarKov.jpg");
+        keywordToImageMap.put("立交桥", "Interchange.jpg");
+        keywordToImageMap.put("森林", "Woods.jpg");
+        keywordToImageMap.put("实验室", "TheLab.jpg");
+        keywordToImageMap.put("疗养院", "ShorelineHose.jpg");
+        keywordToImageMap.put("中心区", "Center.jpg");
+    }
+
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
         if (event.getRawMessage().contains(CMD)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CMD);
-            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/";
+            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/";
 
             String rawMessage = event.getRawMessage();
-
-            if (rawMessage.contains("储备站")) {
-                imgPath += "Reserve.jpg";
-            } else if (rawMessage.contains("灯塔")) {
-                imgPath += "Lighthouse.jpg";
-            } else if (rawMessage.contains("工厂")) {
-                imgPath += "Factory.jpg";
-            } else if (rawMessage.contains("海岸线")) {
-                imgPath += "Shoreline.jpg";
-            } else if (rawMessage.contains("海关")) {
-                imgPath += "Customs.jpg";
-            } else if (rawMessage.contains("街区")) {
-                imgPath += "StreetsOfTarKov.jpg";
-            } else if (rawMessage.contains("立交桥")) {
-                imgPath += "Interchange.jpg";
-            } else if (rawMessage.contains("森林")) {
-                imgPath += "Woods.jpg";
-            } else if (rawMessage.contains("实验室")) {
-                imgPath += "TheLab.jpg";
-            } else if (rawMessage.contains("疗养院")) {
-                imgPath += "ShorelineHose.jpg";
-            } else if (rawMessage.contains("中心区")) {
-                imgPath += "Center.jpg";
-            } else {
-                return MESSAGE_IGNORE;
+            String imgName = null;
+            for (Map.Entry<String, String> entry : keywordToImageMap.entrySet()) {
+                if (rawMessage.contains(entry.getKey())) {
+                    imgName = entry.getValue();
+                    break;
+                }
             }
-
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getJpgImage?path=" + imgPath).cache(false);
+            if (imgName == null) {
+                return MESSAGE_BLOCK;
+            }
+            imgPath += imgName;
+            OneBotMedia media = OneBotMedia.builder().file(STR."http://localhost:8081/getJpgImage?path=\{imgPath}").cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
@@ -130,7 +131,7 @@ public class TarKovMapPlugin extends BotPlugin {
                 ArrayList<Object> jsonValue = CastUtils.cast(jsHandle.jsonValue());
                 new Thread(() -> bulletService.updateAllBullet(jsonValue)).start();
                 String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/" + "BulletData.png";
-                PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader","._1MLS_xjiUjam_u2qmURY4i { display: none }");
+                PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader", "._1MLS_xjiUjam_u2qmURY4i { display: none }");
             } catch (Exception e) {
                 log.error("子弹数据更新失败", e);
                 MsgUtils msg = MsgUtils.builder().text("子弹数据更新失败" + e.getMessage());
@@ -169,13 +170,13 @@ public class TarKovMapPlugin extends BotPlugin {
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
-        }else if (event.getRawMessage().startsWith("boss刷新率")) {
+        } else if (event.getRawMessage().startsWith("boss刷新率")) {
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/bossRefreshRate.png";
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
-        }else if (event.getRawMessage().startsWith("boss丢包时间")) {
+        } else if (event.getRawMessage().startsWith("boss丢包时间")) {
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/bossLossWrap.png";
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
@@ -187,7 +188,7 @@ public class TarKovMapPlugin extends BotPlugin {
             MsgUtils msg = MsgUtils.builder().img(media);
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
-        }else if (event.getRawMessage().startsWith("耳机强度")) {
+        } else if (event.getRawMessage().startsWith("耳机强度")) {
             String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/headset.png";
             OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
             MsgUtils msg = MsgUtils.builder().img(media);
