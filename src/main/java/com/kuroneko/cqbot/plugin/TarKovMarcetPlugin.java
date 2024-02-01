@@ -34,9 +34,6 @@ public class TarKovMarcetPlugin extends BotPlugin {
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
         if (event.getRawMessage().startsWith(CMD)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CMD);
-            if (checkCd(event.getUserId())) {
-                return MESSAGE_BLOCK;
-            }
             String text = getText(event.getRawMessage());
             MsgUtils msg = getMsg(text, event.getUserId());
 
@@ -69,15 +66,5 @@ public class TarKovMarcetPlugin extends BotPlugin {
             }
         });
         return msg;
-    }
-
-    private boolean checkCd(Long qq) {
-        Long time = Constant.TAR_KOV_MARKET_CD.get(qq);
-        if (time == null || System.currentTimeMillis() - time > 5000) {
-            Constant.TAR_KOV_MARKET_CD.put(qq, System.currentTimeMillis());
-            return false;
-        }
-        return true;
-
     }
 }
