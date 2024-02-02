@@ -47,12 +47,12 @@ public class CacheUtil {
         return expiringMap.get(key);
     }
 
-    public static Collection<String> getOrPut(String key, long duration, TimeUnit timeUnit, Callable<Collection<String>> callable) {
+    public static Collection<String> getOrPut(String key, long duration, TimeUnit timeUnit, Callable<?> callable) {
         Collection<String> cacheMsg = CacheUtil.get(key);
         if (cacheMsg != null) {
             return cacheMsg;
         }
-        Collection<String> call;
+        Object call;
         try {
             call = callable.call();
         } catch (Exception e) {
@@ -62,7 +62,12 @@ public class CacheUtil {
                 throw new RuntimeException(e);
             }
         }
-        CacheUtil.put(key, call, duration, timeUnit);
-        return call;
+        Collection<String> res = switch (call) {
+            case String msg -> Collections.singletonList(msg);
+            case Collection<?> msgList -> msgList.stream().map(String::valueOf).toList();
+            default -> Collections.emptyList();
+        };
+        CacheUtil.put(key, res, duration, timeUnit);
+        return res;
     }
 }
