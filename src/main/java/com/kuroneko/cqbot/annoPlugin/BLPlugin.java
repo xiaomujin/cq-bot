@@ -7,6 +7,7 @@ import com.kuroneko.cqbot.dto.AntiBiliMiniAppDTO;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
+import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.RegexUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
@@ -73,16 +74,8 @@ public class BLPlugin {
     }
 
     public String parseBidByShortURL(String url) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
-        String urlBid;
-        try {
-            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
-            urlBid = send.headers().firstValue("location").orElse("");
-        } catch (IOException | InterruptedException e) {
-            throw new BotException(e.getMessage());
-        }
-        return RegexUtil.group("BVId", urlBid, Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败" + url));
+        String redirect = HttpUtil.getRedirect(url);
+        return RegexUtil.group("BVId", redirect, Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败" + url));
     }
 
     private String buildMsg(AntiBiliMiniAppDTO.BLData data) {
@@ -93,7 +86,7 @@ public class BLPlugin {
                 .text("\n播放：" + data.getStat().getView() + " 弹幕：" + data.getStat().getDanmaku())
                 .text("\n投币：" + data.getStat().getCoin() + " 点赞：" + data.getStat().getLike())
                 .text("\n评论：" + data.getStat().getReply() + " 分享：" + data.getStat().getShare())
-                .text("\nhttps://www.bilibili.com/video/av" + data.getStat().getAid())
+                .text("\nav" + data.getStat().getAid())
                 .text("\nhttps://www.bilibili.com/video/" + data.getBvid())
                 .build();
     }
