@@ -22,7 +22,6 @@ public class HelpPlugin extends BotPlugin {
         List<String> allCmd = new ArrayList<>();
         allCmd.add(CmdConst.RI_BAO);
         allCmd.add(CmdConst.RI_LI);
-        allCmd.add(CmdConst.NEW_FANJU);
         allCmd.add(CmdConst.TODAY_FANJU);
         allCmd.add(CmdConst.SE_TU);
         allCmd.add(CmdConst.PA);
@@ -39,7 +38,6 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add(CmdConst.BILI_SUBSCRIBE);
         allCmd.add(CmdConst.BILI_SUBSCRIBE_CANCEL);
         allCmd.add(CmdConst.RECORD_SAY);
-        allCmd.add(CmdConst.TIWAN_AI);
         allCmd.add("任务流程图");
         allCmd.add("任务物品图");
         allCmd.add("信誉栏位图");
@@ -47,7 +45,6 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add("boss丢包时间");
         allCmd.add("3x4道具");
         allCmd.add("耳机强度");
-        allCmd.add(CmdConst.TIWAN_AI);
         for (int i = 1; i <= allCmd.size(); i++) {
             stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
         }

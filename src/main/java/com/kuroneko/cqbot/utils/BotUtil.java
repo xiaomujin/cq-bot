@@ -2,6 +2,7 @@ package com.kuroneko.cqbot.utils;
 
 import cn.hutool.core.util.StrUtil;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.enums.MsgTypeEnum;
@@ -86,5 +87,15 @@ public class BotUtil {
                 log.error("sleep err", e);
             }
         });
+    }
+
+    public static OneBotMedia getLocalMedia(String imgPath, boolean cache) {
+        String method;
+        if (imgPath.endsWith("png")) {
+            method = "getImage";
+        } else {
+            method = "getJpgImage";
+        }
+        return OneBotMedia.builder().file(STR."http://localhost:8081/\{method}?path=\{imgPath}").cache(cache);
     }
 }

@@ -21,11 +21,6 @@ public class CmdConst {
      */
     public static String RI_LI = "日历";
     /**
-     * 最新番剧
-     */
-    public static String NEW_FANJU = "最新番剧";
-    /**
-    /**
      * 今日番剧
      */
     public static String TODAY_FANJU = "今日番剧";

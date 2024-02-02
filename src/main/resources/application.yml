@@ -62,7 +62,6 @@ shiro:
   plugin-list:
     - com.kuroneko.cqbot.plugin.LogPlugin
     - com.kuroneko.cqbot.plugin.HelpPlugin
-    - com.kuroneko.cqbot.plugin.AgePlugin
     # - com.kuroneko.cqbot.plugin.AiPlugin
     - com.kuroneko.cqbot.plugin.BiLiPlugin
     - com.kuroneko.cqbot.plugin.OvoOaPlugin

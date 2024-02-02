@@ -19,5 +19,6 @@ public class Regex {
 
     public static final String DAILY = "^日报$";
     public static final String TKF_SERVER_INFO = "^(?i)((塔科夫|tkf)?服务器(状态)?)$";
+    public static final String BANGUMI_CALENDAR = "^(今日|每日|最新)番剧$";
 
 }
