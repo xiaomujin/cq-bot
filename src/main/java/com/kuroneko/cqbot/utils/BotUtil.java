@@ -12,12 +12,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class MsgShiroUtil {
-    private MsgShiroUtil() {
+public class BotUtil {
+    private BotUtil() {
     }
 
     public static boolean isAtMe(List<ArrayMsg> arrayMsg, long id) {
-        return MsgShiroUtil.getAtList(arrayMsg).contains(id);
+        return BotUtil.getAtList(arrayMsg).contains(id);
     }
 
     public static boolean isReplyMe(List<ArrayMsg> arrayMsg, long id) {
@@ -35,7 +35,7 @@ public class MsgShiroUtil {
     }
 
     public static String getText(List<ArrayMsg> arrayMsg) {
-        return MsgShiroUtil.getText(arrayMsg, ",").trim();
+        return BotUtil.getText(arrayMsg, ",").trim();
     }
 
     public static String getText(List<ArrayMsg> arrayMsg, String join) {

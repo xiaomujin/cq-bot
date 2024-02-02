@@ -2,17 +2,14 @@ package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.service.AiService;
-import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
-import com.mikuac.shiro.dto.action.common.ActionRaw;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-
-import java.util.List;
 
 @Slf4j
 @Component
@@ -25,9 +22,9 @@ public class AiPlugin extends BotPlugin {
 
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
-        if (MsgShiroUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
+        if (BotUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.TIWAN_AI);
-            MsgUtils msg = getMsg(event.getGroupId(), MsgShiroUtil.getText(event.getArrayMsg()));
+            MsgUtils msg = getMsg(event.getGroupId(), BotUtil.getText(event.getArrayMsg()));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         }

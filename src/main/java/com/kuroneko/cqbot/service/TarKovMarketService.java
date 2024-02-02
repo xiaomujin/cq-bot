@@ -131,6 +131,6 @@ public class TarKovMarketService {
 
     private void pushTkfServerStatus(Collection<String> msg) {
         Set<Number> list = redisUtil.members(RedisKey.TKF_INFO);
-        MsgShiroUtil.sendToGroupList(list, msg);
+        BotUtil.sendToGroupList(list, msg);
     }
 }

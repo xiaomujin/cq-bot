@@ -2,7 +2,7 @@ package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.QqUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -10,14 +10,12 @@ import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -36,8 +34,8 @@ public class OvoOaPlugin extends BotPlugin {
 
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
-        List<Long> atList = MsgShiroUtil.getAtList(event.getArrayMsg());
-        String text = MsgShiroUtil.getText(event.getArrayMsg());
+        List<Long> atList = BotUtil.getAtList(event.getArrayMsg());
+        String text = BotUtil.getText(event.getArrayMsg());
         if (text.startsWith(CmdConst.PA) && !ObjectUtils.isEmpty(atList)) {
             log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.PA);
             MsgUtils msg = getMsg(Long.toString(atList.get(0)));

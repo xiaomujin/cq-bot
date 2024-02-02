@@ -3,7 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.service.BiLiService;
-import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -50,7 +50,7 @@ public class BiLiPlugin extends BotPlugin {
         String message = event.getRawMessage();
         if (message.startsWith(CmdConst.BILI_DYNAMICS)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_DYNAMICS);
-            Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
+            Optional<String> uidOp = BotUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
             if (uidOp.isEmpty()) {
                 return MESSAGE_IGNORE;
             }

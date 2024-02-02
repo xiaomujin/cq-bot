@@ -3,7 +3,7 @@ package com.kuroneko.cqbot.plugin;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
@@ -41,7 +41,7 @@ public class ThreeHundredPlugin extends BotPlugin {
     public MsgUtils getMsg(String text) {
         String roleName = "";
         String index = "排位赛";
-        List<String> params = MsgShiroUtil.getParams(CmdConst.THREE_HUNDRED_KD, text);
+        List<String> params = BotUtil.getParams(CmdConst.THREE_HUNDRED_KD, text);
         switch (params.size()) {
             case 2, 3, 4:
                 index = params.get(1);

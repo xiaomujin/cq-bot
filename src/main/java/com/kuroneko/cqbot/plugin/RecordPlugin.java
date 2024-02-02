@@ -1,7 +1,7 @@
 package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
-import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
@@ -23,7 +23,7 @@ public class RecordPlugin extends BotPlugin {
         String rawMessage = event.getRawMessage();
         if (rawMessage.startsWith(CmdConst.RECORD_SAY)) {
             log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.RECORD_SAY);
-            Optional<String> oneParam = MsgShiroUtil.getOneParam(CmdConst.RECORD_SAY, rawMessage);
+            Optional<String> oneParam = BotUtil.getOneParam(CmdConst.RECORD_SAY, rawMessage);
             if (oneParam.isEmpty()) {
                 return MESSAGE_IGNORE;
             }

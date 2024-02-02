@@ -4,7 +4,7 @@ import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.service.BiLiService;
-import com.kuroneko.cqbot.utils.MsgShiroUtil;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.QqUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
@@ -14,13 +14,10 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
-import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -108,7 +105,7 @@ public class SubscribePlugin extends BotPlugin {
                 bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
                 return MESSAGE_BLOCK;
             }
-            Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
+            Optional<String> uidOp = BotUtil.getOneParam(CmdConst.BILI_DYNAMICS, message);
             if (uidOp.isEmpty()) return MESSAGE_IGNORE;
 
             String uid = uidOp.get();
@@ -132,7 +129,7 @@ public class SubscribePlugin extends BotPlugin {
             return MESSAGE_BLOCK;
         } else if (message.startsWith(CmdConst.BILI_SUBSCRIBE_CANCEL)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE_CANCEL);
-            Optional<String> uidOp = MsgShiroUtil.getOneParam(CmdConst.BILI_SUBSCRIBE_CANCEL, message);
+            Optional<String> uidOp = BotUtil.getOneParam(CmdConst.BILI_SUBSCRIBE_CANCEL, message);
             if (uidOp.isEmpty()) return MESSAGE_IGNORE;
             msg = MsgUtils.builder();
             String uid = uidOp.get();
