@@ -30,40 +30,32 @@ public class DailyPlugin {
 
     @AnyMessageHandler(cmd = Regex.CALENDAR)
     public void calendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
-        ExceptionHandler.with(bot, event, () -> {
-            Collection<String> cacheMsg = CacheUtil.getOrPut(Regex.CALENDAR, 20, TimeUnit.MINUTES, () -> {
-                String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
-                JSONObject moyuObject = JSON.parseObject(moyuStr);
-                boolean success = moyuObject.getBooleanValue("success", false);
-                if (!success) {
-                    throw new BotException("获取日历失败");
-                }
-                String url = moyuObject.getString("url");
-                OneBotMedia media = new OneBotMedia().file(url).cache(false);
-                String msg = MsgUtils.builder().img(media).build();
-                return Collections.singleton(msg);
-            });
-            return cacheMsg.iterator().next();
-        });
+        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.CALENDAR, 20, TimeUnit.MINUTES, () -> {
+            String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
+            JSONObject moyuObject = JSON.parseObject(moyuStr);
+            boolean success = moyuObject.getBooleanValue("success", false);
+            if (!success) {
+                throw new BotException("获取日历失败");
+            }
+            String url = moyuObject.getString("url");
+            OneBotMedia media = new OneBotMedia().file(url).cache(false);
+            return MsgUtils.builder().img(media).build();
+        }));
     }
 
     @AnyMessageHandler(cmd = Regex.DAILY)
     public void daily(Bot bot, AnyMessageEvent event, Matcher matcher) {
-        ExceptionHandler.with(bot, event, () -> {
-            Collection<String> cacheMsg = CacheUtil.getOrPut(Regex.DAILY, 30, TimeUnit.MINUTES, () -> {
-                String zaobaoStr = HttpUtil.get("https://v2.alapi.cn/api/zaobao?format=json&token=eCKR3lL7uFtt9PIm");
-                JSONObject zaobaoObject = JSON.parseObject(zaobaoStr);
-                int code = zaobaoObject.getIntValue("code", 0);
-                if (code != 200) {
-                    throw new BotException("获取日报失败");
-                }
-                String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
-                OneBotMedia media = new OneBotMedia().file(imgUrl).cache(false);
-                String msg = MsgUtils.builder().img(media).build();
-                return Collections.singleton(msg);
-            });
-            return cacheMsg.iterator().next();
-        });
+        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.DAILY, 30, TimeUnit.MINUTES, () -> {
+            String zaobaoStr = HttpUtil.get("https://v2.alapi.cn/api/zaobao?format=json&token=eCKR3lL7uFtt9PIm");
+            JSONObject zaobaoObject = JSON.parseObject(zaobaoStr);
+            int code = zaobaoObject.getIntValue("code", 0);
+            if (code != 200) {
+                throw new BotException("获取日报失败");
+            }
+            String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
+            OneBotMedia media = new OneBotMedia().file(imgUrl).cache(false);
+            return MsgUtils.builder().img(media).build();
+        }));
     }
 }
 

@@ -25,10 +25,7 @@ public class TkfServerPlugin {
 
     @AnyMessageHandler(cmd = Regex.TKF_SERVER_INFO)
     public void tkfServerInfo(Bot bot, AnyMessageEvent event, Matcher matcher) {
-        ExceptionHandler.with(bot, event, () -> {
-            Collection<String> cacheMsg = CacheUtil.getOrPut(Regex.TKF_SERVER_INFO, 20, TimeUnit.MINUTES, tarKovMarketService::getTkfServerStatusMsg);
-            return cacheMsg.iterator().next();
-        });
+        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.TKF_SERVER_INFO, 20, TimeUnit.MINUTES, tarKovMarketService::getTkfServerStatusMsg));
     }
 }
 

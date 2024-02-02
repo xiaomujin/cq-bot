@@ -67,7 +67,7 @@ public class TarKovMarketService {
         return JsonUtil.toList(json, TarKovMarketVo.class);
     }
 
-    public Set<String> getTkfServerStatusMsg() {
+    public String getTkfServerStatusMsg() {
         String respServices = HttpUtil.get("https://status.escapefromtarkov.com/api/services");
         JSONArray jsonArray = JSON.parseArray(respServices);
         StringBuilder sb = new StringBuilder();
@@ -100,8 +100,7 @@ public class TarKovMarketService {
         if (!ObjectUtils.isEmpty(message)) {
             sb.append(STR."信息：\{message}");
         }
-        String build = MsgUtils.builder().text(sb.toString()).build();
-        return Collections.singleton(build);
+        return MsgUtils.builder().text(sb.toString()).build();
     }
 
     private String getCNStatus(int status) {
@@ -116,20 +115,20 @@ public class TarKovMarketService {
 
     public void cacheTkfServerStatusMsg() {
         Collection<String> msg = CacheUtil.get(Regex.TKF_SERVER_INFO);
-        Set<String> tkfServerStatusMsg = getTkfServerStatusMsg();
+        String tkfServerStatusMsg = getTkfServerStatusMsg();
         CacheUtil.put(Regex.TKF_SERVER_INFO, tkfServerStatusMsg, 20, TimeUnit.MINUTES);
         //推送
         if (msg == null) {
             return;
         }
         String old = msg.iterator().next().substring(20);
-        String now = tkfServerStatusMsg.iterator().next().substring(20);
+        String now = tkfServerStatusMsg.substring(20);
         if (!old.equals(now)) {
             pushTkfServerStatus(tkfServerStatusMsg);
         }
     }
 
-    private void pushTkfServerStatus(Collection<String> msg) {
+    private void pushTkfServerStatus(String msg) {
         Set<Number> list = redisUtil.members(RedisKey.TKF_INFO);
         BotUtil.sendToGroupList(list, msg);
     }
