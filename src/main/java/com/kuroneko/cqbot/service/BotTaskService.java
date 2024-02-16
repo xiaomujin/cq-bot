@@ -88,7 +88,7 @@ public class BotTaskService {
             String mapName = td.get(2).text();
             String time = td.get(3).text();
 
-            SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy H:mm:ss");
+            SimpleDateFormat df = new SimpleDateFormat("M/dd/yyyy H:mm:ss");
             df.setTimeZone(TimeZone.getTimeZone("EST"));
             Date after = df.parse(time);
             df.applyPattern("yyyy-MM-dd HH:mm:ss");
