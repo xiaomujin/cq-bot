@@ -85,8 +85,8 @@ public class BotTaskService {
             Document document;
             document = Jsoup.connect("https://t0t.co/proxy/docs.google.com/spreadsheets/d/e/2PACX-1vR-wIQI351UH85ILq5KiCLMMrl0uHRmjDinBCt6nXGg5exeuCxQUf8DTLJkwn7Ckr8-HmLyEIoapBE5/pubhtml/sheet?headers=false&gid=1420050773").get();
             Elements td = document.getElementsByTag("td");
-            String mapName = td.get(2).text();
-            String time = td.get(3).text();
+            String time = td.get(2).text();
+            String mapName = td.get(3).text();
 
             SimpleDateFormat df = new SimpleDateFormat("M/dd/yyyy H:mm:ss");
             df.setTimeZone(TimeZone.getTimeZone("EST"));
