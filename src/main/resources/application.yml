@@ -72,7 +72,6 @@ shiro:
     - com.kuroneko.cqbot.plugin.SeTuPlugin
     - com.kuroneko.cqbot.plugin.SubscribePlugin
     - com.kuroneko.cqbot.plugin.TarKovMapPlugin
-    - com.kuroneko.cqbot.plugin.TarKovMarketPlugin
     - com.kuroneko.cqbot.plugin.ZeroMagnetPlugin
     - com.kuroneko.cqbot.plugin.ThreeHundredPlugin
     - com.kuroneko.cqbot.plugin.AddSetuSystemPlugin

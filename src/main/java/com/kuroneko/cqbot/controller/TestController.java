@@ -22,6 +22,7 @@ import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.mikuac.shiro.common.utils.CommonUtils;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
+import com.mikuac.shiro.common.utils.RegexUtils;
 import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.ObjectUtils;
@@ -41,6 +42,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 
 @RestController
 @RequiredArgsConstructor
@@ -166,8 +168,15 @@ public class TestController {
 //        String redirect = HttpUtil.getRedirect("https://www.bilibili.com/opus/887167886324400164");
 //        System.out.println(System.currentTimeMillis() - l);
 //        List<TarKovMarketVo> btc = tarKovMarketService.search("btc");
-
-        return "redirect";
+        return """
+                你想查什么呢？
+                发送：跳蚤+(需要查询的物品关键字名称 多个关键字用空格分开)
+                如下：
+                跳蚤 显卡
+                跳蚤 btc
+                """ + "\n123\n";
+//        Optional<Matcher> match = RegexUtils.matcher(Regex.TKF_MARKET_SEARCH, "跳蚤123");
+//        return match.map(matcher -> matcher.group("text").trim()).orElse("null");
     }
 
 
