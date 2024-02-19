@@ -36,12 +36,7 @@ public class TarKovMarketService {
     private final RedisUtil redisUtil;
 
     public List<TarKovMarketVo> search(String text) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.COOKIE, "cf_clearance=CVzPv4LT32X5WSW0QGJQXrdYI.rT.lo5y4rgxJ1Xi1U-1679205658-0-160; __cf_bm=kjMixk_YXW3S_0NXmwKAwi3lcQ0U_TLOFksVyKb1X6o-1679205665-0-AU8HOoHP/GzAjyCTvPIo8I+x8wAyUrrD8P5CYU4bp7HfQIiBK8Lp8yl+yv4rmp6XmkOcK3riU9NiOK8y2Qhh6wMDfbug2zgwo7k26xbv2uVd8liw4/TqQloFlaCuob+jg7PnMjiVWym1DO16vJWTEk3cKas8M7b34qQvljnHWiJk; tm_locale=cn; HCLBSTICKY=9002f577e4f8d278d30e4c50321e2c20|ZBalV|ZBalH");
-        headers.add("referer", "https://tarkov-market.com/");
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36");
-        HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);
+        HttpEntity<String> httpEntity = buildHttpEntity();
         ResponseEntity<TarKovRVo> entity = restTemplate.exchange(
                 Constant.TAR_KOV_MARKET_URL,
                 HttpMethod.GET,
@@ -67,6 +62,15 @@ public class TarKovMarketService {
         return JsonUtil.toList(json, TarKovMarketVo.class);
     }
 
+    private static HttpEntity<String> buildHttpEntity() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, "cf_clearance=CVzPv4LT32X5WSW0QGJQXrdYI.rT.lo5y4rgxJ1Xi1U-1679205658-0-160; __cf_bm=kjMixk_YXW3S_0NXmwKAwi3lcQ0U_TLOFksVyKb1X6o-1679205665-0-AU8HOoHP/GzAjyCTvPIo8I+x8wAyUrrD8P5CYU4bp7HfQIiBK8Lp8yl+yv4rmp6XmkOcK3riU9NiOK8y2Qhh6wMDfbug2zgwo7k26xbv2uVd8liw4/TqQloFlaCuob+jg7PnMjiVWym1DO16vJWTEk3cKas8M7b34qQvljnHWiJk; tm_locale=cn; HCLBSTICKY=9002f577e4f8d278d30e4c50321e2c20|ZBalV|ZBalH");
+        headers.add("referer", "https://tarkov-market.com/");
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36");
+        return new HttpEntity<>(null, headers);
+    }
+
     public String getTkfServerStatusMsg() {
         String respServices = HttpUtil.get("https://status.escapefromtarkov.com/api/services");
         JSONArray jsonArray = JSON.parseArray(respServices);
@@ -83,7 +87,7 @@ public class TarKovMarketService {
                 case "Website" -> sb.append("游戏官网：");
                 case "Forum" -> sb.append("官方论坛：");
                 case "Authentication" -> sb.append("身份认证：");
-                case "Launcher" -> sb.append("   启动器：");
+                case "Launcher" -> sb.append("    启动器：");
                 case "Group lobby" -> sb.append("组队功能：");
                 case "Trading" -> sb.append("交易功能：");
                 case "Matchmaking" -> sb.append("战局匹配：");
