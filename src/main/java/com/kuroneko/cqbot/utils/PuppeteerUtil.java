@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +38,7 @@ public class PuppeteerUtil {
 
     private static final int restartNum = 500;
     private static final String savePath = "/opt";
-    private static final String VERSION = "1132420";
+    private static final String VERSION = "1270719";
 
     public static Browser getBrowser() {
         if (browser == null || !browser.isConnected()) {
@@ -60,19 +61,21 @@ public class PuppeteerUtil {
             long start = System.currentTimeMillis();
             List<String> list = List.of(
                     "--disable-gpu",
-                    "--disable-dev-shm-usage",
-                    "--disable-setuid-sandbox",
+//                    "--disable-dev-shm-usage",
+//                    "--disable-setuid-sandbox",
                     "--no-first-run",
                     "--no-sandbox",
-                    "--single-process",
+//                    "--single-process"
                     "--disable-blink-features=AutomationControlled",
-                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-                    "--no-zygote"
+                    "--disable-extensions"
+//                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+//                    "--no-zygote"
             );
-            LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(true).build();
+            LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(false).build();
             FetcherOptions fetcherOptions = new FetcherOptions();
             //chrome 保存路径
             fetcherOptions.setPath(savePath);
+            fetcherOptions.setHost("https://npmmirror.com/mirrors");
             BrowserFetcher browserFetcher = new BrowserFetcher(savePath, fetcherOptions);
             //下载指定版本 原方法zip解压有问题
 //            browserFetcher.download(VERSION);
