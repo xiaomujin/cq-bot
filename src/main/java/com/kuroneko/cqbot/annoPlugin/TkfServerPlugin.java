@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.annoPlugin;
 
+import cn.hutool.core.util.StrUtil;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.service.HelpService;
@@ -46,7 +47,11 @@ public class TkfServerPlugin {
                     return msg.text("没有找到 ").text(text).build();
                 }
                 search.forEach(it -> {
-                    msg.img(it.getWikiIcon());
+                    if (StrUtil.isNotBlank(it.getWikiIcon())) {
+                        msg.img(it.getWikiIcon());
+                    } else if (StrUtil.isNotBlank(it.getWikiImg())) {
+                        msg.img(it.getWikiImg());
+                    }
                     msg.text("\n名称：").text(STR."\{it.getCnName()}\n");
                     msg.text("波动 24h：").text(STR."\{it.getChange24()}%").text("  7d：").text(STR."\{it.getChange7d()}%\n");
                     msg.text("基础价格：").text(STR."\{it.getBasePrice()}₽\n");

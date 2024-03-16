@@ -25,7 +25,7 @@ public class TarKovMarketVo {
 //    private String wikiName;
 //    private String wikiUrl;
     private String wikiIcon;
-//    private String wikiImg;
+    private String wikiImg;
     private Instant priceUpdated;
     private String shortName;
     private String traderName;
