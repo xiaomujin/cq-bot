@@ -9,6 +9,7 @@ import com.kuroneko.cqbot.service.BulletService;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
+import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
@@ -32,7 +33,8 @@ import java.util.regex.Matcher;
 public class BulletPlugin {
     private final BulletService bulletService;
 
-    @AnyMessageHandler(cmd = Regex.SEARCH_BULLET)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.SEARCH_BULLET)
     public void handler(Bot bot, AnyMessageEvent event, Matcher matcher) {
         String name = matcher.group("name").trim();
         String sName = name.replace(" ", "%").replace("-", "%").replace("*", "x");
@@ -48,7 +50,8 @@ public class BulletPlugin {
         bot.sendMsg(event, msg.build(), false);
     }
 
-    @AnyMessageHandler(cmd = Regex.TKF_TIME)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.TKF_TIME)
     public void tkvTime(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ZoneId zoneId = ZoneId.of("Europe/Moscow");
         LocalDateTime dateTime = LocalDateTimeUtil.of(Instant.now().toEpochMilli() * 7, zoneId);
@@ -63,7 +66,8 @@ public class BulletPlugin {
     }
 
 
-    @AnyMessageHandler(cmd = Regex.LIFE_RESTART)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.LIFE_RESTART)
     public void life(Bot bot, AnyMessageEvent event, Matcher matcher) {
         String imgPath = STR."\{Constant.BASE_IMG_PATH}life/\{event.getGroupId()}_\{event.getSender().getUserId()}.png";
         Page newPage = PuppeteerUtil.getNewPage(STR."http://127.0.0.1:8081/Life/\{event.getSender().getNickname()}", 500, 800);

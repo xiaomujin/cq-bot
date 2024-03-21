@@ -7,6 +7,7 @@ import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BaVo;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
+import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
@@ -43,7 +44,8 @@ public class BaPlugin {
             .expiration(5L, TimeUnit.MINUTES)
             .build();
 
-    @AnyMessageHandler(cmd = Regex.BA_TOTAL_BATTLE)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.BA_TOTAL_BATTLE)
     public void ba(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
             Collection<String> arrayList = expiringMap.get(Regex.BA_TOTAL_BATTLE);
@@ -62,7 +64,8 @@ public class BaPlugin {
         });
     }
 
-    @AnyMessageHandler(cmd = Regex.BA_CALENDAR)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.BA_CALENDAR)
     public void baCalendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
             Collection<String> arrayList = expiringMap.get(Regex.BA_CALENDAR);
@@ -82,7 +85,8 @@ public class BaPlugin {
     }
 
 
-    @AnyMessageHandler(cmd = Regex.BA_IMAGE_BATTLE)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.BA_IMAGE_BATTLE)
     public void image(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
             String text = matcher.group("text").trim();

@@ -8,6 +8,7 @@ import com.kuroneko.cqbot.service.TarKovMarketService;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
+import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
@@ -28,12 +29,14 @@ public class TkfServerPlugin {
     private final TarKovMarketService tarKovMarketService;
     private final HelpService helpService;
 
-    @AnyMessageHandler(cmd = Regex.TKF_SERVER_INFO)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.TKF_SERVER_INFO)
     public void tkfServerInfo(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.TKF_SERVER_INFO, 20, TimeUnit.MINUTES, tarKovMarketService::getTkfServerStatusMsg));
     }
 
-    @AnyMessageHandler(cmd = Regex.TKF_MARKET_SEARCH)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.TKF_MARKET_SEARCH)
     public void tkfMarketSearch(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
             String text = matcher.group("text").trim();

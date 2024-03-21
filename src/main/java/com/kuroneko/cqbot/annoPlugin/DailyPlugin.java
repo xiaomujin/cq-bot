@@ -8,6 +8,7 @@ import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
+import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
@@ -28,7 +29,8 @@ import java.util.regex.Matcher;
 @RequiredArgsConstructor
 public class DailyPlugin {
 
-    @AnyMessageHandler(cmd = Regex.CALENDAR)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.CALENDAR)
     public void calendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.CALENDAR, 20, TimeUnit.MINUTES, () -> {
             String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
@@ -43,7 +45,8 @@ public class DailyPlugin {
         }));
     }
 
-    @AnyMessageHandler(cmd = Regex.DAILY)
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.DAILY)
     public void daily(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.DAILY, 30, TimeUnit.MINUTES, () -> {
             String zaobaoStr = HttpUtil.get("https://v2.alapi.cn/api/zaobao?format=json&token=eCKR3lL7uFtt9PIm");

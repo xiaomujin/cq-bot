@@ -168,6 +168,7 @@ public class TestController {
 //        String redirect = HttpUtil.getRedirect("https://www.bilibili.com/opus/887167886324400164");
 //        System.out.println(System.currentTimeMillis() - l);
 //        List<TarKovMarketVo> btc = tarKovMarketService.search("btc");
+        PuppeteerUtil.getBrowser();
         return """
                 你想查什么呢？
                 发送：跳蚤+(需要查询的物品关键字名称 多个关键字用空格分开)
