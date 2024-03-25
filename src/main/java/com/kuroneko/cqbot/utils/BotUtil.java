@@ -6,15 +6,21 @@ import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.enums.MsgTypeEnum;
+import com.mikuac.shiro.handler.ActionHandler;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Component
 public class BotUtil {
-    private BotUtil() {
+    public static ActionHandler actionHandler;
+
+    private BotUtil(ActionHandler actionHandler) {
+        BotUtil.actionHandler = actionHandler;
     }
 
     public static boolean isAtMe(List<ArrayMsg> arrayMsg, long id) {
