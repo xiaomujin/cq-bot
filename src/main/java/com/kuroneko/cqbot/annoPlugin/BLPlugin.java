@@ -75,7 +75,7 @@ public class BLPlugin {
 
     public String parseBidByShortURL(String url) {
         String redirect = HttpUtil.getRedirect(url);
-        return RegexUtil.group("BVId", redirect, Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败" + url));
+        return RegexUtil.group("BVId", redirect, Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败1"));
     }
 
     private String buildMsg(AntiBiliMiniAppDTO.BLData data) {
@@ -104,11 +104,11 @@ public class BLPlugin {
     }
 
     private void handleURL(Bot bot, AnyMessageEvent event, Long id) {
-        handleRequest(bot, event, id, RegexUtil.group("BVId", event.getMessage(), Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败" + event.getMessage())));
+        handleRequest(bot, event, id, RegexUtil.group("BVId", event.getMessage(), Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败2")));
     }
 
     private void handleShortURL(Bot bot, AnyMessageEvent event, Long id) {
-        String sUrl = RegexUtil.group("sUrl", event.getMessage(), Regex.BILIBILI_SHORT_URL).orElseThrow(() -> new BotException("解析失败"));
+        String sUrl = RegexUtil.group("sUrl", event.getMessage(), Regex.BILIBILI_SHORT_URL).orElseThrow(() -> new BotException("解析失败3"));
         handleRequest(bot, event, id, parseBidByShortURL("https://" + sUrl));
     }
 
