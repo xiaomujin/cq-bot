@@ -60,7 +60,7 @@ public class BangumiPlugin {
     }
 
     @AnyMessageHandler()
-    @MessageHandlerFilter(cmd = "(\\[CQ:at,.*?\\]\\s*)?md")
+    @MessageHandlerFilter(cmd = "(\\[CQ:at,.*?\\]\\s*)?md2")
     public void md(Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), "md");
         JSONObject content = new JSONObject();
@@ -217,9 +217,10 @@ public class BangumiPlugin {
         if (ActionParams.PRIVATE.equals(event.getMessageType())) {
             params.put(ActionParams.USER_ID, event.getUserId());
         }
-        JSONObject result = BotUtil.actionHandler.action(bot.getSession(), ActionPathEnum.SEND_FORWARD_MSG, params);
-        return result != null ? result.to(new TypeReference<ActionData<String>>() {
-        }.getType()) : null;
+//        JSONObject result = BotUtil.actionHandler.action(bot.getSession(), ActionPathEnum.SEND_FORWARD_MSG, params);
+//        return result != null ? result.to(new TypeReference<ActionData<String>>() {
+//        }.getType()) : null;
+        return null;
     }
 }
 

@@ -24,17 +24,7 @@ public class BotUtil {
     }
 
     public static boolean isAtMe(List<ArrayMsg> arrayMsg, long id) {
-        return BotUtil.getAtList(arrayMsg).contains(id);
-    }
-
-    public static boolean isReplyMe(List<ArrayMsg> arrayMsg, long id) {
-        return MsgTypeEnum.reply.equals(arrayMsg.get(0).getType())
-                && MsgTypeEnum.at.equals(arrayMsg.get(1).getType())
-                && Long.parseLong((String) arrayMsg.get(1).getData().get("qq")) == id;
-    }
-
-    public static int getReplyId(List<ArrayMsg> arrayMsg) {
-        return Integer.parseInt(arrayMsg.get(0).getData().get("id"));
+        return getAtList(arrayMsg).contains(id);
     }
 
     public static List<Long> getAtList(List<ArrayMsg> arrayMsg) {
@@ -42,14 +32,14 @@ public class BotUtil {
     }
 
     public static String getText(List<ArrayMsg> arrayMsg) {
-        return BotUtil.getText(arrayMsg, ",").trim();
+        return BotUtil.getText(arrayMsg, ",");
     }
 
     public static String getText(List<ArrayMsg> arrayMsg, String join) {
         return arrayMsg.stream()
                 .filter(it -> MsgTypeEnum.text == it.getType())
                 .map(it -> it.getData().get("text"))
-                .collect(Collectors.joining(join));
+                .collect(Collectors.joining(join)).trim();
     }
 
     public static Optional<String> getOneParam(String cmd, String msg) {
@@ -57,7 +47,7 @@ public class BotUtil {
         if (params.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(params.get(0));
+        return Optional.of(params.getFirst());
     }
 
     public static List<String> getParams(String cmd, String msg, int paramNum) {
@@ -85,7 +75,7 @@ public class BotUtil {
 
     public static void sendToGroupList(Collection<Number> groupList, Collection<String> msgList) {
         BotContainer botContainer = ApplicationContextHandler.getBean(BotContainer.class);
-        botContainer.robots.forEach((_, bot) -> {
+        botContainer.robots.forEach((qq, bot) -> {
             groupList.forEach(group -> msgList.forEach(msg -> bot.sendGroupMsg(group.longValue(), msg, false)));
             try {
                 Thread.sleep(2600);

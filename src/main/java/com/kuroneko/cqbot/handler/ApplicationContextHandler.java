@@ -1,7 +1,6 @@
 package com.kuroneko.cqbot.handler;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
@@ -76,7 +75,7 @@ public class ApplicationContextHandler implements ApplicationContextAware, Dispo
      * 实现DisposableBean接口, 在Context关闭时清理静态变量.
      */
     @Override
-    @SneakyThrows
+//    @SneakyThrows
     public void destroy() {
         ApplicationContextHandler.clearHolder();
     }

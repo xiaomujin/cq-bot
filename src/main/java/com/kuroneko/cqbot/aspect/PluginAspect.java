@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class PluginAspect {
 
     @Pointcut("execution(* com.mikuac.shiro.handler.EventHandler.handler(..))")

@@ -28,18 +28,14 @@ public class OvoOaPlugin extends BotPlugin {
 
     private final QqUtil qqUtil;
 
-    private MsgUtils getMsg(String qq) {
-        return MsgUtils.builder().img(Constant.OVO_OA_PA_URL + qq);
-    }
-
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
         List<Long> atList = BotUtil.getAtList(event.getArrayMsg());
         String text = BotUtil.getText(event.getArrayMsg());
         if (text.startsWith(CmdConst.PA) && !ObjectUtils.isEmpty(atList)) {
             log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.PA);
-            MsgUtils msg = getMsg(Long.toString(atList.get(0)));
-            bot.sendMsg(event, msg.build(), false);
+//            MsgUtils msg = getMsg(Long.toString(atList.get(0)));
+//            bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TUI)) {
 
