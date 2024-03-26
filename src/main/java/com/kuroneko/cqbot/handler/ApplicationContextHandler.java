@@ -54,7 +54,7 @@ public class ApplicationContextHandler implements ApplicationContextAware, Dispo
      */
     public static void clearHolder() {
         if (log.isDebugEnabled()) {
-            log.debug("清除ApplicationContextHandler中的ApplicationContext:" + applicationContext);
+            log.debug(STR."清除ApplicationContextHandler中的ApplicationContext:\{applicationContext.toString()}");
         }
         applicationContext = null;
     }
@@ -75,7 +75,6 @@ public class ApplicationContextHandler implements ApplicationContextAware, Dispo
      * 实现DisposableBean接口, 在Context关闭时清理静态变量.
      */
     @Override
-//    @SneakyThrows
     public void destroy() {
         ApplicationContextHandler.clearHolder();
     }

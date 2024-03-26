@@ -1,7 +1,5 @@
 package com.kuroneko.cqbot.constant;
 
-//import lombok.SneakyThrows;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,14 +81,13 @@ public class CmdConst {
     public static String DEL_SE_TU_ADMIN = "删除管理员";
 
 
-//    @SneakyThrows
     public static List<String> getAllCmd() {
         ArrayList<String> cmd = new ArrayList<>();
         for (Field field : CmdConst.class.getFields()) {
             try {
                 cmd.add((String) field.get(null));
             } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+
             }
         }
         return cmd;

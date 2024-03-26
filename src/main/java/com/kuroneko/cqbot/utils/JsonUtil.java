@@ -1,21 +1,23 @@
 package com.kuroneko.cqbot.utils;
 
-import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Component
 public class JsonUtil {
-    public final static ObjectMapper objectMapper = ApplicationContextHandler.getBean(ObjectMapper.class);
+    public static ObjectMapper objectMapper;
 
-    private JsonUtil() {
+    private JsonUtil(ObjectMapper objectMapper) {
+        JsonUtil.objectMapper = objectMapper;
     }
 
     /**
