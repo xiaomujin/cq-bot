@@ -67,12 +67,12 @@
                         <div data-v-b10835a6="" class="grade" th:each="lastRank,iterStat : ${lastRankBodyData}">
                             <div data-v-b10835a6="" th:switch="${iterStat.index}">
                                 <div th:case="0" data-v-b10835a6="" class="title"
-                                     style="background-color: rgb(252, 222, 253);">
-                                    Extreme
+                                     style="background-color: rgb(214,210,251);">
+                                    Insane
                                 </div>
                                 <div th:case="1" data-v-b10835a6="" class="title"
-                                     style="background-color: rgb(254, 210, 225);">
-                                    HardCore
+                                     style="background-color: rgb(252, 222, 253);">
+                                    Extreme
                                 </div>
                                 <div th:case="2" data-v-b10835a6="" class="title"
                                      style="background-color: rgb(253, 255, 210);">
@@ -164,6 +164,11 @@
                                                                 <td class="el-table_1_column_3 is-center el-table__cell"
                                                                     rowspan="1" colspan="1" th:switch="${record.hard}">
                                                                     <div class="cell">
+                                                                        <div th:case="INS" data-v-b10835a6=""
+                                                                             class="table-title"
+                                                                             style="background-color: rgb(214, 210, 251);">
+                                                                            INS
+                                                                        </div>
                                                                         <div th:case="EX" data-v-b10835a6=""
                                                                              class="table-title"
                                                                              style="background-color: rgb(252, 222, 253);">
