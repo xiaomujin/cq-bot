@@ -16,8 +16,8 @@ Shiro 以 [OneBot-v11](https://github.com/howmanybots/onebot/tree/master/v11/spe
 | [OpenShamrock](https://github.com/whitechi73/OpenShamrock)  | 基于 Xposed 实现 OneBot 标准的机器人框架          |          |
 
 # Credits
-* [Shiro](https://github.com/MisakaTAT/Shiro)
+* [Shiro](https://github.com/MisakaTAT/Shiro)  
 
 # Thanks
-[JetBrains](https://www.jetbrains.com/?from=cq-bot) offers free licenses to support open source projects.
+[JetBrains](https://www.jetbrains.com/?from=cq-bot) offers free licenses to support open source projects.  
 [<img src="https://mikuac.com/images/jetbrains-variant-3.png" width="200"/>](https://www.jetbrains.com/?from=cq-bot)
