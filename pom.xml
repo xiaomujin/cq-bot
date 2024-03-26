@@ -15,7 +15,7 @@
     <description>cq-bot</description>
     <properties>
         <java.version>21</java.version>
-        <shiro.version>2.1.8</shiro.version>
+        <shiro.version>2.2.0</shiro.version>
         <hutool.version>5.8.26</hutool.version>
         <zip4j.version>2.11.5</zip4j.version>
         <jvppeteer.version>1.1.6</jvppeteer.version>
@@ -23,6 +23,7 @@
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <druid.version>1.2.22</druid.version>
         <expiringmap.version>0.5.11</expiringmap.version>
+        <fastjson2.version>2.0.47</fastjson2.version>
     </properties>
     <dependencies>
         <dependency>
@@ -80,18 +81,12 @@
             <groupId>com.mikuac</groupId>
             <artifactId>shiro</artifactId>
             <version>${shiro.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba.fastjson2</groupId>
-                    <artifactId>fastjson2</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2-extension-spring6 -->
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2-extension-spring6</artifactId>
-            <version>2.0.47</version>
+            <version>${fastjson2.version}</version>
         </dependency>
 
 
@@ -149,11 +144,11 @@
 
 
         <!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-devtools</artifactId>-->
-<!--            <scope>runtime</scope>-->
-<!--            <optional>true</optional>-->
-<!--        </dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-devtools</artifactId>-->
+        <!--            <scope>runtime</scope>-->
+        <!--            <optional>true</optional>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -197,49 +192,49 @@
         </plugins>
     </build>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>spring-milestones</id>-->
-<!--            <name>Spring Milestones</name>-->
-<!--            <url>https://repo.spring.io/milestone</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>spring-snapshots</id>-->
-<!--            <name>Spring Snapshots</name>-->
-<!--            <url>https://repo.spring.io/snapshot</url>-->
-<!--            <releases>-->
-<!--                <enabled>false</enabled>-->
-<!--            </releases>-->
-<!--        </repository>-->
-<!--        <repository>-->
-<!--            <id>maven-milestones</id>-->
-<!--            <name>maven Milestones</name>-->
-<!--            <url>https://repo1.maven.org/maven2</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
-<!--    </repositories>-->
-<!--    <pluginRepositories>-->
-<!--        <pluginRepository>-->
-<!--            <id>spring-milestones</id>-->
-<!--            <name>Spring Milestones</name>-->
-<!--            <url>https://repo.spring.io/milestone</url>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </pluginRepository>-->
-<!--        <pluginRepository>-->
-<!--            <id>spring-snapshots</id>-->
-<!--            <name>Spring Snapshots</name>-->
-<!--            <url>https://repo.spring.io/snapshot</url>-->
-<!--            <releases>-->
-<!--                <enabled>false</enabled>-->
-<!--            </releases>-->
-<!--        </pluginRepository>-->
-<!--    </pluginRepositories>-->
+    <!--    <repositories>-->
+    <!--        <repository>-->
+    <!--            <id>spring-milestones</id>-->
+    <!--            <name>Spring Milestones</name>-->
+    <!--            <url>https://repo.spring.io/milestone</url>-->
+    <!--            <snapshots>-->
+    <!--                <enabled>false</enabled>-->
+    <!--            </snapshots>-->
+    <!--        </repository>-->
+    <!--        <repository>-->
+    <!--            <id>spring-snapshots</id>-->
+    <!--            <name>Spring Snapshots</name>-->
+    <!--            <url>https://repo.spring.io/snapshot</url>-->
+    <!--            <releases>-->
+    <!--                <enabled>false</enabled>-->
+    <!--            </releases>-->
+    <!--        </repository>-->
+    <!--        <repository>-->
+    <!--            <id>maven-milestones</id>-->
+    <!--            <name>maven Milestones</name>-->
+    <!--            <url>https://repo1.maven.org/maven2</url>-->
+    <!--            <snapshots>-->
+    <!--                <enabled>false</enabled>-->
+    <!--            </snapshots>-->
+    <!--        </repository>-->
+    <!--    </repositories>-->
+    <!--    <pluginRepositories>-->
+    <!--        <pluginRepository>-->
+    <!--            <id>spring-milestones</id>-->
+    <!--            <name>Spring Milestones</name>-->
+    <!--            <url>https://repo.spring.io/milestone</url>-->
+    <!--            <snapshots>-->
+    <!--                <enabled>false</enabled>-->
+    <!--            </snapshots>-->
+    <!--        </pluginRepository>-->
+    <!--        <pluginRepository>-->
+    <!--            <id>spring-snapshots</id>-->
+    <!--            <name>Spring Snapshots</name>-->
+    <!--            <url>https://repo.spring.io/snapshot</url>-->
+    <!--            <releases>-->
+    <!--                <enabled>false</enabled>-->
+    <!--            </releases>-->
+    <!--        </pluginRepository>-->
+    <!--    </pluginRepositories>-->
 
 </project>
