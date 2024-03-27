@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.utils;
 
 import cn.hutool.core.util.StrUtil;
+import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.common.utils.ShiroUtils;
@@ -32,7 +33,7 @@ public class BotUtil {
     }
 
     public static String getText(List<ArrayMsg> arrayMsg) {
-        return BotUtil.getText(arrayMsg, ",");
+        return getText(arrayMsg, ",");
     }
 
     public static String getText(List<ArrayMsg> arrayMsg, String join) {
@@ -76,13 +77,22 @@ public class BotUtil {
     public static void sendToGroupList(Collection<Number> groupList, Collection<String> msgList) {
         BotContainer botContainer = ApplicationContextHandler.getBean(BotContainer.class);
         botContainer.robots.forEach((qq, bot) -> {
-            groupList.forEach(group -> msgList.forEach(msg -> bot.sendGroupMsg(group.longValue(), msg, false)));
-            try {
-                Thread.sleep(2600);
-            } catch (InterruptedException e) {
-                log.error("sleep err", e);
-            }
+            groupList.forEach(group -> {
+                msgList.forEach(msg -> {
+                    bot.sendGroupMsg(group.longValue(), msg, false);
+                    sleep(600);
+                });
+                sleep(1500);
+            });
         });
+    }
+
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            log.error("sleep err", e);
+        }
     }
 
     public static OneBotMedia getLocalMedia(String imgPath, boolean cache) {
@@ -92,6 +102,10 @@ public class BotUtil {
         } else {
             method = "getJpgImage";
         }
-        return OneBotMedia.builder().file(STR."http://localhost:8081/\{method}?path=\{imgPath}").cache(cache);
+        return OneBotMedia.builder().file(STR."\{ProjectConfig.url}\{method}?path=\{imgPath}").cache(cache);
+    }
+
+    public static OneBotMedia getLocalMedia(String imgPath) {
+        return getLocalMedia(imgPath, false);
     }
 }
