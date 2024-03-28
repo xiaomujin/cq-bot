@@ -45,17 +45,17 @@ public class PuppeteerUtil {
             long start = System.currentTimeMillis();
             List<String> list = List.of(
                     "--disable-gpu",
-//                    "--disable-dev-shm-usage",
-//                    "--disable-setuid-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-setuid-sandbox",
                     "--no-first-run",
                     "--no-sandbox",
-//                    "--single-process"
+                    "--single-process",
                     "--disable-blink-features=AutomationControlled",
-                    "--disable-extensions"
-//                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
-//                    "--no-zygote"
+                    "--disable-extensions",
+                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+                    "--no-zygote"
             );
-            LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(true).build();
+            LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(false).build();
 //            FetcherOptions fetcherOptions = new FetcherOptions();
             //chrome 保存路径
 //            fetcherOptions.setPath(savePath);
