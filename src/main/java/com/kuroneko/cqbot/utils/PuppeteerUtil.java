@@ -55,7 +55,7 @@ public class PuppeteerUtil {
                     "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                     "--no-zygote"
             );
-            LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(false).build();
+            LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(true).build();
 //            FetcherOptions fetcherOptions = new FetcherOptions();
             //chrome 保存路径
 //            fetcherOptions.setPath(savePath);
