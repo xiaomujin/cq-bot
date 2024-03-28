@@ -154,7 +154,7 @@ public class BotUtil {
         }
         List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
         ActionData<String> actionData = sendForwardMsg(bot, maps);
-        if (StrUtil.isEmpty(actionData.getData())) {
+        if (actionData == null || StrUtil.isEmpty(actionData.getData())) {
             return null;
         }
         return bot.sendMsg(event, STR."[CQ:longmsg,id=\{actionData.getData()}]", false);
