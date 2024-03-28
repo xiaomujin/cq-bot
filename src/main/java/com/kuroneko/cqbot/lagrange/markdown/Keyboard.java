@@ -20,6 +20,13 @@ public class Keyboard {
         return new Keyboard();
     }
 
+    /**
+     * 添加按钮
+     *
+     * @param text 按钮文本
+     * @param data 按钮数据
+     * @return Keyboard
+     */
     public Keyboard addButton(String text, String data) {
         Button button = new Button();
         button.getRenderData().setLabel(text);

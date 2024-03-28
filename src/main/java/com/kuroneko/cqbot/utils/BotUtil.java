@@ -1,11 +1,21 @@
 package com.kuroneko.cqbot.utils;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
+import com.kuroneko.cqbot.lagrange.markdown.Keyboard;
+import com.kuroneko.cqbot.lagrange.markdown.Markdown;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.common.utils.ShiroUtils;
+import com.mikuac.shiro.constant.ActionParams;
+import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
+import com.mikuac.shiro.dto.action.common.ActionData;
+import com.mikuac.shiro.dto.action.common.MsgId;
+import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.mikuac.shiro.enums.ActionPathEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.handler.ActionHandler;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -107,5 +117,46 @@ public class BotUtil {
 
     public static OneBotMedia getLocalMedia(String imgPath) {
         return getLocalMedia(imgPath, false);
+    }
+
+
+    public static List<Map<String, Object>> generateForwardMsg(String uin, String name, List<Object> contents) {
+        List<Map<String, Object>> nodes = new ArrayList<>();
+        Map<String, Object> node = new HashMap<>();
+        node.put("type", "node");
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", name);
+        data.put("uin", uin);
+        data.put("content", contents);
+        node.put("data", data);
+        nodes.add(node);
+        return nodes;
+    }
+
+    public static ActionData<String> sendForwardMsg(Bot bot, List<Map<String, Object>> msg) {
+        JSONObject params = new JSONObject();
+        params.put(ActionParams.MESSAGES, msg);
+        JSONObject result = BotUtil.actionHandler.action(bot.getSession(), ActionPathEnum.SEND_FORWARD_MSG, params);
+        return result != null ? result.to(new TypeReference<ActionData<String>>() {
+        }.getType()) : null;
+    }
+
+    public static ActionData<MsgId> sendMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText) {
+        return sendMarkdownMsg(bot, event, mdText, null);
+    }
+
+    public static ActionData<MsgId> sendMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText, Keyboard keyboard) {
+        List<Object> contents = new ArrayList<>();
+        Markdown markdown = Markdown.Builder().setContent(mdText);
+        contents.add(markdown);
+        if (keyboard != null) {
+            contents.add(keyboard);
+        }
+        List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
+        ActionData<String> actionData = sendForwardMsg(bot, maps);
+        if (StrUtil.isEmpty(actionData.getData())) {
+            return null;
+        }
+        return bot.sendMsg(event, STR."[CQ:longmsg,id=\{actionData.getData()}]", false);
     }
 }

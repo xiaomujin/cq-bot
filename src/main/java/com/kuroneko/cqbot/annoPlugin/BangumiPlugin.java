@@ -66,68 +66,14 @@ public class BangumiPlugin {
     @MessageHandlerFilter(cmd = "md2", at = AtEnum.NEED)
     public void md(Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), "md2");
-        String con = """
-                ---\s
-                [点我喵喵叫](mqqapi://aio/inlinecmd?command=喵呜&reply=false&enter=true)""";
-
-        JSONArray contents = new JSONArray();
-        Markdown markdown = Markdown.Builder().setContent(con);
-        contents.add(markdown);
-        Keyboard keyboard = Keyboard.Builder().addButton("+1", "md2");
-        contents.add(keyboard);
-
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut("md", 1, TimeUnit.SECONDS, () -> {
-
-            List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
-            System.out.println(JSON.toJSONString(maps));
-
-            ActionData<String> actionData = sendForwardMsg(bot, event, maps);// data -> VCRrRDOF4xHq5ClbLb0XC0TSe3X7oWtg/mrjoNprYHyUYtudgYuubT9SftypV0eh
-            bot.sendMsg(event, STR."[CQ:longmsg,id=\{actionData.getData()}]", false);
+            String mdText = """
+                    ---\s
+                    [点我喵喵叫](mqqapi://aio/inlinecmd?command=喵呜&reply=false&enter=true)""";
+            Keyboard keyboard = Keyboard.Builder().addButton("+1", "md2");
+            BotUtil.sendMarkdownMsg(bot, event, mdText, keyboard);
             return "";
         }));
-    }
-
-    public List<Map<String, Object>> generateForwardMsg(String uin, String name, List<String> contents) {
-        List<Map<String, Object>> nodes = new ArrayList<>();
-        contents.forEach((msg) -> {
-            System.out.println(msg);
-            Map<String, Object> node = new HashMap<>();
-            node.put("type", "node");
-            Map<String, Object> data = new HashMap<>();
-            data.put("name", name);
-            data.put("uin", uin);
-            data.put("content", msg);
-            node.put("data", data);
-            nodes.add(node);
-        });
-        return nodes;
-    }
-
-    public List<Map<String, Object>> generateForwardMsg(String uin, String name, Object contents) {
-        List<Map<String, Object>> nodes = new ArrayList<>();
-        Map<String, Object> node = new HashMap<>();
-        node.put("type", "node");
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
-        data.put("uin", uin);
-        data.put("content", contents);
-        node.put("data", data);
-        nodes.add(node);
-        return nodes;
-    }
-
-    public ActionData<String> sendForwardMsg(Bot bot, AnyMessageEvent event, List<Map<String, Object>> msg) {
-        JSONObject params = new JSONObject();
-        params.put(ActionParams.MESSAGES, msg);
-        if (ActionParams.GROUP.equals(event.getMessageType())) {
-            params.put(ActionParams.GROUP_ID, event.getGroupId());
-        }
-        if (ActionParams.PRIVATE.equals(event.getMessageType())) {
-            params.put(ActionParams.USER_ID, event.getUserId());
-        }
-        JSONObject result = BotUtil.actionHandler.action(bot.getSession(), ActionPathEnum.SEND_FORWARD_MSG, params);
-        return result != null ? result.to(new TypeReference<ActionData<String>>() {
-        }.getType()) : null;
     }
 }
 
