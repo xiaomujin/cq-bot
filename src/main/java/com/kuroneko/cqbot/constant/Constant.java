@@ -121,7 +121,7 @@ public class Constant {
     /**
      * bili 动态api
      */
-    public static String BL_DYNAMIC_URL = "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid={1}";
+    public static String BL_DYNAMIC_URL = "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space?host_mid={1}";
 
     public static String TKF_SERVER_INFO = "TkfServerInfo";
 

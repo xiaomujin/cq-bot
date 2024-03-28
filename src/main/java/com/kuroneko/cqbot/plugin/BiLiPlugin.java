@@ -63,13 +63,13 @@ public class BiLiPlugin extends BotPlugin {
                 return MESSAGE_BLOCK;
             }
             BiliDynamicVo.BiliDynamicCard dynamicCard = firstCard.get();
-            String path = biLiService.getNewScreenshot(dynamicCard.getDesc().getDynamic_id_str(), uid);
+            String path = biLiService.getNewScreenshot(dynamicCard.getId_str(), uid);
             if (ObjectUtils.isEmpty(path)) {
                 msg.text(CmdConst.BILI_DYNAMICS + Constant.GET_FAIL);
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
                 return MESSAGE_BLOCK;
             }
-            msg = biLiService.buildDynamicMsg(path, dynamicCard.getDesc().getDynamic_id_str());
+            msg = biLiService.buildDynamicMsg(path, dynamicCard.getId_str());
             bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
             return MESSAGE_BLOCK;
         }

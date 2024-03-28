@@ -140,7 +140,7 @@ public class BotTaskService {
                 BiliDynamicVo.BiliDynamicCard card = Constant.BILI_DYNAMIC.get(uid);
                 Constant.BILI_DYNAMIC.put(uid, dynamicCard);
                 if (!initSend) {
-                    if (card == null || !card.getDesc().getDynamic_id_str().equals(dynamicCard.getDesc().getDynamic_id_str())) {
+                    if (card == null || !card.getId_str().equals(dynamicCard.getId_str())) {
                         BiliSubscribeEvent event = new BiliSubscribeEvent(dynamicCard);
                         ApplicationContextHandler.publishEvent(event);
                     }

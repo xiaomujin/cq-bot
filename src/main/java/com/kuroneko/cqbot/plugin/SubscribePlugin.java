@@ -116,14 +116,14 @@ public class SubscribePlugin extends BotPlugin {
                 return MESSAGE_BLOCK;
             }
             BiliDynamicVo.BiliDynamicCard dynamicCard = firstCard.get();
-            BiliDynamicVo.BUserInfo userInfo = dynamicCard.getDesc().getUser_profile().getInfo();
+            BiliDynamicVo.ModuleAuthor moduleAuthor = dynamicCard.getModules().getModule_author();
             //添加到持久化
             redisUtil.add(RedisKey.BILI_SUB + ":" + uid, event.getGroupId());
 
-            OneBotMedia media = OneBotMedia.builder().file(userInfo.getFace()).cache(false);
+            OneBotMedia media = OneBotMedia.builder().file(moduleAuthor.getFace()).cache(false);
             msg.img(media)
-                    .text("UID: " + userInfo.getUid() + Constant.XN)
-                    .text("昵称: " + userInfo.getUname() + Constant.XN)
+                    .text("UID: " + moduleAuthor.getMid() + Constant.XN)
+                    .text("昵称: " + moduleAuthor.getName() + Constant.XN)
                     .text("订阅成功~");
             bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
             return MESSAGE_BLOCK;

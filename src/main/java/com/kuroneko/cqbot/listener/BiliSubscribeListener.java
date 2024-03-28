@@ -26,8 +26,8 @@ public class BiliSubscribeListener implements ApplicationListener<BiliSubscribeE
     @Override
     public void onApplicationEvent(BiliSubscribeEvent event) {
         BiliDynamicVo.BiliDynamicCard source = CastUtils.cast(event.getSource());
-        String uid = source.getDesc().getUser_profile().getInfo().getUid();
-        String dynamicId = source.getDesc().getDynamic_id_str();
+        String uid = source.getModules().getModule_author().getMid();
+        String dynamicId = source.getId_str();
         Set<Number> list = redisUtil.members(RedisKey.BILI_SUB + ":" + uid);
         String path = biLiService.getNewScreenshot(dynamicId, uid);
         MsgUtils msg = biLiService.buildDynamicMsg(path, dynamicId);

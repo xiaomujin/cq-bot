@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.service;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
@@ -8,6 +9,9 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -49,14 +53,19 @@ public class BiLiService {
      * @return 最新动态id
      */
     public String getNew(String uid) {
-        ResponseEntity<BiliDynamicVo> entity = restTemplate.getForEntity(Constant.BL_DYNAMIC_URL, BiliDynamicVo.class, uid);
-        return Objects.requireNonNull(entity.getBody()).getData().getCards().get(0).getDesc().getDynamic_id_str();
+        Optional<BiliDynamicVo.BiliDynamicCard> firstCard = getFirstCard(uid);
+        return firstCard.get().getId_str();
     }
 
     public Optional<BiliDynamicVo.BiliDynamicCard> getFirstCard(String uid) {
-        ResponseEntity<BiliDynamicVo> entity = restTemplate.getForEntity(Constant.BL_DYNAMIC_URL, BiliDynamicVo.class, uid);
-        List<BiliDynamicVo.BiliDynamicCard> cards = Objects.requireNonNull(entity.getBody()).getData().getCards();
-        return Optional.ofNullable(cards).map(c -> c.get(0));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cookie", "buvid3=46C88013-513D-84FD-05D6-4A5A546E8A7E92960infoc");
+        headers.add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0");
+        JSONObject httpObject = new JSONObject();
+        HttpEntity<Object> httpEntity = new HttpEntity<>(httpObject, headers);
+        ResponseEntity<BiliDynamicVo> entity = restTemplate.exchange(Constant.BL_DYNAMIC_URL, HttpMethod.GET, httpEntity, BiliDynamicVo.class,uid);
+        List<BiliDynamicVo.BiliDynamicCard> items = Objects.requireNonNull(entity.getBody()).getData().getItems();
+        return items.stream().min((o1, o2) -> o2.getModules().getModule_author().getPub_ts().compareTo(o1.getModules().getModule_author().getPub_ts()));
     }
 
     /**
