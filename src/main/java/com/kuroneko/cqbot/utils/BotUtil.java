@@ -86,15 +86,13 @@ public class BotUtil {
 
     public static void sendToGroupList(Collection<Number> groupList, Collection<String> msgList) {
         BotContainer botContainer = ApplicationContextHandler.getBean(BotContainer.class);
-        botContainer.robots.forEach((qq, bot) -> {
-            groupList.forEach(group -> {
-                msgList.forEach(msg -> {
-                    bot.sendGroupMsg(group.longValue(), msg, false);
-                    sleep(600);
-                });
-                sleep(1500);
+        botContainer.robots.forEach((qq, bot) -> groupList.forEach(group -> {
+            msgList.forEach(msg -> {
+                bot.sendGroupMsg(group.longValue(), msg, false);
+                sleep(600);
             });
-        });
+            sleep(1500);
+        }));
     }
 
     public static void sleep(long millis) {
