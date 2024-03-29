@@ -68,9 +68,9 @@
     <!--        <appender-ref ref="info_log" />-->
     <!--    </logger>-->
 
-    <logger name="com.cl.bootmiraibot" level="DEBUG" />
-    <logger name="com.kuroneko.cqbot.mapper" level="DEBUG" />
-    <logger name="org.springframework.web" level="DEBUG" />
+<!--    <logger name="com.cl.bootmiraibot" level="DEBUG" />-->
+<!--    <logger name="com.kuroneko.cqbot.mapper" level="DEBUG" />-->
+<!--    <logger name="org.springframework.web" level="DEBUG" />-->
 
 
 </configuration>

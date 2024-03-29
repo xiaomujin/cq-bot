@@ -21,5 +21,6 @@ public class Regex {
     public static final String TKF_SERVER_INFO = "^(?i)((塔科夫|tkf)?服务器(状态)?)$";
     public static final String BANGUMI_CALENDAR = "^(今日|每日|最新)番剧$";
     public static final String TKF_MARKET_SEARCH = "^跳蚤(?<text>.*)";
+    public static final String WORD_CLOUD = "^(我的|本群)(今日|本周|本月|本年)词云$";
 
 }
