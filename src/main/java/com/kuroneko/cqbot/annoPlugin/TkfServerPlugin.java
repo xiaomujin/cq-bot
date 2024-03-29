@@ -56,7 +56,7 @@ public class TkfServerPlugin {
                         msg.img(it.getWikiImg());
                     }
                     msg.text("\n名称：").text(STR."\{it.getCnName()}\n");
-                    msg.text("波动 24h：").text(STR."\{it.getChange24()}%").text("  7d：").text(STR."\{it.getChange7d()}%\n");
+                    msg.text("24h:").text(STR."\{it.getChange24()}%").text(" 7d:").text(STR."\{it.getChange7d()}%\n");
                     msg.text("基础价格：").text(STR."\{it.getBasePrice()}₽\n");
                     msg.text(it.getTraderName()).text("：").text(STR."\{it.getTraderPrice()}\{it.getTraderPriceCur()}\n");
                     if (it.isCanSellOnFlea()) {
