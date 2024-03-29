@@ -24,6 +24,7 @@
         <druid.version>1.2.22</druid.version>
         <expiringmap.version>0.5.11</expiringmap.version>
         <fastjson2.version>2.0.47</fastjson2.version>
+        <ik-analyzer.version>9.0.0</ik-analyzer.version>
     </properties>
     <dependencies>
         <dependency>
@@ -141,6 +142,13 @@
             <artifactId>expiringmap</artifactId>
             <version>${expiringmap.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/cn.shenyanchao.ik-analyzer/ik-analyzer -->
+        <dependency>
+            <groupId>cn.shenyanchao.ik-analyzer</groupId>
+            <artifactId>ik-analyzer</artifactId>
+            <version>${ik-analyzer.version}</version>
+        </dependency>
+
 
 
         <!--        <dependency>-->
