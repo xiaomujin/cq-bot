@@ -1,4 +1,24 @@
-# cq-bot
+<div align="center">
+
+# CQ-BOT
+
+_✨ 基于 [Shiro](https://github.com/MisakaTAT/Shiro) QQ机器人工具 ✨_
+
+</div>
+
+<p align="center">
+    <img src="https://img.shields.io/badge/JDK-21+-brightgreen.svg?style=flat-square" alt="jdk-version">
+</p>
+
+<p align="center">
+  <a href="https://misakatat.github.io/shiro-docs">文档</a>
+  ·
+  <a href="">下载</a>
+  ·
+  <a href="https://misakatat.github.io/shiro-docs">快速开始</a>
+  ·
+  <a href="">参与贡献</a>
+</p>
 
 # QuickStart
 JDK21 以上的开发环境运行即可
