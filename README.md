@@ -1,7 +1,7 @@
 # cq-bot
 
-#### 介绍
-go-cqhttp 的消息处理端实现
+# QuickStart
+JDK21 以上的开发环境运行即可
 
 # Client
 
