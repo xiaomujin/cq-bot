@@ -9,9 +9,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
  * 群友聊天记录
@@ -22,6 +20,8 @@ import lombok.EqualsAndHashCode;
 @TableName(value = "word_cloud")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WordCloud extends BaseEntity implements Serializable {
     /**
      *

@@ -8,21 +8,20 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serial;
 import java.io.Serializable;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 /**
- * 
  * @TableName bullet
  */
 @EqualsAndHashCode(callSuper = true)
-@TableName(value ="bullet")
+@TableName(value = "bullet")
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Bullet extends BaseEntity implements Serializable {
     /**
-     * 
+     *
      */
     @TableId(type = IdType.AUTO)
     private Long id;

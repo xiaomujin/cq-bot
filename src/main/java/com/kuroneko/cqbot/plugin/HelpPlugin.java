@@ -2,6 +2,7 @@ package com.kuroneko.cqbot.plugin;
 
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
+import com.kuroneko.cqbot.enums.Regex;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
@@ -45,6 +46,7 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add("boss丢包时间");
         allCmd.add("3x4道具");
         allCmd.add("耳机强度");
+        allCmd.add(Regex.WORD_CLOUD);
         for (int i = 1; i <= allCmd.size(); i++) {
             stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
         }

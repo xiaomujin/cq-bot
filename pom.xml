@@ -25,6 +25,7 @@
         <expiringmap.version>0.5.11</expiringmap.version>
         <fastjson2.version>2.0.47</fastjson2.version>
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
+        <kumo-core.version>1.28</kumo-core.version>
     </properties>
     <dependencies>
         <dependency>
@@ -147,6 +148,12 @@
             <groupId>cn.shenyanchao.ik-analyzer</groupId>
             <artifactId>ik-analyzer</artifactId>
             <version>${ik-analyzer.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.kennycason/kumo-core -->
+        <dependency>
+            <groupId>com.kennycason</groupId>
+            <artifactId>kumo-core</artifactId>
+            <version>${kumo-core.version}</version>
         </dependency>
 
 
