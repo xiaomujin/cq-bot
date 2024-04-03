@@ -62,7 +62,7 @@ public class BiLiService {
             } else if (redirect.contains("bilibili.com/read")) {
                 selector = "#app > div > div.article-container";
             }
-            PuppeteerUtil.screenshot(redirect, path, selector, ".z-top-container { display: none } .international-header { display: none } .van-popper { display: none }");
+            PuppeteerUtil.screenshot(redirect, path, selector, ".z-top-container { display: none } .international-header { display: none } .van-popper { display: none } .bili-mini-mask { display: none }");
             return path;
         } catch (Exception e) {
             log.error("动态截图异常", e);
