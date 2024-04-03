@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.service;
 
+import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.HttpUtil;
@@ -29,32 +30,7 @@ public class BiLiService {
 
     public BiLiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-
-        File file = new File(imgPath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-    }
-
-    /**
-     * 152065343 纱雾最可爱辣
-     * {
-     * "code": 0,
-     * "msg": "",
-     * "message": "",
-     * "data": {
-     * "has_more": 0,
-     * "next_offset": 0,
-     * "_gt_": 0
-     * }
-     * }
-     *
-     * @param uid B站Uid
-     * @return 最新动态id
-     */
-    public String getNew(String uid) {
-        Optional<BiliDynamicVo.BiliDynamicCard> firstCard = getFirstCard(uid);
-        return firstCard.get().getId_str();
+        FileUtil.mkdir(imgPath);
     }
 
     public Optional<BiliDynamicVo.BiliDynamicCard> getFirstCard(String uid) {

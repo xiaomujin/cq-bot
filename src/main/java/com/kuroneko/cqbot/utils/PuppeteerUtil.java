@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.utils;
 
+import cn.hutool.core.io.FileUtil;
 import com.kuroneko.cqbot.exception.BotException;
 import com.ruiyun.jvppeteer.core.Puppeteer;
 import com.ruiyun.jvppeteer.core.browser.Browser;
@@ -177,13 +178,7 @@ public class PuppeteerUtil {
         long start = System.currentTimeMillis();
         String screenshot = "";
         try {
-            File file = new File(path).getParentFile();
-            if (file != null && !file.exists()) {
-                boolean mkdir = file.mkdirs();
-                if (mkdir) {
-                    log.info("创建目录成功:{}", file.getAbsolutePath());
-                }
-            }
+            FileUtil.mkdir(new File(path).getParentFile());
             //添加css
             if (StringUtil.isNotBlank(css)) {
                 StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, css);

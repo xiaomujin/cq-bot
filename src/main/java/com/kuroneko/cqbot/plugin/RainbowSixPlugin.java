@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.plugin;
 
+import cn.hutool.core.io.FileUtil;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
@@ -27,10 +28,7 @@ public class RainbowSixPlugin extends BotPlugin {
     String imgPath = Constant.BASE_IMG_PATH + "r6/";
 
     public RainbowSixPlugin() {
-        File file = new File(imgPath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+        FileUtil.mkdir(imgPath);
     }
 
 

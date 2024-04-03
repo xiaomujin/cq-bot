@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.plugin;
 
+import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
@@ -32,10 +33,7 @@ public class ThreeHundredPlugin extends BotPlugin {
 
     public ThreeHundredPlugin(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        File file = new File(imgPath);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+        FileUtil.mkdir(imgPath);
     }
 
     public MsgUtils getMsg(String text) {

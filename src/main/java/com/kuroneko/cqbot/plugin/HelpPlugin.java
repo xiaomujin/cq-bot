@@ -35,7 +35,6 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add(CmdConst.THREE_HUNDRED_KD);
         allCmd.add(CmdConst.MAP);
         allCmd.add(CmdConst.ZI_DAN);
-        allCmd.add(CmdConst.TAKOV_DYNAMICS);
         allCmd.add(CmdConst.BILI_SUBSCRIBE);
         allCmd.add(CmdConst.BILI_SUBSCRIBE_CANCEL);
         allCmd.add(CmdConst.RECORD_SAY);
