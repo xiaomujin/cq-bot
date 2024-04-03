@@ -79,8 +79,8 @@ public class BotUtil {
         return getParams(cmd, msg, 0);
     }
 
-    public static void sendToGroupList(Collection<Number> groupList, String msgList) {
-        sendToGroupList(groupList, Collections.singleton(msgList));
+    public static void sendToGroupList(Collection<Number> groupList, String msg) {
+        sendToGroupList(groupList, Collections.singleton(msg));
     }
 
 

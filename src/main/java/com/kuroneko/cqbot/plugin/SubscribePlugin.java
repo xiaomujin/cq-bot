@@ -43,11 +43,6 @@ public class SubscribePlugin extends BotPlugin {
                 MsgUtils msg = MsgUtils.builder().text("成功订阅三兄弟位置推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
-            } else if (message.contains("塔科夫动态")) {
-                pushMapPut(RedisKey.TKF_DT, event.getGroupId());
-                MsgUtils msg = MsgUtils.builder().text("成功订阅塔科夫动态推送");
-                bot.sendMsg(event, msg.build(), false);
-                return MESSAGE_BLOCK;
             } else if (message.contains("塔科夫服务器")) {
                 pushMapPut(RedisKey.TKF_INFO, event.getGroupId());
                 MsgUtils msg = MsgUtils.builder().text("成功订阅塔科夫服务器状态推送");
@@ -61,10 +56,6 @@ public class SubscribePlugin extends BotPlugin {
             //三兄弟位置推送
             if (message.contains("三兄弟") || message.contains("三狗")) {
                 MsgUtils msg = getRemoveMsg(RedisKey.THREE_DOG, event.getGroupId(), "取消订阅三兄弟位置推送", "本群没有订阅三兄弟位置推送");
-                bot.sendMsg(event, msg.build(), false);
-                return MESSAGE_BLOCK;
-            } else if (message.contains("塔科夫动态")) {
-                MsgUtils msg = getRemoveMsg(RedisKey.TKF_DT, event.getGroupId(), "取消订阅塔科夫动态推送", "本群没有订阅塔科夫动态推送");
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             } else if (message.contains("塔科夫服务器")) {
@@ -98,10 +89,9 @@ public class SubscribePlugin extends BotPlugin {
         String message = event.getRawMessage();
 
 
-
         if (message.startsWith(CmdConst.BILI_SUBSCRIBE)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE);
-            if (qqUtil.verifyQq(event)){
+            if (qqUtil.verifyQq(event)) {
                 bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("暂无使用权限").build(), false);
                 return MESSAGE_BLOCK;
             }
@@ -135,7 +125,7 @@ public class SubscribePlugin extends BotPlugin {
             String uid = uidOp.get();
             Long remove = redisUtil.remove(RedisKey.BILI_SUB + ":" + uid, event.getGroupId());
             if (remove > 0) {
-                msg.text(uid + " 取消订阅成功");
+                msg.text(uid + " 退订成功");
             } else {
                 msg.text(uid + " 未订阅");
             }

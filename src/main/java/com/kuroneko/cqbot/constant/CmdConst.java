@@ -59,12 +59,12 @@ public class CmdConst {
     public static String RAINBOW_KD = "r6战绩";
     public static String THREE_HUNDRED_KD = "300战绩";
     public static String MAP = "地图";
-    public static String OPEN = "开启";
-    public static String CLOSE = "关闭";
+    public static String OPEN = "订阅";
+    public static String CLOSE = "退订";
     public static String ZI_DAN = "子弹数据";
     public static String UPDATE_ZI_DAN = "更新子弹数据";
     public static String BILI_SUBSCRIBE = "哔哩订阅";
-    public static String BILI_SUBSCRIBE_CANCEL = "哔哩取消订阅";
+    public static String BILI_SUBSCRIBE_CANCEL = "哔哩退订";
     public static String BILI_DYNAMICS = "哔哩动态";
     public static String RECORD_SAY = ".说";
     /**

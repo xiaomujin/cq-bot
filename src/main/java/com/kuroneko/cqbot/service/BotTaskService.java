@@ -4,21 +4,17 @@ import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.event.BiliSubscribeEvent;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.RedisUtil;
-import com.kuroneko.cqbot.vo.*;
+import com.kuroneko.cqbot.vo.BiliDynamicVo;
+import com.kuroneko.cqbot.vo.ThreeDog;
 import com.mikuac.shiro.common.utils.MsgUtils;
-import com.mikuac.shiro.core.Bot;
-import com.mikuac.shiro.core.BotContainer;
-import com.mikuac.shiro.dto.action.common.ActionList;
-import com.mikuac.shiro.dto.action.response.GroupInfoResp;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -30,8 +26,6 @@ import java.util.*;
 @Service
 public class BotTaskService {
 
-    private final RestTemplate restTemplate;
-    private final BotContainer botContainer;
     private final BiLiService biLiService;
     private final RedisUtil redisUtil;
 
@@ -89,7 +83,7 @@ public class BotTaskService {
             String mapName = td.get(3).text();
 
             SimpleDateFormat df = new SimpleDateFormat("M/dd/yyyy H:mm:ss");
-            df.setTimeZone(TimeZone.getTimeZone("EST"));
+            df.setTimeZone(TimeZone.getTimeZone("America/New_York"));
             Date after = df.parse(time);
             df.applyPattern("yyyy-MM-dd HH:mm:ss");
             df.setTimeZone(TimeZone.getDefault());
@@ -116,18 +110,8 @@ public class BotTaskService {
         Set<Number> list = redisUtil.members(RedisKey.THREE_DOG);
         log.info("THREE_DOG 推送群聊：{}", list);
         if (!list.isEmpty()) {
-            botContainer.robots.forEach((id, bot) -> {
-                MsgUtils msg = MsgUtils.builder().text("三兄弟位置变更" + Constant.XN).text(oldThreeDog.getLocation() + " -> " + threeDog.getLocation() + Constant.XN).text(threeDog.getLastReported());
-                list.forEach(groupId -> {
-                    bot.sendGroupMsg(groupId.longValue(), msg.build(), false);
-                    try {
-                        Thread.sleep(3600);
-                    } catch (InterruptedException e) {
-                        log.error("sleep err", e);
-                    }
-                });
-            });
-
+            MsgUtils msg = MsgUtils.builder().text(STR."三兄弟位置变更\{Constant.XN}").text(STR."\{oldThreeDog.getLocationCN()} -> \{threeDog.getLocationCN()}\{Constant.XN}").text(threeDog.getLastReported());
+            BotUtil.sendToGroupList(list, msg.build());
         }
     }
 
@@ -145,13 +129,8 @@ public class BotTaskService {
                         ApplicationContextHandler.publishEvent(event);
                     }
                 }
-
             }
-            try {
-                Thread.sleep(3600);
-            } catch (InterruptedException e) {
-                log.error("sleep err", e);
-            }
+            BotUtil.sleep(3600);
         });
     }
 }

@@ -147,7 +147,7 @@ public class TarKovMapPlugin extends BotPlugin {
             if (event.getRawMessage().contains("三兄弟") || event.getRawMessage().contains("三狗")) {
                 ThreeDog threeDog = (ThreeDog) Constant.CONFIG_CACHE.get(RedisKey.THREE_DOG);
                 if (threeDog != null) {
-                    MsgUtils msg = MsgUtils.builder().text(threeDog.getLocation() + Constant.XN).text(threeDog.getLastReported());
+                    MsgUtils msg = MsgUtils.builder().text(threeDog.getLocationCN() + Constant.XN).text(threeDog.getLastReported());
                     bot.sendMsg(event, msg.build(), false);
                 }
             }
