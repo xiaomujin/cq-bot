@@ -8,16 +8,19 @@ import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
 import com.ruiyun.jvppeteer.core.page.ElementHandle;
 import com.ruiyun.jvppeteer.core.page.Page;
 import com.ruiyun.jvppeteer.options.*;
+import com.ruiyun.jvppeteer.protocol.network.CookieParam;
 import com.ruiyun.jvppeteer.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class PuppeteerUtil {
     private static volatile Browser browser;
+    private static final List<CookieParam> COOKIES;
 
     private static final AtomicInteger renderNum = new AtomicInteger(0);
 
@@ -36,7 +39,26 @@ public class PuppeteerUtil {
         return browser;
     }
 
-
+    static {
+        List<CookieParam> cookies = new ArrayList<>();
+        CookieParam cookieParam = new CookieParam();
+        cookieParam.setUrl("https://t.bilibili.com");
+        cookieParam.setName("buvid3");
+        cookieParam.setValue("46C88013-513D-84FD-05D6-4A5A546E8A7E92960infoc");
+        cookieParam.setDomain(".bilibili.com");
+        cookieParam.setPath("/");
+        cookieParam.setExpires(1990454302000L);
+        cookies.add(cookieParam);
+        CookieParam cookieParam2 = new CookieParam();
+        cookieParam2.setUrl("https://www.bilibili.com");
+        cookieParam2.setName("buvid3");
+        cookieParam2.setValue("46C88013-513D-84FD-05D6-4A5A546E8A7E92960infoc");
+        cookieParam2.setDomain(".bilibili.com");
+        cookieParam2.setPath("/");
+        cookieParam2.setExpires(1990454302000L);
+        cookies.add(cookieParam2);
+        COOKIES = cookies;
+    }
     private PuppeteerUtil() {
     }
 
@@ -189,11 +211,11 @@ public class PuppeteerUtil {
                 page.waitFor(selectorOrFunctionOrTimeout);
             }
             ScreenshotOptions screenshotOptions = new ScreenshotOptions();
+            screenshotOptions.setPath(path);
             if (StringUtil.isBlank(selector)) {
                 //设置截图范围
                 screenshotOptions.setFullPage(true);
                 //设置存放的路径
-                screenshotOptions.setPath(path);
                 screenshot = page.screenshot(screenshotOptions);
             } else {
                 // 超时处理
@@ -209,7 +231,6 @@ public class PuppeteerUtil {
                 //设置截图范围
                 ElementHandle elementHandle = page.waitForSelector(selector);
                 thread.interrupt();
-                screenshotOptions.setPath(path);
                 screenshot = elementHandle.screenshot(screenshotOptions);
             }
             long cost = System.currentTimeMillis() - start;
@@ -252,6 +273,7 @@ public class PuppeteerUtil {
         pageNavigateOptions.setTimeout(timeout);
         pageNavigateOptions.setWaitUntil(List.of(waitUntil));
         try {
+            page.setCookie(COOKIES);
             page.goTo(url, pageNavigateOptions);
         } catch (Exception e) {
             log.error("页面打开失败", e);
