@@ -47,7 +47,7 @@ public class BiLiPlugin extends BotPlugin {
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
                 return MESSAGE_BLOCK;
             }
-            msg = biLiService.buildDynamicMsg(path, dynamicCard.getId_str());
+            msg = biLiService.buildDynamicMsg(path, dynamicCard);
             bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
             return MESSAGE_BLOCK;
         }

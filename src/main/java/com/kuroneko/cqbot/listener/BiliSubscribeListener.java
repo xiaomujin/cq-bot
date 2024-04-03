@@ -30,7 +30,7 @@ public class BiliSubscribeListener implements ApplicationListener<BiliSubscribeE
         String dynamicId = source.getId_str();
         Set<Number> list = redisUtil.members(RedisKey.BILI_SUB + ":" + uid);
         String path = biLiService.getNewScreenshot(dynamicId, uid);
-        MsgUtils msg = biLiService.buildDynamicMsg(path, dynamicId);
+        MsgUtils msg = biLiService.buildDynamicMsg(path, source);
         botContainer.robots.forEach((id, bot) -> list.forEach(groupId -> {
             bot.sendGroupMsg(groupId.longValue(), msg.build(), false);
             try {

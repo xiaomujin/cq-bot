@@ -3,7 +3,7 @@ package com.kuroneko.cqbot.service;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class BiLiService {
     private final RestTemplate restTemplate;
-    String imgPath = Constant.BASE_IMG_PATH + "bili/";
+    String imgPath = STR."\{Constant.BASE_IMG_PATH}bili/";
 
     public BiLiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -52,8 +51,9 @@ public class BiLiService {
      */
     public String getNewScreenshot(String dynamicId, String uid) {
         try {
-            String path = imgPath + dynamicId + ".png";
-            String redirect = HttpUtil.getRedirect("https://www.bilibili.com/opus/" + dynamicId);
+            String path = STR."\{imgPath}\{dynamicId}.png";
+            Page page = PuppeteerUtil.getNewPage(STR."https://www.bilibili.com/opus/\{dynamicId}");
+            String redirect = page.mainFrame().getUrl();
             String selector = null;
             if (redirect.contains("bilibili.com/opus")) {
                 selector = "#app > div.opus-detail > div.bili-opus-view";
@@ -62,7 +62,7 @@ public class BiLiService {
             } else if (redirect.contains("bilibili.com/read")) {
                 selector = "#app > div > div.article-container";
             }
-            PuppeteerUtil.screenshot(redirect, path, selector, ".z-top-container { display: none } .international-header { display: none } .van-popper { display: none } .bili-mini-mask { display: none }");
+            PuppeteerUtil.screenshot(page, path, selector, ".z-top-container { display: none } .international-header { display: none } .van-popper { display: none } .bili-mini-mask { display: none }");
             return path;
         } catch (Exception e) {
             log.error("动态截图异常", e);
@@ -70,9 +70,13 @@ public class BiLiService {
         return "";
     }
 
-    public MsgUtils buildDynamicMsg(String path, String dynamicId) {
-        OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + path).cache(false);
-        return MsgUtils.builder().img(media).text("https://www.bilibili.com/opus/" + dynamicId);
+    public MsgUtils buildDynamicMsg(String path, BiliDynamicVo.BiliDynamicCard card) {
+        OneBotMedia localMedia = BotUtil.getLocalMedia(path, false);
+        return MsgUtils.builder()
+                .img(localMedia)
+                .text(STR."up: \{card.getModules().getModule_author().getName()}\n")
+                .text(STR."uid: \{card.getModules().getModule_author().getMid()}\n")
+                .text(STR."https://www.bilibili.com/opus/\{card.getId_str()}");
     }
 
 }
