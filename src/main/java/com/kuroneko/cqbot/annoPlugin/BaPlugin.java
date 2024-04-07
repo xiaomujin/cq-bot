@@ -4,6 +4,7 @@ import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BaVo;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
@@ -53,11 +54,10 @@ public class BaPlugin {
                 arrayList.forEach(s -> bot.sendMsg(event, s, false));
                 return "";
             }
-            Page page = PuppeteerUtil.getNewPage("http://localhost:8081/baRank", 880, 500);
-            String imgPath = Constant.BASE_IMG_PATH + "ba/baRank.png";
+            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}baRank", 880, 500);
+            String imgPath = STR."\{Constant.BASE_IMG_PATH}ba/baRank.png";
             PuppeteerUtil.screenshot(page, imgPath, "#app");
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
-            String msg = MsgUtils.builder().img(media).build();
+            String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
             expiringMap.put(Regex.BA_TOTAL_BATTLE, List.of(msg));
             bot.sendMsg(event, msg, false);
             return "";
@@ -73,11 +73,10 @@ public class BaPlugin {
                 arrayList.forEach(s -> bot.sendMsg(event, s, false));
                 return "";
             }
-            Page page = PuppeteerUtil.getNewPage("http://localhost:8081/baCalendar", 1000, 400);
-            String imgPath = Constant.BASE_IMG_PATH + "ba/baCalendar.png";
+            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}baCalendar", 1000, 400);
+            String imgPath = STR."\{Constant.BASE_IMG_PATH}ba/baCalendar.png";
             PuppeteerUtil.screenshot(page, imgPath, "html");
-            OneBotMedia media = OneBotMedia.builder().file("http://localhost:8081/getImage?path=" + imgPath).cache(false);
-            String msg = MsgUtils.builder().img(media).build();
+            String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
             expiringMap.put(Regex.BA_CALENDAR, List.of(msg));
             bot.sendMsg(event, msg, false);
             return "";
