@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 public class ImageController {
@@ -22,6 +23,11 @@ public class ImageController {
     @RequestMapping(value = "/getJpgImage", produces = {MediaType.IMAGE_JPEG_VALUE})
     public BufferedImage getJpgImage(@RequestParam(defaultValue = "") String path) throws IOException {
         File file = new File(path);
+        if (!file.exists()) {
+            InputStream resourceAsStream = this.getClass().getResourceAsStream("/static/img/404.png");
+            assert resourceAsStream != null;
+            return ImageIO.read(resourceAsStream);
+        }
         return ImageIO.read(file);
     }
 
