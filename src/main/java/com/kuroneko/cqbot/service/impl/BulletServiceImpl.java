@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kuroneko.cqbot.entity.Bullet;
 import com.kuroneko.cqbot.mapper.BulletMapper;
 import com.kuroneko.cqbot.service.BulletService;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.ruiyun.jvppeteer.core.page.Page;
 import org.springframework.data.util.CastUtils;
@@ -98,7 +99,7 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
         if (size == 0) {
             return "";
         }
-        Page page = PuppeteerUtil.getNewPage("http://localhost:8081/Bullet/" + URLEncoder.encode(name, StandardCharsets.UTF_8), size, 900);
+        Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Bullet/\{URLEncoder.encode(name, StandardCharsets.UTF_8)}", size, 900);
         return PuppeteerUtil.screenshot(page, path, ".flex_div");
     }
 

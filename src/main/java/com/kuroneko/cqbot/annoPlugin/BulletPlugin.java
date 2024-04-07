@@ -70,7 +70,7 @@ public class BulletPlugin {
     @MessageHandlerFilter(cmd = Regex.LIFE_RESTART)
     public void life(Bot bot, AnyMessageEvent event, Matcher matcher) {
         String imgPath = STR."\{Constant.BASE_IMG_PATH}life/\{event.getGroupId()}_\{event.getSender().getUserId()}.png";
-        Page newPage = PuppeteerUtil.getNewPage(STR."http://127.0.0.1:8081/Life/\{event.getSender().getNickname()}", 500, 800);
+        Page newPage = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Life/\{event.getSender().getNickname()}", 500, 800);
         PuppeteerUtil.screenshot(newPage, imgPath);
         MsgUtils msg = MsgUtils.builder();
         OneBotMedia localMedia = BotUtil.getLocalMedia(imgPath, false);

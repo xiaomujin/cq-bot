@@ -110,11 +110,15 @@ public class BotUtil {
         } else {
             method = "getJpgImage";
         }
-        return OneBotMedia.builder().file(STR."\{ProjectConfig.url}\{method}?path=\{imgPath}").cache(cache);
+        return OneBotMedia.builder().file(STR."\{getLocalHost()}\{method}?path=\{imgPath}").cache(cache);
     }
 
     public static OneBotMedia getLocalMedia(String imgPath) {
         return getLocalMedia(imgPath, false);
+    }
+
+    public static String getLocalHost() {
+        return ProjectConfig.url;
     }
 
 
