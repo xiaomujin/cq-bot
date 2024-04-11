@@ -18,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
@@ -33,14 +31,15 @@ public class DailyPlugin {
     @MessageHandlerFilter(cmd = Regex.CALENDAR)
     public void calendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.CALENDAR, 20, TimeUnit.MINUTES, () -> {
-            String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
+            String moyuStr = HttpUtil.get("https://api.j4u.ink/v1/store/other/proxy/remote/moyu.json");
+//            String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
             JSONObject moyuObject = JSON.parseObject(moyuStr);
-            boolean success = moyuObject.getBooleanValue("success", false);
-            if (!success) {
+            Integer code = moyuObject.getInteger("code");
+            if (code != 200) {
                 throw new BotException("获取日历失败");
             }
-            String url = moyuObject.getString("url");
-            OneBotMedia media = new OneBotMedia().file(url).cache(false);
+            String url = moyuObject.getJSONObject("data").getString("moyu_url");
+            OneBotMedia media = new OneBotMedia().file(url).cache(true);
             return MsgUtils.builder().img(media).build();
         }));
     }
@@ -56,7 +55,7 @@ public class DailyPlugin {
                 throw new BotException("获取日报失败");
             }
             String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
-            OneBotMedia media = new OneBotMedia().file(imgUrl).cache(false);
+            OneBotMedia media = new OneBotMedia().file(imgUrl).cache(true);
             return MsgUtils.builder().img(media).build();
         }));
     }
