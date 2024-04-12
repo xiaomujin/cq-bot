@@ -293,7 +293,7 @@ public class TkfServerPlugin {
                     }
                 }
             } else {
-                keyboard = Keyboard.Builder().addRow().addButton("我也查查", STR."查任务 ", false, List.of(event.getUserId()));
+                keyboard = Keyboard.Builder().addRow().addButton("我也查查", STR."查任务 ", false);
             }
 
             return BotUtil.getMarkdownMsg(bot, event, mdText, keyboard);
