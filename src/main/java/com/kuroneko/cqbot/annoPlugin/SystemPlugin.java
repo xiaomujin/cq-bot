@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.annoPlugin;
 
+import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.UpdateCache;
@@ -29,8 +30,7 @@ public class SystemPlugin {
     @MessageHandlerFilter(cmd = Regex.SYS_UPDATE)
     public void update(Bot bot, AnyMessageEvent event, Matcher matcher) {
         Long qq = event.getSender().getUserId();
-        List<Long> list = Arrays.asList(1419229777L, 728109103L);
-        if (!list.contains(qq)) {
+        if (!ProjectConfig.adminList.contains(qq)) {
             MsgUtils msg = MsgUtils.builder();
             msg.text("只有主人才能更新哦！");
             bot.sendMsg(event, msg.build(), false);

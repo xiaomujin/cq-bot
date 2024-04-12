@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kuroneko.cqbot.mapper.TkfTaskTargetMapper">
+
+    <resultMap id="BaseResultMap" type="com.kuroneko.cqbot.entity.TkfTaskTarget">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+            <result property="type" column="type" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="isOptional" column="is_optional" jdbcType="TINYINT"/>
+            <result property="count" column="count" jdbcType="INTEGER"/>
+            <result property="isRaid" column="is_raid" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,parent_id,type,
+        description,is_optional,count,
+        is_raid
+    </sql>
+</mapper>
