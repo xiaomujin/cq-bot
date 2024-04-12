@@ -70,7 +70,7 @@ public class BangumiPlugin {
             String mdText = """
                     ---\s
                     [点我喵喵叫](mqqapi://aio/inlinecmd?command=喵呜&reply=false&enter=true)""";
-            Keyboard keyboard = Keyboard.Builder().addButton("+1", "md2");
+            Keyboard keyboard = Keyboard.Builder().addRow().addButton("+1", "md2");
             BotUtil.sendMarkdownMsg(bot, event, mdText, keyboard);
             return "";
         }));

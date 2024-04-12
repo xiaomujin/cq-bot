@@ -24,5 +24,5 @@ public class Regex {
     public static final String WORD_CLOUD = "^(我的|本群)(今日|本周|本月|本年)词云$";
     public static final String DICE = "^(?i)(?<cmd>(\\.|。)r).+";
     public static final String UPDATE_TKF_TASK = "^更新任务$";
-
+    public static final String SEARCH_TKF_TASK = "^(?i)(查任务)(?<name>.+)";
 }

@@ -148,6 +148,14 @@ public class BotUtil {
     }
 
     public static ActionData<MsgId> sendMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText, Keyboard keyboard) {
+        String markdownMsg = getMarkdownMsg(bot, event, mdText, keyboard);
+        if (StrUtil.isEmpty(markdownMsg)) {
+            return null;
+        }
+        return bot.sendMsg(event, markdownMsg, false);
+    }
+
+    public static String getMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText, Keyboard keyboard) {
         List<Object> contents = new ArrayList<>();
         Markdown markdown = Markdown.Builder().setContent(mdText);
         contents.add(markdown);
@@ -159,6 +167,6 @@ public class BotUtil {
         if (actionData == null || StrUtil.isEmpty(actionData.getData())) {
             return null;
         }
-        return bot.sendMsg(event, STR."[CQ:longmsg,id=\{actionData.getData()}]", false);
+        return STR."[CQ:longmsg,id=\{actionData.getData()}]";
     }
 }

@@ -28,10 +28,42 @@ public class Keyboard {
      * @return Keyboard
      */
     public Keyboard addButton(String text, String data) {
+        return addButton(text, data, false);
+    }
+
+    /**
+     * 添加按钮
+     *
+     * @param text  按钮文本
+     * @param data  按钮数据
+     * @param enter 自动发送
+     * @return Keyboard
+     */
+    public Keyboard addButton(String text, String data, boolean enter) {
+        return addButton(text, data, enter, List.of());
+    }
+
+    /**
+     * 添加按钮
+     *
+     * @param text           按钮文本
+     * @param data           按钮数据
+     * @param enter          自动发送
+     * @param specifyUserIds 指定可操作的QQ
+     * @return Keyboard
+     */
+    public Keyboard addButton(String text, String data, boolean enter, List<Long> specifyUserIds) {
         Button button = new Button();
         button.getRenderData().setLabel(text);
         button.getRenderData().setVisitedLabel(text);
         button.getAction().setData(data);
+        button.getAction().setEnter(enter);
+        if (!specifyUserIds.isEmpty()) {
+            Permission permission = button.getAction().getPermission();
+            permission.setType(0);
+            List<String> list = specifyUserIds.stream().map(String::valueOf).toList();
+            permission.setSpecifyUserIds(list);
+        }
         List<Row> rows = getData().getContent().getRows();
         rows.getLast().addButton(button);
         return this;
@@ -55,10 +87,6 @@ public class Keyboard {
     @Setter
     public static class Content {
         private List<Row> rows = new ArrayList<>();
-
-        public Content() {
-            getRows().add(new Row());
-        }
     }
 
     @Getter

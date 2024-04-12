@@ -9,10 +9,12 @@ import com.kuroneko.cqbot.entity.TkfTask;
 import com.kuroneko.cqbot.entity.TkfTaskTarget;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
+import com.kuroneko.cqbot.lagrange.markdown.Keyboard;
 import com.kuroneko.cqbot.service.HelpService;
 import com.kuroneko.cqbot.service.TarKovMarketService;
 import com.kuroneko.cqbot.service.TkfTaskService;
 import com.kuroneko.cqbot.service.TkfTaskTargetService;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
@@ -22,18 +24,15 @@ import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.mikuac.shiro.enums.AtEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
@@ -150,7 +149,7 @@ public class TkfServerPlugin {
                             .description(target.getString("description"))
                             .isOptional(target.getBoolean("optional"))
                             .count(count)
-                            .isRaid(target.getBoolean("raid"))
+                            .isRaid(target.getBoolean("foundInRaid"))
                             .build();
                     taskTargets.add(tkfTaskTarget);
                 }
@@ -228,6 +227,78 @@ public class TkfServerPlugin {
         return queryMap;
     }
 
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.SEARCH_TKF_TASK, at = AtEnum.NEED)
+    public void searchTkfTaskAt(Bot bot, AnyMessageEvent event, Matcher matcher) {
+        searchTkfTask(bot, event, matcher);
+    }
+
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.SEARCH_TKF_TASK, at = AtEnum.NOT_NEED)
+    public void searchTkfTaskNoAt(Bot bot, AnyMessageEvent event, Matcher matcher) {
+        searchTkfTask(bot, event, matcher);
+    }
+
+    private void searchTkfTask(Bot bot, AnyMessageEvent event, Matcher matcher) {
+        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.SEARCH_TKF_TASK);
+        String name = matcher.group("name").trim();
+        String sName = name.replaceAll("[\\s-]", "");
+        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(sName, 1, TimeUnit.SECONDS, () -> {
+            List<TkfTask> tkfTasks = tkfTaskService.lambdaQuery().like(TkfTask::getSName, sName).list();
+            if (tkfTasks.isEmpty()) {
+                return STR."未找到任务: \{sName}";
+            }
+            tkfTasks.sort(Comparator.comparing(
+                    tkfTask -> tkfTask.getSName().length()
+            ));
+            TkfTask first = tkfTasks.getFirst();
+            List<TkfTaskTarget> tkfTaskTargets = tkfTaskTargetService.lambdaQuery().eq(TkfTaskTarget::getParentId, first.getId()).list();
+            StringBuilder stringBuilder = new StringBuilder();
+            boolean tip = false;
+            for (int i = 0; i < tkfTaskTargets.size(); i++) {
+                TkfTaskTarget tkfTaskTarget = tkfTaskTargets.get(i);
+                if (tkfTaskTarget.getIsOptional()) {
+                    tkfTaskTarget.setDescription(STR."( 可选 ) \{tkfTaskTarget.getDescription()}");
+                }
+                String num = tkfTaskTarget.getCount().toString();
+                if (tkfTaskTarget.getIsRaid()) {
+                    tip = true;
+                    num = STR."( \{num}√ )";
+                } else {
+                    num = STR."( \{num} )";
+                }
+                stringBuilder.append(STR."> \{i + 1}. \{tkfTaskTarget.getDescription()}\{tkfTaskTarget.getCount() > 0 ? num : ""}\n");
+            }
+            if (tip) {
+                stringBuilder.append("> Tip: √ 表示需要在战局中找到。");
+            }
+            String mdText = STR."""
+                    ![\{first.getTraderName()} #30px #30px](\{first.getTraderImg()}): \{first.getName()}
+                    ***
+                    \{first.getIsKappa() ? "3x4任务: ( √ )" : "~~3x4任务~~: ( × )"}
+                    \{first.getIsLightkeeper() ? "灯塔商人: ( √ )" : "~~灯塔商人~~: ( × )"}
+                    开启等级: \{first.getMinLevel()}
+                    任务目标:
+                    ***
+                    \{stringBuilder.toString()}""";
+
+            Keyboard keyboard;
+            if (tkfTasks.size() > 1) {
+                keyboard = Keyboard.Builder();
+                for (int i = 1; i < tkfTasks.size(); i++) {
+                    TkfTask tkfTask = tkfTasks.get(i);
+                    keyboard.addRow().addButton(tkfTask.getName(), STR."查任务 \{tkfTask.getSName()}", true, List.of(event.getUserId()));
+                    if (i >= 5) {
+                        break;
+                    }
+                }
+            } else {
+                keyboard = Keyboard.Builder().addRow().addButton("我也查查", STR."查任务 ", false, List.of(event.getUserId()));
+            }
+
+            return BotUtil.getMarkdownMsg(bot, event, mdText, keyboard);
+        }));
+    }
 
 }
 
