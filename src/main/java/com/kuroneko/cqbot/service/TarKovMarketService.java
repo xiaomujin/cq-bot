@@ -87,12 +87,13 @@ public class TarKovMarketService {
                 case "Website" -> sb.append("游戏官网：");
                 case "Forum" -> sb.append("官方论坛：");
                 case "Authentication" -> sb.append("身份认证：");
-                case "Launcher" -> sb.append("    启动器：");
+                case "Launcher" -> sb.append("   启动器：");
                 case "Group lobby" -> sb.append("组队功能：");
                 case "Trading" -> sb.append("交易功能：");
                 case "Matchmaking" -> sb.append("战局匹配：");
                 case "Friends and msg." -> sb.append("好友消息：");
                 case "Inventory operations" -> sb.append("库存操作：");
+                default -> sb.append(name);
             }
             sb.append(STR."\{getCNStatus(status)}\n");
         });
