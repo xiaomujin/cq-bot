@@ -521,6 +521,7 @@ public class TkfServerPlugin {
                 任务需求:
 
                 \{taskSB.toString()}
+
                 藏身处需求:
 
                 \{craftSB.toString()}
