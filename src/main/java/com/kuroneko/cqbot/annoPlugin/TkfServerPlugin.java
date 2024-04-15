@@ -243,7 +243,7 @@ public class TkfServerPlugin {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.SEARCH_TKF_TASK);
         String name = matcher.group("name").trim();
         String sName = name.replaceAll("[\\s-]", "");
-        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(sName, 1, TimeUnit.SECONDS, () -> {
+        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(sName, 3, TimeUnit.MINUTES, () -> {
             List<TkfTask> tkfTasks = tkfTaskService.lambdaQuery().like(TkfTask::getSName, sName).list();
             if (tkfTasks.isEmpty()) {
                 return STR."未找到任务: \{sName}";
