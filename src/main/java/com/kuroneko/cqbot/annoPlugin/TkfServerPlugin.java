@@ -253,34 +253,7 @@ public class TkfServerPlugin {
             ));
             TkfTask first = tkfTasks.getFirst();
             List<TkfTaskTarget> tkfTaskTargets = tkfTaskTargetService.lambdaQuery().eq(TkfTaskTarget::getParentId, first.getId()).list();
-            StringBuilder stringBuilder = new StringBuilder();
-            boolean tip = false;
-            for (int i = 0; i < tkfTaskTargets.size(); i++) {
-                TkfTaskTarget tkfTaskTarget = tkfTaskTargets.get(i);
-                if (tkfTaskTarget.getIsOptional()) {
-                    tkfTaskTarget.setDescription(STR."( 可选 ) \{tkfTaskTarget.getDescription()}");
-                }
-                String num = tkfTaskTarget.getCount().toString();
-                if (tkfTaskTarget.getIsRaid()) {
-                    tip = true;
-                    num = STR."( \{num}√ )";
-                } else {
-                    num = STR."( \{num} )";
-                }
-                stringBuilder.append(STR."> \{i + 1}. \{tkfTaskTarget.getDescription()}\{tkfTaskTarget.getCount() > 0 ? num : ""}\n");
-            }
-            if (tip) {
-                stringBuilder.append("> Tip: √ 表示需要在战局中找到。");
-            }
-            String mdText = STR."""
-                    ![\{first.getTraderName()} #30px #30px](\{first.getTraderImg()}): \{first.getName()}
-                    ***
-                    \{first.getIsKappa() ? "3x4任务: ( √ )" : "~~3x4任务~~: ( × )"}
-                    \{first.getIsLightkeeper() ? "灯塔商人: ( √ )" : "~~灯塔商人~~: ( × )"}
-                    开启等级: \{first.getMinLevel()}
-                    任务目标:
-                    ***
-                    \{stringBuilder.toString()}""";
+            String mdText = getMdText(tkfTaskTargets, first);
 
             Keyboard keyboard;
             if (tkfTasks.size() > 1) {
@@ -298,6 +271,38 @@ public class TkfServerPlugin {
 
             return BotUtil.getMarkdownMsg(bot, event, mdText, keyboard);
         }));
+    }
+
+    private static String getMdText(List<TkfTaskTarget> tkfTaskTargets, TkfTask first) {
+        StringBuilder stringBuilder = new StringBuilder();
+        boolean tip = false;
+        for (int i = 0; i < tkfTaskTargets.size(); i++) {
+            TkfTaskTarget tkfTaskTarget = tkfTaskTargets.get(i);
+            if (tkfTaskTarget.getIsOptional()) {
+                tkfTaskTarget.setDescription(STR."( 可选 ) \{tkfTaskTarget.getDescription()}");
+            }
+            String num = tkfTaskTarget.getCount().toString();
+            if (tkfTaskTarget.getIsRaid()) {
+                tip = true;
+                num = STR."( \{num}√ )";
+            } else {
+                num = STR."( \{num} )";
+            }
+            stringBuilder.append(STR."> \{i + 1}. \{tkfTaskTarget.getDescription()}\{tkfTaskTarget.getCount() > 0 ? num : ""}\n");
+        }
+        if (tip) {
+            stringBuilder.append("> Tip: √ 表示需要在战局中找到。");
+        }
+        String mdText = STR."""
+                ![\{first.getTraderName()} #30px #30px](\{first.getTraderImg()}): \{first.getName()}
+                ***
+                \{first.getIsKappa() ? "3x4任务: ( √ )" : "~~3x4任务~~: ( × )"}
+                \{first.getIsLightkeeper() ? "灯塔商人: ( √ )" : "~~灯塔商人~~: ( × )"}
+                开启等级: \{first.getMinLevel()}
+                任务目标:
+                ***
+                \{stringBuilder.toString()}""";
+        return mdText;
     }
 
 }
