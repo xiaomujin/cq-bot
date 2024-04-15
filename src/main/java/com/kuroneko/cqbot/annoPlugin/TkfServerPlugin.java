@@ -515,8 +515,8 @@ public class TkfServerPlugin {
                 String mdText = STR."""
                 ![icon #35px #35px](\{item.getString("iconLink")}): \{item.getString("name")}
                 ***
-                24h均价: \{avg24hPrice == 0 ? STR."\{avg24hPrice} ₽" : "跳蚤禁售"}
-                跳蚤现价: \{avg24hPrice == 0 ? STR."\{lastLowPrice} ₽" : "跳蚤禁售"}
+                24h均价: \{avg24hPrice != 0 ? STR."\{avg24hPrice} ₽" : "跳蚤禁售"}
+                跳蚤现价: \{avg24hPrice != 0 ? STR."\{lastLowPrice} ₽" : "跳蚤禁售"}
                 商人价格: \{maxPrice} ₽
                 任务需求:
 
