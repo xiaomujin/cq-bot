@@ -94,7 +94,7 @@ public class SeTuPlugin extends BotPlugin {
                     .text("标题：" + seTuData.getTitle() + Constant.XN)
                     .text("作者：" + seTuData.getAuthor() + Constant.XN)
                     .text(STR."pid：\{seTuData.getPid()}\n")
-                    .text(STR."：反代地址: https://i.loli.best/\{seTuData.getPid()}");
+                    .text(STR."反代地址: https://i.loli.best/\{seTuData.getPid()}");
             two.setSeTuData(seTuData);
             two.setMsg(msg);
         }
