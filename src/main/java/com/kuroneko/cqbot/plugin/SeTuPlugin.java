@@ -90,7 +90,11 @@ public class SeTuPlugin extends BotPlugin {
             }
             String imgUrl = seTuData.getImgUrl();
             log.info("图片url：{}", imgUrl);
-            MsgUtils msg = MsgUtils.builder().img(imgUrl).text("标题：" + seTuData.getTitle() + Constant.XN).text("作者：" + seTuData.getAuthor() + Constant.XN).text("pid：" + seTuData.getPid());
+            MsgUtils msg = MsgUtils.builder().img(imgUrl)
+                    .text("标题：" + seTuData.getTitle() + Constant.XN)
+                    .text("作者：" + seTuData.getAuthor() + Constant.XN)
+                    .text(STR."pid：\{seTuData.getPid()}\n")
+                    .text(STR."：反代地址: https://i.loli.best/\{seTuData.getPid()}");
             two.setSeTuData(seTuData);
             two.setMsg(msg);
         }
