@@ -25,4 +25,6 @@ public class Regex {
     public static final String DICE = "^(?i)(?<cmd>(\\.|。)r).+";
     public static final String UPDATE_TKF_TASK = "^更新任务$";
     public static final String SEARCH_TKF_TASK = "^(?i)(查任务)(?<name>.+)";
+    public static final String PIC_SEARCH = "^[搜识][图圖]$";
+    public static final String UNSET_SEARCH_MODE = "^谢谢|退出搜图$";
 }

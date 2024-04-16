@@ -7,6 +7,7 @@ import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.kuroneko.cqbot.lagrange.markdown.Keyboard;
 import com.kuroneko.cqbot.lagrange.markdown.Markdown;
+import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.constant.ActionParams;
@@ -168,5 +169,17 @@ public class BotUtil {
             return null;
         }
         return STR."[CQ:longmsg,id=\{actionData.getData()}]";
+    }
+
+    public static ActionData<MsgId> at(Bot bot, Long userId, Long groupId, String msg) {
+        if (groupId != null && groupId != 0L) {
+            return bot.sendGroupMsg(
+                    groupId,
+                    MsgUtils.builder().at(userId).text(" ").text(msg).build(),
+                    false
+            );
+        }
+
+        return bot.sendPrivateMsg(userId, msg, false);
     }
 }
