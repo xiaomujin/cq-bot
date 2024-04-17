@@ -75,6 +75,7 @@ public class ModePlugin {
     }
 
     public Boolean check(String mode, Long userId, Long groupId) {
+        groupId = groupId == null ? 0L : groupId;
         String key = STR."\{userId.toString()}_\{groupId.toString()}";
         // 判断当前检索模式与 SearchModeBean 中是否一致，否则会执行所有检索插件
         SearchMode searchMode = expiringMap.get(key);
