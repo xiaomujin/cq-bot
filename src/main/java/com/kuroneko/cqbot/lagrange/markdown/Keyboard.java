@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.lagrange.markdown;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +14,35 @@ import java.util.List;
 @Getter
 @Setter
 public class Keyboard {
+    public static final int STYLE_GREY = 0;
+    public static final int STYLE_BLUE = 1;
+    public static final int ACTION_TYPE_JUMP = 0;
+    public static final int ACTION_TYPE_CALLBACK = 1;
+    public static final int ACTION_TYPE_CMD = 2;
+    public static final int PERMISSION_TYPE_USER = 0;
+    public static final int PERMISSION_TYPE_MANAGER = 1;
+    public static final int PERMISSION_TYPE_ALL = 2;
+    public static final int PERMISSION_TYPE_ROLE = 3;
+
+    private static final int MAX_BUTTON_NUM = 5;
+    private static final int MAX_ROW_NUM = 5;
     private final String type = "keyboard";
     private Data data = new Data();
 
     public static Keyboard Builder() {
         return new Keyboard();
+    }
+
+    public static ButtonBuilder CallButtonBuilder() {
+        return new ButtonBuilder().actionType(ACTION_TYPE_CALLBACK);
+    }
+
+    public static ButtonBuilder TextButtonBuilder() {
+        return new ButtonBuilder().actionType(ACTION_TYPE_CMD);
+    }
+
+    public static ButtonBuilder UrlButtonBuilder() {
+        return new ButtonBuilder().actionType(ACTION_TYPE_JUMP);
     }
 
     /**
@@ -50,27 +75,88 @@ public class Keyboard {
      * @param data           按钮数据
      * @param enter          自动发送
      * @param specifyUserIds 指定可操作的QQ
-     * @return Keyboard
+     * @return {@link Keyboard}
      */
     public Keyboard addButton(String text, String data, boolean enter, List<Long> specifyUserIds) {
+        int permissionType = PERMISSION_TYPE_ALL;
+        if (specifyUserIds != null && !specifyUserIds.isEmpty()) {
+            permissionType = PERMISSION_TYPE_USER;
+        }
+        return addButton(text, text, STYLE_BLUE, ACTION_TYPE_CMD, data, false, enter, permissionType, specifyUserIds, null);
+    }
+
+    public Keyboard addButton(ButtonBuilder builder) {
+        List<Long> specifyUserIds = null;
+        List<Long> specifyRoleIds = null;
+        if (builder.permissionType() == PERMISSION_TYPE_USER) {
+            specifyUserIds = builder.specifies();
+        } else if (builder.permissionType() == PERMISSION_TYPE_ROLE) {
+            specifyRoleIds = builder.specifies();
+        }
+        if (builder.visitedLabel() == null) {
+            builder.visitedLabel(builder.text());
+        }
+        return addButton(builder.text(), builder.visitedLabel(), builder.style(), builder.actionType(), builder.data(), builder.reply(), builder.enter(), builder.permissionType(), specifyUserIds, specifyRoleIds);
+    }
+
+    /**
+     * 添加按钮
+     *
+     * @param label          按钮上的文字
+     * @param visitedLabel   点击后按钮的上文字
+     * @param style          按钮样式:<br/>
+     *                       {@link Keyboard#STYLE_GREY} 灰色线框<br/>
+     *                       {@link Keyboard#STYLE_BLUE} 蓝色线框
+     * @param actionType     按钮类型:<br/>
+     *                       {@link Keyboard#ACTION_TYPE_JUMP} 跳转按钮: http 或 小程序 客户端识别 scheme<br/>
+     *                       {@link Keyboard#ACTION_TYPE_CALLBACK} 回调按钮: 回调后台接口, data 传给后台<br/>
+     *                       {@link Keyboard#ACTION_TYPE_CMD} 指令按钮: 自动在输入框插入 @bot data<br/>
+     * @param data           操作相关的数据
+     * @param reply          指令按钮可用，指令是否带引用回复本消息，默认 false。支持版本 8983
+     * @param enter          指令按钮可用，点击按钮后直接自动发送 data，默认 false。支持版本 8983
+     * @param permissionType 按钮权限类型:<br/>
+     *                       {@link Keyboard#PERMISSION_TYPE_USER} 指定用户可操作<br/>
+     *                       {@link Keyboard#PERMISSION_TYPE_MANAGER} 仅管理者可操作<br/>
+     *                       {@link Keyboard#PERMISSION_TYPE_ALL} 所有人可操作<br/>
+     *                       {@link Keyboard#PERMISSION_TYPE_ROLE} 指定身份组可操作（仅频道可用）<br/>
+     * @param specifyUserIds 有权限的用户 id 的列表
+     * @param specifyRoleIds 有权限的身份组 id 的列表（仅频道可用）
+     * @return {@link Keyboard}
+     */
+    public Keyboard addButton(String label, String visitedLabel, int style, int actionType, String data, boolean reply, boolean enter, int permissionType, List<Long> specifyUserIds, List<Long> specifyRoleIds) {
         Button button = new Button();
-        button.getRenderData().setLabel(text);
-        button.getRenderData().setVisitedLabel(text);
-        button.getAction().setData(data);
-        button.getAction().setEnter(enter);
-        if (!specifyUserIds.isEmpty()) {
-            Permission permission = button.getAction().getPermission();
-            permission.setType(0);
+        button.getRenderData()
+                .setLabel(label)
+                .setVisitedLabel(visitedLabel)
+                .setStyle(style);
+        button.getAction()
+                .setType(actionType)
+                .setData(data)
+                .setReply(reply)
+                .setEnter(enter);
+        Permission permission = button.getAction().getPermission()
+                .setType(permissionType);
+        if (specifyUserIds != null && !specifyUserIds.isEmpty()) {
             List<String> list = specifyUserIds.stream().map(String::valueOf).toList();
             permission.setSpecifyUserIds(list);
         }
+        if (specifyRoleIds != null && !specifyRoleIds.isEmpty()) {
+            List<String> list = specifyRoleIds.stream().map(String::valueOf).toList();
+            permission.setSpecifyRoleIds(list);
+        }
         List<Row> rows = getData().getContent().getRows();
-        rows.getLast().addButton(button);
+        if (rows.isEmpty()) {
+            addRow();
+        }
+        if (!rows.getLast().addButton(button)) {
+            addRow();
+            rows.getLast().addButton(button);
+        }
         return this;
     }
 
     public Keyboard addRow() {
-        if (getData().getContent().getRows().size() >= 5) {
+        if (getData().getContent().getRows().size() >= MAX_ROW_NUM) {
             return this;
         }
         getData().getContent().getRows().add(new Row());
@@ -94,12 +180,12 @@ public class Keyboard {
     public static class Row {
         private List<Button> buttons = new ArrayList<>();
 
-        public Row addButton(Button button) {
-            if (getButtons().size() >= 5) {
-                return this;
+        public boolean addButton(Button button) {
+            if (getButtons().size() >= MAX_BUTTON_NUM) {
+                return false;
             }
             getButtons().add(button);
-            return this;
+            return true;
         }
     }
 
@@ -119,6 +205,7 @@ public class Keyboard {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class RenderData {
         /**
          * 按钮上的文字
@@ -139,6 +226,7 @@ public class Keyboard {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Action {
         /**
          * 设置 0 跳转按钮：http 或 小程序 客户端识别 scheme，<br/>
@@ -148,7 +236,7 @@ public class Keyboard {
         @JSONField(name = "type")
         private int type = 2;
         /**
-         * 点击后按钮的上文字
+         * 权限设置
          */
         @JSONField(name = "permission")
         private Permission permission = new Permission();
@@ -183,6 +271,7 @@ public class Keyboard {
 
     @Getter
     @Setter
+    @Accessors(chain = true)
     public static class Permission {
         /**
          * 0 指定用户可操作，<br/>
@@ -204,5 +293,55 @@ public class Keyboard {
         private List<String> specifyRoleIds;
     }
 
+    @Getter
+    @Setter
+    @Accessors(fluent = true, chain = true)
+    public static class ButtonBuilder {
+        /**
+         * 按钮上的文字
+         */
+        private String text = "按钮";
+        /**
+         * 点击后按钮的上文字
+         */
+        private String visitedLabel;
+        /**
+         * 按钮样式:<br/>
+         * {@link Keyboard#STYLE_GREY} 灰色线框<br/>
+         * {@link Keyboard#STYLE_BLUE} 蓝色线框
+         */
+        private int style = STYLE_BLUE;
+        /**
+         * 按钮类型:<br/>
+         * {@link Keyboard#ACTION_TYPE_JUMP} 跳转按钮: http 或 小程序 客户端识别 scheme<br/>
+         * {@link Keyboard#ACTION_TYPE_CALLBACK} 回调按钮: 回调后台接口, data 传给后台<br/>
+         * {@link Keyboard#ACTION_TYPE_CMD} 指令按钮: 自动在输入框插入 @bot data<br/>
+         */
+        private int actionType = ACTION_TYPE_CMD;
+        /**
+         * 操作相关的数据
+         */
+        private String data = "";
+        /**
+         * 指令按钮可用，指令是否带引用回复本消息，默认 false。支持版本 8983
+         */
+        private boolean reply = false;
+        /**
+         * 指令按钮可用，点击按钮后直接自动发送 data，默认 false。支持版本 8983
+         */
+        private boolean enter = false;
+        /**
+         * 按钮权限类型:<br/>
+         * {@link Keyboard#PERMISSION_TYPE_USER} 指定用户可操作<br/>
+         * {@link Keyboard#PERMISSION_TYPE_MANAGER} 仅管理者可操作<br/>
+         * {@link Keyboard#PERMISSION_TYPE_ALL} 所有人可操作<br/>
+         * {@link Keyboard#PERMISSION_TYPE_ROLE} 指定身份组可操作（仅频道可用）<br/>
+         */
+        private int permissionType = PERMISSION_TYPE_ALL;
+        /**
+         * 有权限的 id 的列表
+         */
+        private List<Long> specifies;
+    }
 
 }
