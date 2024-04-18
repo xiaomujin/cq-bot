@@ -156,10 +156,14 @@ public class Keyboard {
     }
 
     public Keyboard addRow() {
-        if (getData().getContent().getRows().size() >= MAX_ROW_NUM) {
+        List<Row> rows = getData().getContent().getRows();
+        if (rows.size() >= MAX_ROW_NUM) {
             return this;
         }
-        getData().getContent().getRows().add(new Row());
+        if (rows.getLast().getButtons().isEmpty()) {
+            return this;
+        }
+        rows.add(new Row());
         return this;
     }
 
