@@ -149,26 +149,19 @@ public class BotUtil {
     }
 
     public static ActionData<MsgId> sendMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText, Keyboard keyboard) {
-        String markdownMsg = getMarkdownMsg(bot, event, mdText, keyboard);
-        if (StrUtil.isEmpty(markdownMsg)) {
-            return null;
-        }
-        return bot.sendMsg(event, markdownMsg, false);
-    }
-
-    public static String getMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText, Keyboard keyboard) {
         List<Object> contents = new ArrayList<>();
         Markdown markdown = Markdown.Builder().setContent(mdText);
         contents.add(markdown);
         if (keyboard != null) {
             contents.add(keyboard);
         }
-        List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
-        ActionData<String> actionData = sendForwardMsg(bot, maps);
-        if (actionData == null || StrUtil.isEmpty(actionData.getData())) {
-            return null;
-        }
-        return STR."[CQ:longmsg,id=\{actionData.getData()}]";
+        return sendGroupMsg(bot, event, contents);
+//        List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
+//        ActionData<String> actionData = sendForwardMsg(bot, maps);
+//        if (actionData == null || StrUtil.isEmpty(actionData.getData())) {
+//            return null;
+//        }
+//        return STR."[CQ:longmsg,id=\{actionData.getData()}]";
     }
 
     public static ActionData<MsgId> at(Bot bot, Long userId, Long groupId, String msg) {
@@ -181,5 +174,20 @@ public class BotUtil {
         }
 
         return bot.sendPrivateMsg(userId, msg, false);
+    }
+
+    public static ActionData<MsgId> sendGroupMsg(Bot bot, AnyMessageEvent event, Object msg) {
+        JSONObject params = new JSONObject();
+        if (ActionParams.PRIVATE.equals(event.getMessageType())) {
+            params.put(ActionParams.USER_ID, event.getUserId());
+        }
+        if (ActionParams.GROUP.equals(event.getMessageType())) {
+            params.put(ActionParams.GROUP_ID, event.getGroupId());
+        }
+        params.put(ActionParams.MESSAGE, msg);
+        params.put(ActionParams.AUTO_ESCAPE, false);
+        JSONObject result = actionHandler.action(bot.getSession(), ActionPathEnum.SEND_GROUP_MSG, params);
+        return result != null ? result.to(new TypeReference<ActionData<MsgId>>() {
+        }.getType()) : null;
     }
 }
