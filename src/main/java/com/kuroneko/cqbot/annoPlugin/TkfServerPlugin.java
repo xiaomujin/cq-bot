@@ -369,13 +369,20 @@ public class TkfServerPlugin {
                 keyboard = Keyboard.Builder();
                 for (int i = 1; i < tkfTasks.size(); i++) {
                     TkfTask tkfTask = tkfTasks.get(i);
-                    keyboard.addRow().addButton(tkfTask.getName(), STR."查任务 \{tkfTask.getSName()}", true, List.of(event.getUserId()));
+                    Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder()
+                            .text(tkfTask.getName())
+                            .data(STR."查任务 \{tkfTask.getSName()}")
+                            .enter(true)
+                            .permissionType(Keyboard.PERMISSION_TYPE_USER)
+                            .specifies(List.of(event.getUserId()));
+                    keyboard.addRow().addButton(buttonBuilder);
                     if (i >= 5) {
                         break;
                     }
                 }
             } else {
-                keyboard = Keyboard.Builder().addRow().addButton("我也查查", STR."查任务 ", false);
+                Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder().text("我也要查").data("查任务 ");
+                keyboard = Keyboard.Builder().addRow().addButton(buttonBuilder);
             }
 
             BotUtil.sendMarkdownMsg(bot, event, mdText, keyboard);
@@ -534,13 +541,20 @@ public class TkfServerPlugin {
                 for (int i = 1; i < jsonArray.size(); i++) {
                     String idOther = jsonArray.getJSONObject(i).getString("id");
                     String nameOther = jsonArray.getJSONObject(i).getString("name");
-                    keyboard.addRow().addButton(nameOther, STR."跳蚤 \{idOther}", true, List.of(event.getUserId()));
+                    Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder()
+                            .text(nameOther)
+                            .data(STR."跳蚤 \{idOther}")
+                            .enter(true)
+                            .permissionType(Keyboard.PERMISSION_TYPE_USER)
+                            .specifies(List.of(event.getUserId()));
+                    keyboard.addRow().addButton(buttonBuilder);
                     if (i >= 5) {
                         break;
                     }
                 }
             } else {
-                keyboard.addRow().addButton("我也要查", "跳蚤 ");
+                Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder().text("我也要查").data("跳蚤 ");
+                keyboard.addRow().addButton(buttonBuilder);
             }
             BotUtil.sendMarkdownMsg(bot, event, mdText, keyboard);
             return "";

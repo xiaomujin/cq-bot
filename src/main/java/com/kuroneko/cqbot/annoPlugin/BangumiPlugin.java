@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
@@ -58,7 +59,8 @@ public class BangumiPlugin {
             String mdText = """
                     ---\s
                     [点我喵喵叫](mqqapi://aio/inlinecmd?command=喵呜&reply=false&enter=true)""";
-            Keyboard keyboard = Keyboard.Builder().addRow().addButton(Keyboard.TextButtonBuilder().text("+1").data("md2"));
+            Keyboard keyboard = Keyboard.Builder().addButton(Keyboard.TextButtonBuilder().text("+1").data("md2").permissionType(Keyboard.PERMISSION_TYPE_USER).specifies(List.of(1L)))
+                    .addButton(Keyboard.TextButtonBuilder().text("+2").data("md2").permissionType(Keyboard.PERMISSION_TYPE_USER).specifies(List.of(event.getUserId())));
             BotUtil.sendMarkdownMsg(bot, event, mdText, keyboard);
             return "";
         }));

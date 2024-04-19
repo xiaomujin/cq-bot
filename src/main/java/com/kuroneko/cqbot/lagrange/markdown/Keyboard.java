@@ -23,9 +23,12 @@ public class Keyboard {
     public static final int PERMISSION_TYPE_MANAGER = 1;
     public static final int PERMISSION_TYPE_ALL = 2;
     public static final int PERMISSION_TYPE_ROLE = 3;
+    public static final int ANCHOR_NONE = 0;
+    public static final int ANCHOR_SELECT = 1;
 
     private static final int MAX_BUTTON_NUM = 5;
     private static final int MAX_ROW_NUM = 5;
+
     private final String type = "keyboard";
     private Data data = new Data();
 
@@ -45,46 +48,6 @@ public class Keyboard {
         return new ButtonBuilder().actionType(ACTION_TYPE_JUMP);
     }
 
-    /**
-     * 添加按钮
-     *
-     * @param text 按钮文本
-     * @param data 按钮数据
-     * @return Keyboard
-     */
-    public Keyboard addButton(String text, String data) {
-        return addButton(text, data, false);
-    }
-
-    /**
-     * 添加按钮
-     *
-     * @param text  按钮文本
-     * @param data  按钮数据
-     * @param enter 自动发送
-     * @return Keyboard
-     */
-    public Keyboard addButton(String text, String data, boolean enter) {
-        return addButton(text, data, enter, List.of());
-    }
-
-    /**
-     * 添加按钮
-     *
-     * @param text           按钮文本
-     * @param data           按钮数据
-     * @param enter          自动发送
-     * @param specifyUserIds 指定可操作的QQ
-     * @return {@link Keyboard}
-     */
-    public Keyboard addButton(String text, String data, boolean enter, List<Long> specifyUserIds) {
-        int permissionType = PERMISSION_TYPE_ALL;
-        if (specifyUserIds != null && !specifyUserIds.isEmpty()) {
-            permissionType = PERMISSION_TYPE_USER;
-        }
-        return addButton(text, text, STYLE_BLUE, ACTION_TYPE_CMD, data, false, enter, permissionType, specifyUserIds, null);
-    }
-
     public Keyboard addButton(ButtonBuilder builder) {
         List<Long> specifyUserIds = null;
         List<Long> specifyRoleIds = null;
@@ -96,7 +59,7 @@ public class Keyboard {
         if (builder.visitedLabel() == null) {
             builder.visitedLabel(builder.text());
         }
-        return addButton(builder.text(), builder.visitedLabel(), builder.style(), builder.actionType(), builder.data(), builder.reply(), builder.enter(), builder.permissionType(), specifyUserIds, specifyRoleIds);
+        return addButton(builder.id(), builder.text(), builder.visitedLabel(), builder.style(), builder.actionType(), builder.data(), builder.reply(), builder.enter(), builder.anchor(), builder.unSupportTips(), builder.permissionType(), specifyUserIds, specifyRoleIds);
     }
 
     /**
@@ -123,8 +86,9 @@ public class Keyboard {
      * @param specifyRoleIds 有权限的身份组 id 的列表（仅频道可用）
      * @return {@link Keyboard}
      */
-    public Keyboard addButton(String label, String visitedLabel, int style, int actionType, String data, boolean reply, boolean enter, int permissionType, List<Long> specifyUserIds, List<Long> specifyRoleIds) {
+    public Keyboard addButton(String id, String label, String visitedLabel, Integer style, Integer actionType, String data, Boolean reply, Boolean enter, Integer anchor, String unSupportTips, Integer permissionType, List<Long> specifyUserIds, List<Long> specifyRoleIds) {
         Button button = new Button();
+        button.setId(id);
         button.getRenderData()
                 .setLabel(label)
                 .setVisitedLabel(visitedLabel)
@@ -133,7 +97,9 @@ public class Keyboard {
                 .setType(actionType)
                 .setData(data)
                 .setReply(reply)
-                .setEnter(enter);
+                .setEnter(enter)
+                .setAnchor(anchor)
+                .setUnSupportTips(unSupportTips);
         Permission permission = button.getAction().getPermission()
                 .setType(permissionType);
         if (specifyUserIds != null && !specifyUserIds.isEmpty()) {
@@ -160,7 +126,7 @@ public class Keyboard {
         if (rows.size() >= MAX_ROW_NUM) {
             return this;
         }
-        if (rows.getLast().getButtons().isEmpty()) {
+        if (!rows.isEmpty() && rows.getLast().getButtons().isEmpty()) {
             return this;
         }
         rows.add(new Row());
@@ -215,17 +181,17 @@ public class Keyboard {
          * 按钮上的文字
          */
         @JSONField(name = "label")
-        private String label = "";
+        private String label;
         /**
          * 点击后按钮的上文字
          */
         @JSONField(name = "visited_label")
-        private String visitedLabel = "";
+        private String visitedLabel;
         /**
          * 按钮样式：0 灰色线框，1 蓝色线框
          */
         @JSONField(name = "style")
-        private int style = 1;
+        private Integer style;
     }
 
     @Getter
@@ -238,7 +204,7 @@ public class Keyboard {
          * 设置 2 指令按钮：自动在输入框插入 @bot data <br/>
          */
         @JSONField(name = "type")
-        private int type = 2;
+        private int type;
         /**
          * 权限设置
          */
@@ -269,8 +235,8 @@ public class Keyboard {
         /**
          * 客户端不支持本action的时候，弹出的toast文案
          */
-        @JSONField(name = "anchor")
-        private String unsupport_tips = "暂不支持当前版本";
+        @JSONField(name = "unsupport_tips")
+        private String unSupportTips;
     }
 
     @Getter
@@ -284,7 +250,7 @@ public class Keyboard {
          * 3 指定身份组可操作（仅频道可用）<br/>
          */
         @JSONField(name = "type")
-        private int type = 2;
+        private Integer type;
         /**
          * 有权限的用户 id 的列表
          */
@@ -302,6 +268,10 @@ public class Keyboard {
     @Accessors(fluent = true, chain = true)
     public static class ButtonBuilder {
         /**
+         * 按钮ID：在一个keyboard消息内设置唯一
+         */
+        private String id;
+        /**
          * 按钮上的文字
          */
         private String text = "按钮";
@@ -314,14 +284,14 @@ public class Keyboard {
          * {@link Keyboard#STYLE_GREY} 灰色线框<br/>
          * {@link Keyboard#STYLE_BLUE} 蓝色线框
          */
-        private int style = STYLE_BLUE;
+        private Integer style = STYLE_BLUE;
         /**
          * 按钮类型:<br/>
          * {@link Keyboard#ACTION_TYPE_JUMP} 跳转按钮: http 或 小程序 客户端识别 scheme<br/>
          * {@link Keyboard#ACTION_TYPE_CALLBACK} 回调按钮: 回调后台接口, data 传给后台<br/>
          * {@link Keyboard#ACTION_TYPE_CMD} 指令按钮: 自动在输入框插入 @bot data<br/>
          */
-        private int actionType = ACTION_TYPE_CMD;
+        private Integer actionType = ACTION_TYPE_CMD;
         /**
          * 操作相关的数据
          */
@@ -329,11 +299,11 @@ public class Keyboard {
         /**
          * 指令按钮可用，指令是否带引用回复本消息，默认 false。支持版本 8983
          */
-        private boolean reply = false;
+        private Boolean reply = false;
         /**
          * 指令按钮可用，点击按钮后直接自动发送 data，默认 false。支持版本 8983
          */
-        private boolean enter = false;
+        private Boolean enter = false;
         /**
          * 按钮权限类型:<br/>
          * {@link Keyboard#PERMISSION_TYPE_USER} 指定用户可操作<br/>
@@ -346,6 +316,16 @@ public class Keyboard {
          * 有权限的 id 的列表
          */
         private List<Long> specifies;
+        /**
+         * 本字段仅在指令按钮下有效，设置后后会忽略 action.enter 配置。
+         * 设置为 1 时 ，点击按钮自动唤起启手Q选图器，其他值暂无效果。
+         * 仅支持手机端版本 8983+ 的单聊场景，桌面端不支持）
+         */
+        private Integer anchor = ANCHOR_NONE;
+        /**
+         * 客户端不支持本action的时候，弹出的toast文案
+         */
+        private String unSupportTips = "暂不支持当前版本";
     }
 
 }
