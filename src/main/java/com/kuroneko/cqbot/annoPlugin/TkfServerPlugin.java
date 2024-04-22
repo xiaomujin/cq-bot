@@ -10,7 +10,6 @@ import com.kuroneko.cqbot.entity.TkfTask;
 import com.kuroneko.cqbot.entity.TkfTaskTarget;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
-import com.kuroneko.cqbot.lagrange.markdown.Keyboard;
 import com.kuroneko.cqbot.service.HelpService;
 import com.kuroneko.cqbot.service.TarKovMarketService;
 import com.kuroneko.cqbot.service.TkfTaskService;
@@ -22,10 +21,13 @@ import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
+import com.mikuac.shiro.common.utils.ArrayMsgUtils;
+import com.mikuac.shiro.common.utils.Keyboard;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.mikuac.shiro.enums.AtEnum;
+import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -366,26 +368,26 @@ public class TkfServerPlugin {
 
             Keyboard keyboard;
             if (tkfTasks.size() > 1) {
-                keyboard = Keyboard.Builder();
+                keyboard = Keyboard.builder();
                 for (int i = 1; i < tkfTasks.size(); i++) {
                     TkfTask tkfTask = tkfTasks.get(i);
-                    Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder()
-                            .text(tkfTask.getName())
+                    Keyboard.Button button = Keyboard.textButtonBuilder()
+                            .label(tkfTask.getName())
                             .data(STR."查任务 \{tkfTask.getSName()}")
                             .enter(true)
-                            .permissionType(Keyboard.PERMISSION_TYPE_USER)
-                            .specifies(List.of(event.getUserId()));
-                    keyboard.addRow().addButton(buttonBuilder);
+                            .build();
+                    keyboard.addRow().addButton(button);
                     if (i >= 5) {
                         break;
                     }
                 }
             } else {
-                Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder().text("我也要查").data("查任务 ");
-                keyboard = Keyboard.Builder().addRow().addButton(buttonBuilder);
+                Keyboard.Button button = Keyboard.textButtonBuilder().label("我也要查").data("查任务 ").build();
+                keyboard = Keyboard.builder().addRow().addButton(button);
             }
 
-            BotUtil.sendMarkdownMsg(bot, event, mdText, keyboard);
+            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
+            bot.sendMsg(event, arrayMsgs, false);
             return "";
         });
     }
@@ -536,27 +538,27 @@ public class TkfServerPlugin {
                 \{formatTime}
                 """;
 
-            Keyboard keyboard = Keyboard.Builder();
+            Keyboard keyboard = Keyboard.builder();
             if (jsonArray.size() > 1) {
                 for (int i = 1; i < jsonArray.size(); i++) {
                     String idOther = jsonArray.getJSONObject(i).getString("id");
                     String nameOther = jsonArray.getJSONObject(i).getString("name");
-                    Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder()
-                            .text(nameOther)
+                    Keyboard.Button button = Keyboard.textButtonBuilder()
+                            .label(nameOther)
                             .data(STR."跳蚤 \{idOther}")
                             .enter(true)
-                            .permissionType(Keyboard.PERMISSION_TYPE_USER)
-                            .specifies(List.of(event.getUserId()));
-                    keyboard.addRow().addButton(buttonBuilder);
+                            .build();
+                    keyboard.addRow().addButton(button);
                     if (i >= 5) {
                         break;
                     }
                 }
             } else {
-                Keyboard.ButtonBuilder buttonBuilder = Keyboard.TextButtonBuilder().text("我也要查").data("跳蚤 ");
-                keyboard.addRow().addButton(buttonBuilder);
+                Keyboard.Button button = Keyboard.textButtonBuilder().label("我也要查").data("跳蚤 ").build();
+                keyboard.addRow().addButton(button);
             }
-            BotUtil.sendMarkdownMsg(bot, event, mdText, keyboard);
+            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
+            bot.sendMsg(event, arrayMsgs, false);
             return "";
         });
     }

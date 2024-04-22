@@ -40,7 +40,7 @@ public class ModePlugin {
     }
 
     private void remove(Long userId, Long groupId, Bot bot) {
-        String key = STR."\{userId.toString()}_\{groupId.toString()}";
+        String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
         SearchMode searchMode = expiringMap.get(key);
         if (searchMode == null) {
             return;
@@ -59,7 +59,7 @@ public class ModePlugin {
     }
 
     public void setSearchMode(String mode, Long userId, Long groupId, Bot bot) {
-        String key = STR."\{userId.toString()}_\{groupId.toString()}";
+        String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
         SearchMode info = new SearchMode(userId, groupId, mode, bot);
         if (isSearchMode(key)) {
             BotUtil.at(bot, userId, groupId, STR."当前已经处于 \{mode} 模式啦，请直接发送需要检索的图片。");
@@ -70,13 +70,12 @@ public class ModePlugin {
     }
 
     public void resetExpiration(Long userId, Long groupId) {
-        String key = STR."\{userId.toString()}_\{groupId.toString()}";
+        String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
         expiringMap.resetExpiration(key);
     }
 
     public Boolean check(String mode, Long userId, Long groupId) {
-        groupId = groupId == null ? 0L : groupId;
-        String key = STR."\{userId.toString()}_\{groupId.toString()}";
+        String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
         // 判断当前检索模式与 SearchModeBean 中是否一致，否则会执行所有检索插件
         SearchMode searchMode = expiringMap.get(key);
         if (searchMode == null) {
