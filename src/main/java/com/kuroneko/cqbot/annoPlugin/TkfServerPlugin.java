@@ -41,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 @Shiro
 @Slf4j
@@ -127,7 +128,70 @@ public class TkfServerPlugin {
                         .minLevel(jsonObject.getInteger("minPlayerLevel"))
                         .isKappa(jsonObject.getBoolean("kappaRequired"))
                         .isLightkeeper(jsonObject.getBoolean("lightkeeperRequired"))
+                        .idStr(jsonObject.getString("id"))
                         .build();
+                JSONArray taskRequirements = jsonObject.getJSONArray("taskRequirements");
+                StringBuilder taskSb = new StringBuilder();
+                if (taskRequirements != null && !taskRequirements.isEmpty()) {
+                    ArrayList<String> perTaskId = new ArrayList<>();
+                    for (int j = 0; j < taskRequirements.size(); j++) {
+                        JSONObject taskRequirement = taskRequirements.getJSONObject(j);
+                        JSONObject task = taskRequirement.getJSONObject("task");
+                        List<String> status = taskRequirement.getList("status", String.class);
+                        String collect = status.stream().map(
+                                        s -> s.replace("active", "进行中")
+                                                .replace("complete", "完成")
+                                                .replace("failed", "失败"))
+                                .collect(Collectors.joining(",", "(", ")"));
+                        perTaskId.add(task.getString("id"));
+                        taskSb.append(STR."> \{task.getString("name")} \{collect}\n");
+                    }
+                    tkfTask.setPreTaskId(String.join("|", perTaskId));
+                }
+                if (taskSb.isEmpty()) {
+                    taskSb.append("> 无\n");
+                }
+                tkfTask.setPreTask(taskSb.toString());
+
+                StringBuilder sb = new StringBuilder();
+                sb.append(STR."> EXP ( \{jsonObject.getString("experience")} )\n");
+                JSONObject finishRewards = jsonObject.getJSONObject("finishRewards");
+                if (finishRewards != null) {
+                    JSONArray traderStanding = finishRewards.getJSONArray("traderStanding");
+                    if (traderStanding != null && !traderStanding.isEmpty()) {
+                        for (int j = 0; j < traderStanding.size(); j++) {
+                            JSONObject traderStand = traderStanding.getJSONObject(j);
+                            String tName = traderStand.getJSONObject("trader").getString("name");
+                            String count = traderStand.getString("standing");
+                            sb.append(STR."> \{tName} ( \{count} )\n");
+                        }
+                    }
+
+                    JSONArray items = finishRewards.getJSONArray("items");
+                    if (items != null && !items.isEmpty()) {
+                        for (int j = 0; j < items.size(); j++) {
+                            JSONObject itemsJSONObject = items.getJSONObject(j);
+                            String tName = itemsJSONObject.getJSONObject("item").getString("name");
+                            String count = itemsJSONObject.getString("count");
+                            sb.append(STR."> \{tName} ( \{count} )\n");
+                        }
+                    }
+
+                    JSONArray skillLevelReward = finishRewards.getJSONArray("skillLevelReward");
+                    if (skillLevelReward != null && !skillLevelReward.isEmpty()) {
+                        for (int j = 0; j < skillLevelReward.size(); j++) {
+                            JSONObject skillLevel = skillLevelReward.getJSONObject(j);
+                            String tName = skillLevel.getString("name");
+                            String count = skillLevel.getString("level");
+                            sb.append(STR."> \{tName} ( \{count} )\n");
+                        }
+                    }
+                }
+                if (sb.isEmpty()) {
+                    sb.append("> 无\n");
+                }
+                tkfTask.setFinishReward(sb.toString());
+
                 tkfTasks.add(tkfTask);
                 if (!jsonObject.containsKey("objectives")) {
                     continue;
@@ -164,59 +228,85 @@ public class TkfServerPlugin {
 
     private static final String QUERY_TASKS = """
             {
-              tasks(lang: zh) {
-                id
-                name
-                trader {
-                  name
-                  imageLink
-                }
-                taskImageLink
-                minPlayerLevel
-                kappaRequired
-                lightkeeperRequired
-                objectives {
-                  id
-                  type
-                  description
-                  optional
-                  __typename
-                  ... on TaskObjectiveItem {
-                    count
-                    foundInRaid
-                  }
-                  ... on TaskObjectiveShoot {
-                    count
-                  }
-                  ... on TaskObjectiveQuestItem {
-                    count
-                  }
-                  ... on TaskObjectiveExtract {
-                    count
-                  }
-                  ... on TaskObjectivePlayerLevel {
-                    count: playerLevel
-                  }
-                  ... on TaskObjectiveSkill {
-                    skillLevel {
-                      level
-                    }
-                  }
-                  ... on TaskObjectiveTraderLevel {
-                    count: level
-                  }
-                  ... on TaskObjectiveTraderStanding {
-                    count: value
-                  }
-                  ... on TaskObjectiveExperience {
-                    count
-                  }
-                  ... on TaskObjectiveUseItem {
-                    count
-                  }
-                }
-              }
-            }
+               tasks(lang: zh) {
+                 id
+                 name
+                 trader {
+                   name
+                   imageLink
+                 }
+                 experience
+                 taskImageLink
+                 minPlayerLevel
+                 kappaRequired
+                 lightkeeperRequired
+                 objectives {
+                   id
+                   type
+                   description
+                   optional
+                   __typename
+                   ... on TaskObjectiveItem {
+                     count
+                     foundInRaid
+                   }
+                   ... on TaskObjectiveShoot {
+                     count
+                   }
+                   ... on TaskObjectiveQuestItem {
+                     count
+                   }
+                   ... on TaskObjectiveExtract {
+                     count
+                   }
+                   ... on TaskObjectivePlayerLevel {
+                     count: playerLevel
+                   }
+                   ... on TaskObjectiveSkill {
+                     skillLevel {
+                       level
+                     }
+                   }
+                   ... on TaskObjectiveTraderLevel {
+                     count: level
+                   }
+                   ... on TaskObjectiveTraderStanding {
+                     count: value
+                   }
+                   ... on TaskObjectiveExperience {
+                     count
+                   }
+                   ... on TaskObjectiveUseItem {
+                     count
+                   }
+                 }
+                 finishRewards {
+                   traderStanding {
+                     trader {
+                       name
+                     }
+                     standing
+                   }
+                   items {
+                     item {
+                       name
+                     }
+                     count
+                   }
+                   skillLevelReward {
+                     name
+                     level
+                   }
+                 }
+                 taskRequirements {
+                   task {
+                     id
+                     name
+                   }
+                   status
+                 }
+               }
+             }
             """;
 
     private static final String QUERY_ITEMS = """
@@ -339,14 +429,8 @@ public class TkfServerPlugin {
     }
 
     @AnyMessageHandler()
-    @MessageHandlerFilter(cmd = Regex.SEARCH_TKF_TASK, at = AtEnum.NEED)
+    @MessageHandlerFilter(cmd = Regex.SEARCH_TKF_TASK, at = AtEnum.BOTH)
     public void searchTkfTaskAt(Bot bot, AnyMessageEvent event, Matcher matcher) {
-        searchTkfTask(bot, event, matcher);
-    }
-
-    @AnyMessageHandler()
-    @MessageHandlerFilter(cmd = Regex.SEARCH_TKF_TASK, at = AtEnum.NOT_NEED)
-    public void searchTkfTaskNoAt(Bot bot, AnyMessageEvent event, Matcher matcher) {
         searchTkfTask(bot, event, matcher);
     }
 
@@ -410,7 +494,7 @@ public class TkfServerPlugin {
             stringBuilder.append(STR."> \{i + 1}. \{tkfTaskTarget.getDescription()}\{tkfTaskTarget.getCount() > 0 ? num : ""}\n");
         }
         if (tip) {
-            stringBuilder.append("> Tip: √ 表示需要在战局中找到。");
+            stringBuilder.append("> Tip: √ 表示需要在战局中找到。\n");
         }
         String mdText = STR."""
                 ![\{first.getTraderName()} #30px #30px](\{first.getTraderImg()}): \{first.getName()}
@@ -420,7 +504,14 @@ public class TkfServerPlugin {
                 开启等级: \{first.getMinLevel()}
                 任务目标:
                 ***
-                \{stringBuilder.toString()}""";
+                \{stringBuilder.toString()}
+                任务奖励:
+                ***
+                \{first.getFinishReward()}
+                前置任务:
+                ***
+                \{first.getPreTask()}
+                """;
         return mdText;
     }
 

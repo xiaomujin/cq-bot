@@ -5,34 +5,35 @@
 <mapper namespace="com.kuroneko.cqbot.mapper.BulletMapper">
 
     <resultMap id="BaseResultMap" type="com.kuroneko.cqbot.entity.Bullet">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="caliber" column="caliber" jdbcType="VARCHAR"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="tracer" column="tracer" jdbcType="TINYINT"/>
-            <result property="subsonic" column="subsonic" jdbcType="TINYINT"/>
-            <result property="noMarket" column="no_market" jdbcType="TINYINT"/>
-            <result property="damage" column="damage" jdbcType="VARCHAR"/>
-            <result property="penetrationPower" column="penetration_power" jdbcType="INTEGER"/>
-            <result property="armorDamage" column="armor_damage" jdbcType="INTEGER"/>
-            <result property="accuracy" column="accuracy" jdbcType="INTEGER"/>
-            <result property="recoil" column="recoil" jdbcType="INTEGER"/>
-            <result property="fragChance" column="frag_chance" jdbcType="INTEGER"/>
-            <result property="bleedLt" column="bleed_lt" jdbcType="INTEGER"/>
-            <result property="bleedHvy" column="bleed_hvy" jdbcType="INTEGER"/>
-            <result property="effectivenessLv1" column="effectiveness_lv1" jdbcType="INTEGER"/>
-            <result property="effectivenessLv2" column="effectiveness_lv2" jdbcType="INTEGER"/>
-            <result property="effectivenessLv3" column="effectiveness_lv3" jdbcType="INTEGER"/>
-            <result property="effectivenessLv4" column="effectiveness_lv4" jdbcType="INTEGER"/>
-            <result property="effectivenessLv5" column="effectiveness_lv5" jdbcType="INTEGER"/>
-            <result property="effectivenessLv6" column="effectiveness_lv6" jdbcType="INTEGER"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="caliber" column="caliber" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="tracer" column="tracer" jdbcType="TINYINT"/>
+        <result property="subsonic" column="subsonic" jdbcType="TINYINT"/>
+        <result property="noMarket" column="no_market" jdbcType="TINYINT"/>
+        <result property="damage" column="damage" jdbcType="VARCHAR"/>
+        <result property="penetrationPower" column="penetration_power" jdbcType="INTEGER"/>
+        <result property="armorDamage" column="armor_damage" jdbcType="INTEGER"/>
+        <result property="accuracy" column="accuracy" jdbcType="INTEGER"/>
+        <result property="recoil" column="recoil" jdbcType="INTEGER"/>
+        <result property="fragChance" column="frag_chance" jdbcType="INTEGER"/>
+        <result property="bleedLt" column="bleed_lt" jdbcType="INTEGER"/>
+        <result property="bleedHvy" column="bleed_hvy" jdbcType="INTEGER"/>
+        <result property="effectivenessLv1" column="effectiveness_lv1" jdbcType="INTEGER"/>
+        <result property="effectivenessLv2" column="effectiveness_lv2" jdbcType="INTEGER"/>
+        <result property="effectivenessLv3" column="effectiveness_lv3" jdbcType="INTEGER"/>
+        <result property="effectivenessLv4" column="effectiveness_lv4" jdbcType="INTEGER"/>
+        <result property="effectivenessLv5" column="effectiveness_lv5" jdbcType="INTEGER"/>
+        <result property="effectivenessLv6" column="effectiveness_lv6" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,caliber,name,
+        id
+        ,caliber,name,
         tracer,subsonic,no_market,
         damage,penetration_power,armor_damage,
         accuracy,recoil,frag_chance,

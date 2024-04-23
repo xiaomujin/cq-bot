@@ -67,6 +67,26 @@ public class TkfTask extends BaseEntity implements Serializable {
      */
     private String taskImg;
 
+    /**
+     * 
+     */
+    private String finishReward;
+
+    /**
+     * 
+     */
+    private String preTaskId;
+
+    /**
+     * 
+     */
+    private String idStr;
+
+    /**
+     * 
+     */
+    private String preTask;
+
     @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
