@@ -31,14 +31,14 @@ public class DailyPlugin {
     @MessageHandlerFilter(cmd = Regex.CALENDAR)
     public void calendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.CALENDAR, 20, TimeUnit.MINUTES, () -> {
-            String moyuStr = HttpUtil.get("https://api.j4u.ink/v1/store/other/proxy/remote/moyu.json");
-//            String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
+//            String moyuStr = HttpUtil.get("https://api.j4u.ink/v1/store/other/proxy/remote/moyu.json");
+            String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
             JSONObject moyuObject = JSON.parseObject(moyuStr);
-            Integer code = moyuObject.getInteger("code");
-            if (code != 200) {
+            Boolean success = moyuObject.getBoolean("success");
+            if (!success) {
                 throw new BotException("获取日历失败");
             }
-            String url = moyuObject.getJSONObject("data").getString("moyu_url");
+            String url = moyuObject.getString("url");
             OneBotMedia media = new OneBotMedia().file(url).cache(true);
             return MsgUtils.builder().img(media).build();
         }));
