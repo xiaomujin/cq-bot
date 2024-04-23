@@ -144,7 +144,7 @@ public class TkfServerPlugin {
                                                 .replace("failed", "失败"))
                                 .collect(Collectors.joining(",", "(", ")"));
                         perTaskId.add(task.getString("id"));
-                        taskSb.append(STR."> \{task.getString("name")} \{collect}\n");
+                        taskSb.append(STR."> \{task.getString("name").trim()} \{collect}\n");
                     }
                     tkfTask.setPreTaskId(String.join("|", perTaskId));
                 }
