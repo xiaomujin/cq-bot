@@ -12,6 +12,7 @@ import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.model.ArrayMsg;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -31,7 +34,7 @@ public class PicSearchPlugin {
     private static final String sauceNaoKey = "a4aa702c9ee5f0f66a7f0f4846a7a77c5a1f5ec2";
 
     @AnyMessageHandler
-    @MessageHandlerFilter(cmd = Regex.PIC_SEARCH)
+    @MessageHandlerFilter(cmd = Regex.PIC_SEARCH , at = AtEnum.NEED)
     public void handler(Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.PIC_SEARCH);
         ExceptionHandler.with(bot, event, () -> {
@@ -55,7 +58,7 @@ public class PicSearchPlugin {
             modePlugin.resetExpiration(event.getUserId(), event.getGroupId());
             String url = list.getFirst().getData().get("url");
             SauceDTO request = request(url);
-            List<SauceDTO.Result> results = request.getResults().stream().filter(it -> List.of(5, 18, 38, 41).contains(it.getHeader().getIndexId())).toList();
+            List<SauceDTO.Result> results = request.getResults();
             if (results.isEmpty()) {
                 return "未能找到相似的内容";
             }
@@ -80,10 +83,14 @@ public class PicSearchPlugin {
                     msgUtils.text("\n数据来源：SauceNao (Twitter)");
                 }
                 case 18, 38 -> {
-                    msgUtils.text("\n来源：${data.source}");
-                    msgUtils.text("\n日文名：${data.jpName}");
-                    msgUtils.text("\n英文名：${data.engName}");
+                    msgUtils.text(STR."\n来源：\{data.getSource()}");
+                    msgUtils.text(STR."\n日文名：\{data.getJpName()}");
+                    msgUtils.text(STR."\n英文名：\{data.getEngName()}");
                     msgUtils.text("\n数据来源：SauceNao (H-Misc)");
+                }
+                default -> {
+                    msgUtils.text(STR."\n链接：\{data.getExtUrls().getFirst()}");
+                    msgUtils.text("\n数据来源：SauceNao");
                 }
             }
             return msgUtils.build();
@@ -93,7 +100,7 @@ public class PicSearchPlugin {
     @Synchronized
     private SauceDTO request(String img) {
         try {
-            String api = STR."https://saucenao.com/search.php?api_key=\{sauceNaoKey}&output_type=2&numres=3&db=999&url=\{img}";
+            String api = STR."https://saucenao.com/search.php?api_key=\{sauceNaoKey}&output_type=2&numres=3&db=999&url=\{URLEncoder.encode(img, Charset.defaultCharset())}";
             String resStr = HttpUtil.get(api);
             SauceDTO sauceDTO = JSON.parseObject(resStr, SauceDTO.class);
             if (sauceDTO.getHeader().getLongRemaining() <= 0) throw new BotException("今日的搜索配额已耗尽啦");
