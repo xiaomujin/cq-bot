@@ -37,7 +37,7 @@ public class BulletCtrl {
             model.addAttribute("message", """
                     没有找到  \s""");
         }
-        return "/md/Markdown";
+        return "md/Markdown";
     }
 
     @RequestMapping(value = {"/Life/{name}"})
