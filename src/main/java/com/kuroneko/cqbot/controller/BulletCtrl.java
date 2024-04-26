@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.controller;
 import com.alibaba.fastjson2.JSON;
 import com.kuroneko.cqbot.entity.Bullet;
 import com.kuroneko.cqbot.service.BulletService;
+import com.kuroneko.cqbot.utils.CacheUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 @Controller
@@ -23,6 +25,19 @@ public class BulletCtrl {
         List<Bullet> bullets = bulletService.searchBulletList(name);
         model.addAttribute("bullets", bullets);
         return "BulletSearch";
+    }
+
+    @RequestMapping(value = {"/Markdown/{id}"})
+    public String Markdown(Model model, @PathVariable(required = false) String id) {
+        Collection<String> collection = CacheUtil.get(id);
+        if (collection != null) {
+            Object o = collection.toArray()[0];
+            model.addAttribute("message", o);
+        } else {
+            model.addAttribute("message", """
+                    没有找到  \s""");
+        }
+        return "/md/Markdown";
     }
 
     @RequestMapping(value = {"/Life/{name}"})

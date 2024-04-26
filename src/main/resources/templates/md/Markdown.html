@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Markdown</title>
+    <script src="../../static/md/markdown-it.min.js" th:src="@{/md/markdown-it.min.js}"></script>
+    <style th:inline="text">
+        @font-face {
+            font-family: 'Number';
+            src: url("[[@{/ba/res/tttgbnumber.woff}]]") format('woff'), url("[[@{/ba/res/tttgbnumber.ttf}]]") format('truetype');
+        }
+
+        @font-face {
+            font-family: 'BA';
+            src: url("[[@{/ba/res/HYWH-65W.woff}]]") format('woff'), url("[[@{/ba/res/HYWH-65W.ttf}]]") format('truetype');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            font-family: Number, BA, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("[[@{/md/BG_AronaRoom_In-13396f5f.webp}]]");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+        }
+        .jt {
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+        }
+
+        .md {
+            background-color: rgba(255, 255, 255, 0.5);
+            height: 100%;
+            position: relative;
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="jt" class="jt">
+    <div id="mdDiv" class="md">
+
+    </div>
+</div>
+</body>
+<script th:inline="javascript">
+    const md = markdownit()
+    const result = md.render([[${message}]]);
+    document.getElementById('mdDiv').innerHTML = result
+</script>
+</html>

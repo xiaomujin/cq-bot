@@ -1,11 +1,13 @@
 package com.kuroneko.cqbot.annoPlugin;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.config.ProjectConfig;
+import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.entity.TkfTask;
 import com.kuroneko.cqbot.entity.TkfTaskTarget;
 import com.kuroneko.cqbot.enums.Regex;
@@ -17,6 +19,7 @@ import com.kuroneko.cqbot.service.TkfTaskTargetService;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
@@ -28,6 +31,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.mikuac.shiro.enums.AtEnum;
 import com.mikuac.shiro.model.ArrayMsg;
+import com.ruiyun.jvppeteer.core.page.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -144,7 +148,7 @@ public class TkfServerPlugin {
                                                 .replace("failed", "失败"))
                                 .collect(Collectors.joining(",", "(", ")"));
                         perTaskId.add(task.getString("id"));
-                        taskSb.append(STR."> \{task.getString("name").trim()} \{collect}\n");
+                        taskSb.append(STR."> \{task.getString("name").trim()} \{collect}  \n");
                     }
                     tkfTask.setPreTaskId(String.join("|", perTaskId));
                 }
@@ -154,7 +158,7 @@ public class TkfServerPlugin {
                 tkfTask.setPreTask(taskSb.toString());
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(STR."> EXP ( \{jsonObject.getString("experience")} )\n");
+                sb.append(STR."> EXP ( \{jsonObject.getString("experience")} )  \n");
                 JSONObject finishRewards = jsonObject.getJSONObject("finishRewards");
                 if (finishRewards != null) {
                     JSONArray traderStanding = finishRewards.getJSONArray("traderStanding");
@@ -163,7 +167,7 @@ public class TkfServerPlugin {
                             JSONObject traderStand = traderStanding.getJSONObject(j);
                             String tName = traderStand.getJSONObject("trader").getString("name");
                             String count = traderStand.getString("standing");
-                            sb.append(STR."> \{tName} ( \{count} )\n");
+                            sb.append(STR."> \{tName} ( \{count} )  \n");
                         }
                     }
 
@@ -173,7 +177,7 @@ public class TkfServerPlugin {
                             JSONObject itemsJSONObject = items.getJSONObject(j);
                             String tName = itemsJSONObject.getJSONObject("item").getString("name");
                             String count = itemsJSONObject.getString("count");
-                            sb.append(STR."> \{tName} ( \{count} )\n");
+                            sb.append(STR."> \{tName} ( \{count} )  \n");
                         }
                     }
 
@@ -183,12 +187,12 @@ public class TkfServerPlugin {
                             JSONObject skillLevel = skillLevelReward.getJSONObject(j);
                             String tName = skillLevel.getString("name");
                             String count = skillLevel.getString("level");
-                            sb.append(STR."> \{tName} ( \{count} )\n");
+                            sb.append(STR."> \{tName} ( \{count} )  \n");
                         }
                     }
                 }
                 if (sb.isEmpty()) {
-                    sb.append("> 无\n");
+                    sb.append("> 无  \n");
                 }
                 tkfTask.setFinishReward(sb.toString());
 
@@ -469,9 +473,14 @@ public class TkfServerPlugin {
                 Keyboard.Button button = Keyboard.textButtonBuilder().label("我也要查").data("查任务 ").build();
                 keyboard = Keyboard.builder().addRow().addButton(button);
             }
-
-            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
-            bot.sendMsg(event, arrayMsgs, false);
+            String id = first.getIdStr();
+            CacheUtil.put(id, mdText, 5L, TimeUnit.SECONDS);
+            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Markdown/\{id}", 600, 200);
+            String imgPath = STR."\{Constant.BASE_IMG_PATH}md/\{id}.png";
+            PuppeteerUtil.screenshot(page, imgPath);
+            String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
+//            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
+            bot.sendMsg(event, msg, false);
             return "";
         });
     }
@@ -491,7 +500,7 @@ public class TkfServerPlugin {
             } else {
                 num = STR."( \{num} )";
             }
-            stringBuilder.append(STR."> \{i + 1}. \{tkfTaskTarget.getDescription()}\{tkfTaskTarget.getCount() > 0 ? num : ""}\n");
+            stringBuilder.append(STR."> \{i + 1}. \{tkfTaskTarget.getDescription()}\{tkfTaskTarget.getCount() > 0 ? num : ""}  \n");
         }
         if (tip) {
             stringBuilder.append("> Tip: √ 表示需要在战局中找到。\n");
@@ -499,9 +508,9 @@ public class TkfServerPlugin {
         String mdText = STR."""
                 ![\{first.getTraderName()} #30px #30px](\{first.getTraderImg()}): \{first.getName()}
                 ***
-                \{first.getIsKappa() ? "3x4任务: ( √ )" : "~~3x4任务~~: ( × )"}
-                \{first.getIsLightkeeper() ? "灯塔商人: ( √ )" : "~~灯塔商人~~: ( × )"}
-                开启等级: \{first.getMinLevel()}
+                \{first.getIsKappa() ? "3x4任务: ( √ )" : "~~3x4任务~~: ( × )"}  \s
+                \{first.getIsLightkeeper() ? "灯塔商人: ( √ )" : "~~灯塔商人~~: ( × )"}  \s
+                开启等级: \{first.getMinLevel()}  \s
                 任务目标:
                 ***
                 \{stringBuilder.toString()}
@@ -585,10 +594,10 @@ public class TkfServerPlugin {
                     }
                 }
 
-                taskSB.append(STR."> \{task.getString("name")}( \{needNum}\{foundInRaid ? "√" : ""} )\n");
+                taskSB.append(STR."> \{task.getString("name")}( \{needNum}\{foundInRaid ? "√" : ""} )  \n");
             }
             if (taskSB.isEmpty()) {
-                taskSB.append("> 无");
+                taskSB.append("> 无  \n");
             }
 
             StringBuilder craftSB = new StringBuilder();
@@ -606,18 +615,18 @@ public class TkfServerPlugin {
                         break;
                     }
                 }
-                craftSB.append(STR."> \{name} lv.\{level} ( \{count} )\n");
+                craftSB.append(STR."> \{name} lv.\{level} ( \{count} )  \n");
             }
             if (craftSB.isEmpty()) {
-                craftSB.append("> 无");
+                craftSB.append("> 无  ");
             }
 
             String mdText = STR."""
                 ![icon #35px #35px](\{item.getString("iconLink")}): \{item.getString("name")}
                 ***
-                24h均价: \{avg24hPrice != 0 ? STR."\{avg24hPrice} ₽" : "跳蚤禁售"}
-                跳蚤现价: \{avg24hPrice != 0 ? STR."\{lastLowPrice} ₽" : "跳蚤禁售"}
-                商人价格: \{maxPrice} ₽
+                24h均价: \{avg24hPrice != 0 ? STR."\{avg24hPrice} ₽" : "跳蚤禁售"}  \s
+                跳蚤现价: \{avg24hPrice != 0 ? STR."\{lastLowPrice} ₽" : "跳蚤禁售"}  \s
+                商人价格: \{maxPrice} ₽  \s
                 任务需求:
 
                 \{taskSB.toString()}
@@ -648,8 +657,14 @@ public class TkfServerPlugin {
                 Keyboard.Button button = Keyboard.textButtonBuilder().label("我也要查").data("跳蚤 ").build();
                 keyboard.addRow().addButton(button);
             }
-            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
-            bot.sendMsg(event, arrayMsgs, false);
+//            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
+            String imgId = item.getString("id");
+            CacheUtil.put(imgId, mdText, 5L, TimeUnit.SECONDS);
+            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Markdown/\{imgId}", 500, 200);
+            String imgPath = STR."\{Constant.BASE_IMG_PATH}md/\{imgId}.png";
+            PuppeteerUtil.screenshot(page, imgPath);
+            String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
+            bot.sendMsg(event, msg, false);
             return "";
         });
     }
