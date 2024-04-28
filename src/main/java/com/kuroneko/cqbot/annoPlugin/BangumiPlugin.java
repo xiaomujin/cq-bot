@@ -48,7 +48,7 @@ public class BangumiPlugin {
             return MsgUtils.builder()
                     .img(localMedia)
                     .text("age：").text("https://rentry.la/agefans\n")
-                    .text("次元城：").text("https://www.cycdm01.top/")
+                    .text("次元城：").text("https://www.cycanime.com/")
                     .build();
         }));
     }
