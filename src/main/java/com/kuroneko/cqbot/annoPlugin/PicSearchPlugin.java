@@ -34,7 +34,7 @@ public class PicSearchPlugin {
     private static final String sauceNaoKey = "a4aa702c9ee5f0f66a7f0f4846a7a77c5a1f5ec2";
 
     @AnyMessageHandler
-    @MessageHandlerFilter(cmd = Regex.PIC_SEARCH , at = AtEnum.NEED)
+    @MessageHandlerFilter(cmd = Regex.PIC_SEARCH, at = AtEnum.BOTH)
     public void handler(Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.PIC_SEARCH);
         ExceptionHandler.with(bot, event, () -> {
