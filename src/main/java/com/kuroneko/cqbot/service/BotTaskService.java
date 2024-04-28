@@ -77,7 +77,7 @@ public class BotTaskService {
     public void refreshThreeDog() {
         try {
             Document document;
-            document = Jsoup.connect("https://t0t.co/proxy/docs.google.com/spreadsheets/d/e/2PACX-1vR-wIQI351UH85ILq5KiCLMMrl0uHRmjDinBCt6nXGg5exeuCxQUf8DTLJkwn7Ckr8-HmLyEIoapBE5/pubhtml/sheet?headers=false&gid=1420050773").get();
+            document = Jsoup.connect("https://9d33d34f.goon-98b.pages.dev/proxy/https://docs.google.com/spreadsheets/d/e/2PACX-1vR-wIQI351UH85ILq5KiCLMMrl0uHRmjDinBCt6nXGg5exeuCxQUf8DTLJkwn7Ckr8-HmLyEIoapBE5/pubhtml/sheet?headers=false&gid=1420050773").get();
             Elements td = document.getElementsByTag("td");
             String time = td.get(2).text();
             String mapName = td.get(3).text();
