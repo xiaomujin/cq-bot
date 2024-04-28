@@ -89,8 +89,12 @@ public class PicSearchPlugin {
                     msgUtils.text("\n数据来源：SauceNao (H-Misc)");
                 }
                 default -> {
-                    msgUtils.text(STR."\n链接：\{data.getExtUrls().getFirst()}");
+                    List<String> extUrls = data.getExtUrls();
+                    if (extUrls != null && !extUrls.isEmpty()) {
+                        msgUtils.text(STR."\n链接：\{extUrls.getFirst()}");
+                    }
                     msgUtils.text("\n数据来源：SauceNao");
+                    msgUtils.text(STR."\n数据来源：SauceNao(\{header.getIndexId()})");
                 }
             }
             return msgUtils.build();
