@@ -64,7 +64,7 @@ public class BangumiPlugin {
             Keyboard keyboard = Keyboard.builder().addButton(Keyboard.textButtonBuilder().label("+1").visitedLabel("anle").data("md2").build())
                     .addButton(Keyboard.urlButtonBuilder().label("+2").visitedLabel("安乐").data("https://www.baidu.com/").permissionType(Keyboard.PERMISSION_TYPE_USER).specifyUserIds(List.of(event.getUserId().toString())).build());
 
-            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
+            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).build();
             bot.sendMsg(event, arrayMsgs, false);
             return "";
         }));
