@@ -34,12 +34,12 @@ public class ModePlugin {
     public void unsetSearchMode(Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.UNSET_SEARCH_MODE);
         ExceptionHandler.with(bot, event, () -> {
-            remove(event.getUserId(), event.getGroupId(), bot);
+            remove(event.getUserId(), event.getGroupId());
             return "";
         });
     }
 
-    private void remove(Long userId, Long groupId, Bot bot) {
+    private void remove(Long userId, Long groupId) {
         String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
         SearchMode searchMode = expiringMap.get(key);
         if (searchMode == null) {
@@ -49,24 +49,34 @@ public class ModePlugin {
         BotUtil.at(searchMode.getBot(), searchMode.getUserId(), searchMode.getGroupId(), "不客气哟！");
     }
 
+    public void removeNow(Long userId, Long groupId) {
+        String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
+        expiringMap.remove(key);
+    }
+
     // 过期通知
     private void onExpiration(SearchMode value) {
-        BotUtil.at(value.getBot(), value.getUserId(), value.getGroupId(), "您已经很久没有发送图片啦，帮您退出检索模式了哟～\n下次记得说：谢谢 来退出搜图");
+        BotUtil.at(value.getBot(), value.getUserId(), value.getGroupId(), STR."您已经很久没有发送图片啦，帮您退出\{value.getMode()}模式了哟～\n下次记得说：谢谢 \n来退出");
     }
 
     public Boolean isSearchMode(String key) {
         return expiringMap.get(key) != null;
     }
 
-    public void setSearchMode(String mode, Long userId, Long groupId, Bot bot) {
+    public SearchMode getSearchMode(Long userId, Long groupId) {
         String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
-        SearchMode info = new SearchMode(userId, groupId, mode, bot);
+        return expiringMap.get(key);
+    }
+
+    public void setSearchMode(String mode, Long userId, Long groupId, Bot bot, String ext) {
+        String key = STR."\{userId.toString()}_\{String.valueOf(groupId)}";
+        SearchMode info = new SearchMode(userId, groupId, mode, bot, ext);
         if (isSearchMode(key)) {
-            BotUtil.at(bot, userId, groupId, STR."当前已经处于 \{mode} 模式啦，请直接发送需要检索的图片。");
+            BotUtil.at(bot, userId, groupId, STR."当前已经处于 \{mode} 模式啦，请直接发送图片。");
             return;
         }
         expiringMap.put(key, info, 100L, TimeUnit.SECONDS);
-        BotUtil.at(bot, userId, groupId, STR."您已进入 \{mode} 模式，请发送想要查找的图片。");
+        BotUtil.at(bot, userId, groupId, STR."您已进入 \{mode} 模式，请发送图片。");
     }
 
     public void resetExpiration(Long userId, Long groupId) {

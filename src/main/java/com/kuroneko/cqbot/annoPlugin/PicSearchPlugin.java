@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.annoPlugin;
 import cn.hutool.core.lang.Pair;
 import com.alibaba.fastjson2.JSON;
 import com.kuroneko.cqbot.dto.SauceDTO;
+import com.kuroneko.cqbot.dto.SearchMode;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
@@ -10,7 +11,9 @@ import com.kuroneko.cqbot.utils.HttpUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
+import com.mikuac.shiro.common.utils.ArrayMsgUtils;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.mikuac.shiro.enums.AtEnum;
@@ -45,7 +48,7 @@ public class PicSearchPlugin {
     public void handler(Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.PIC_SEARCH);
         ExceptionHandler.with(bot, event, () -> {
-            modePlugin.setSearchMode("搜图", event.getUserId(), event.getGroupId(), bot);
+            modePlugin.setSearchMode("搜图", event.getUserId(), event.getGroupId(), bot, "");
             return "";
         });
     }
@@ -174,6 +177,42 @@ public class PicSearchPlugin {
             return sauceDTO;
 //            throw new BotException(STR."SauceNao数据获取异常：\{e.getMessage()}");
         }
+    }
+
+    @AnyMessageHandler()
+    @MessageHandlerFilter(cmd = Regex.PIC_TEXT, at = AtEnum.BOTH)
+    public void picTextMode(Bot bot, AnyMessageEvent event, Matcher matcher) {
+        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.PIC_TEXT);
+        ExceptionHandler.with(bot, event, () -> {
+            String text = matcher.group("text").trim();
+            if (text.isEmpty()) {
+                return "";
+            }
+            modePlugin.setSearchMode("图语", event.getUserId(), event.getGroupId(), bot, text);
+            return "";
+        });
+    }
+
+    @AnyMessageHandler
+    public void picText(Bot bot, AnyMessageEvent event) {
+        if (!modePlugin.check("图语", event.getUserId(), event.getGroupId())) {
+            return;
+        }
+        SearchMode searchMode = modePlugin.getSearchMode(event.getUserId(), event.getGroupId());
+        ExceptionHandler.with(bot, event, () -> {
+            List<ArrayMsg> list = event.getArrayMsg().stream()
+                    .filter(msg -> msg.getType() == MsgTypeEnum.image)
+                    .toList();
+            if (list.isEmpty()) {
+                return "";
+            }
+            String url = list.getFirst().getData().get("url");
+            OneBotMedia summary = OneBotMedia.builder().file(url).summary(searchMode.getExt());
+            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().img(summary).build();
+            modePlugin.removeNow(event.getUserId(), event.getGroupId());
+            bot.sendMsg(event, arrayMsgs, false);
+            return null;
+        });
     }
 }
 

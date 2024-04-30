@@ -15,6 +15,7 @@ public class SearchMode {
     private Long groupId;
     private String mode;
     private Bot bot;
+    private String ext;
 
     public Long getGroupId() {
         return groupId == null ? 0L : groupId;
