@@ -60,7 +60,7 @@ public class RainbowSixPlugin extends BotPlugin {
         MsgUtils msg = MsgUtils.builder();
         int min = Math.min(text.size(), 2);
         String name = null;
-        String selected = null;
+        String selected = "overview";
         switch (min) {
             case 2:
                 String select = text.get(1);
@@ -74,8 +74,6 @@ public class RainbowSixPlugin extends BotPlugin {
                     selected = "encounters";
                 } else if (select.contains("5") || select.contains("t") || select.contains("趋势")) {
                     selected = "trends?playlist=all";
-                } else {
-                    selected = "overview";
                 }
             case 1:
                 name = text.getFirst();
