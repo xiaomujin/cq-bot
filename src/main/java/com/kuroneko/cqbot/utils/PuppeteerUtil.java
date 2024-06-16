@@ -72,7 +72,7 @@ public class PuppeteerUtil {
                     "--disable-setuid-sandbox",
                     "--no-first-run",
                     "--no-sandbox",
-                    "--single-process",
+//                    "--single-process",
                     "--disable-blink-features=AutomationControlled",
                     "--disable-extensions",
                     "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
