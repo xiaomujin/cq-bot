@@ -24,7 +24,7 @@ public class AntiBiliMiniAppDTO {
 
         @Data
         public static class Stat {
-            private Integer aid;
+            private Long aid;
             private Integer view;
             private Integer danmaku;
             private Integer reply;
