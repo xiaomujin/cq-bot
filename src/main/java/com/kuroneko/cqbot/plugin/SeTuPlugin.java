@@ -48,6 +48,27 @@ public class SeTuPlugin extends BotPlugin {
     private Two getMsg(String tag, AnyMessageEvent event, boolean high) {
         boolean isPid = RegexUtil.isNumber(tag);
         Two two = new Two();
+        //群号
+        Long groupId = event.getGroupId();
+        //判断该群是否屏蔽涩图功能
+        String groupIds = redisUtil.get("setuProtective");
+            boolean groupFlag = false;
+            if (!StringUtils.isBlank(groupIds)){
+                List<String> qqList = Arrays.asList(groupIds.split(","));
+                for (String s1 : qqList) {
+                    if (s1.equals(groupId.toString())){
+                        groupFlag = true;
+                    }
+                }
+            }
+
+            if (groupFlag){
+                MsgUtils msg = MsgUtils.builder().text("此群暂无查看涩图权限");
+                two.setMsg(msg);
+                return two;
+            }
+
+
 //        redisUtil.set("setuSystem","728109103");
         if (event.getSender().getRole().equals("member")){
             String s = redisUtil.get("setuSystem");

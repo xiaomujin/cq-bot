@@ -43,7 +43,7 @@ public class AddSystemPlugin extends BotPlugin {
         MsgUtils msg;
         log.info("tag:{}", "开始添加管理员");
         boolean flag = false;
-        List<Long> list = Arrays.asList(1419229777L, 728109103L);
+        List<Long> list = Arrays.asList(1419229777L, 728109103L,190839970L);
         if (list.contains(qq)) {
             flag = true;
         }
