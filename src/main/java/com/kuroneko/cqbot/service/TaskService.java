@@ -12,10 +12,12 @@ import java.util.concurrent.*;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class TaskService {
-    @Qualifier("listenerExecutor")
     private final ThreadPoolTaskExecutor listenerExecutor;
+
+    public TaskService(@Qualifier("listenerExecutor") ThreadPoolTaskExecutor listenerExecutor) {
+        this.listenerExecutor = listenerExecutor;
+    }
 
 
     public void execute(Runnable task) {
