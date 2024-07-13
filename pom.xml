@@ -155,6 +155,12 @@
             <artifactId>kumo-core</artifactId>
             <version>${kumo-core.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/io.netty/netty-common -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>4.1.110.Final</version>
+        </dependency>
 
 
 
@@ -183,6 +189,10 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

@@ -1,11 +1,14 @@
 package com.kuroneko.cqbot.config;
 
+import io.netty.util.HashedWheelTimer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
+@Slf4j
 @Configuration
 public class ThreadPoolConfig {
 //    public static final int cpuNum = Runtime.getRuntime().availableProcessors();
@@ -26,6 +29,10 @@ public class ThreadPoolConfig {
         listenerExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         //初始化线程池
         listenerExecutor.initialize();
+        HashedWheelTimer hashedWheelTimer = new HashedWheelTimer(listenerExecutor);
+        hashedWheelTimer.newTimeout((timerTask) -> {
+            log.info("timerTask {}", timerTask);
+        }, 10, TimeUnit.SECONDS);
         return listenerExecutor;
     }
 
