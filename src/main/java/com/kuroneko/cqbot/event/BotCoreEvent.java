@@ -20,22 +20,22 @@ public class BotCoreEvent extends CoreEvent {
 
     @Override
     public void online(Bot bot) {
-        JSONObject sysUpdate = redisUtil.get("SYS_UPDATE");
-        if (sysUpdate == null) {
-            return;
-        }
-        redisUtil.delete("SYS_UPDATE");
-        UpdateCache updateCache = sysUpdate.to(UpdateCache.class);
-        long startTime = updateCache.getStartTime();
-        long now = Instant.now().getEpochSecond();
-        MsgUtils msg = MsgUtils.builder();
-        long m = (now - startTime) / 60L;
-        long s = (now - startTime) - m * 60L;
-        msg.at(updateCache.getUserID()).text("重启耗时" + m + "分钟" + s + "秒");
-        if (updateCache.getGroupId() != null) {
-            bot.sendGroupMsg(updateCache.getGroupId(), msg.build(), false);
-        } else if (updateCache.getUserID() != null) {
-            bot.sendPrivateMsg(updateCache.getUserID(), msg.build(), false);
-        }
+//        JSONObject sysUpdate = redisUtil.get("SYS_UPDATE");
+//        if (sysUpdate == null) {
+//            return;
+//        }
+//        redisUtil.delete("SYS_UPDATE");
+//        UpdateCache updateCache = sysUpdate.to(UpdateCache.class);
+//        long startTime = updateCache.getStartTime();
+//        long now = Instant.now().getEpochSecond();
+//        MsgUtils msg = MsgUtils.builder();
+//        long m = (now - startTime) / 60L;
+//        long s = (now - startTime) - m * 60L;
+//        msg.at(updateCache.getUserID()).text("重启耗时" + m + "分钟" + s + "秒");
+//        if (updateCache.getGroupId() != null) {
+//            bot.sendGroupMsg(updateCache.getGroupId(), msg.build(), false);
+//        } else if (updateCache.getUserID() != null) {
+//            bot.sendPrivateMsg(updateCache.getUserID(), msg.build(), false);
+//        }
     }
 }
