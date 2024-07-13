@@ -53,38 +53,38 @@ import java.util.stream.Collectors;
 public class WordCloudPlugin {
     private final WordCloudService wordCloudService;
 
-    @GroupMessageHandler
-    public void saveMsg(Bot bot, GroupMessageEvent event) {
-        WordCloud wordCloud = WordCloud.builder()
-                .senderId(event.getSender().getUserId())
-                .groupId(event.getGroupId())
-                .time(LocalDateTime.now())
-                .content(event.getMessage())
-                .build();
-        wordCloudService.save(wordCloud);
-    }
+//    @GroupMessageHandler
+//    public void saveMsg(Bot bot, GroupMessageEvent event) {
+//        WordCloud wordCloud = WordCloud.builder()
+//                .senderId(event.getSender().getUserId())
+//                .groupId(event.getGroupId())
+//                .time(LocalDateTime.now())
+//                .content(event.getMessage())
+//                .build();
+//        wordCloudService.save(wordCloud);
+//    }
 
-    @GroupMessageHandler
-    @MessageHandlerFilter(cmd = Regex.WORD_CLOUD)
-    public void handler(Bot bot, GroupMessageEvent event, Matcher matcher) {
-        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.WORD_CLOUD);
-        Long uid = event.getUserId();
-        var msgId = event.getMessageId();
-        var type = matcher.group(1);
-        var range = matcher.group(2);
-        if ("本群".equals(type)) {
-            uid = 0L;
-        }
-        String tmpCache = STR."\{type}_\{range}_\{event.getGroupId()}_\{uid}";
-        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(tmpCache, 10, TimeUnit.MINUTES, () -> {
-            bot.sendGroupMsg(event.getGroupId(), "回想中，请耐心等待～", false);
-            List<String> contents = getWords(event.getUserId(), event.getGroupId(), type, range);
-            if (contents.isEmpty()) {
-                throw new BotException("唔呣～记忆里没有找到你的发言记录呢");
-            }
-            return MsgUtils.builder().reply(msgId).img(STR."base64://\{generateWordCloud(contents)}").build();
-        }));
-    }
+//    @GroupMessageHandler
+//    @MessageHandlerFilter(cmd = Regex.WORD_CLOUD)
+//    public void handler(Bot bot, GroupMessageEvent event, Matcher matcher) {
+//        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.WORD_CLOUD);
+//        Long uid = event.getUserId();
+//        var msgId = event.getMessageId();
+//        var type = matcher.group(1);
+//        var range = matcher.group(2);
+//        if ("本群".equals(type)) {
+//            uid = 0L;
+//        }
+//        String tmpCache = STR."\{type}_\{range}_\{event.getGroupId()}_\{uid}";
+//        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(tmpCache, 10, TimeUnit.MINUTES, () -> {
+//            bot.sendGroupMsg(event.getGroupId(), "回想中，请耐心等待～", false);
+//            List<String> contents = getWords(event.getUserId(), event.getGroupId(), type, range);
+//            if (contents.isEmpty()) {
+//                throw new BotException("唔呣～记忆里没有找到你的发言记录呢");
+//            }
+//            return MsgUtils.builder().reply(msgId).img(STR."base64://\{generateWordCloud(contents)}").build();
+//        }));
+//    }
 
     private String generateWordCloud(List<String> contents) {
         FrequencyAnalyzer frequencyAnalyzer = new FrequencyAnalyzer();
