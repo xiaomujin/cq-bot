@@ -2,9 +2,11 @@ package com.kuroneko.cqbot.annoPlugin;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
@@ -16,8 +18,16 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
@@ -55,8 +65,23 @@ public class DailyPlugin {
                 throw new BotException("获取日报失败");
             }
             String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
-            OneBotMedia media = new OneBotMedia().file(imgUrl).cache(true);
-            return MsgUtils.builder().img(media).build();
+            String imgPath = STR."\{Constant.BASE_IMG_PATH}Daily.png";
+            try (HttpClient httpClient = HttpClient.newBuilder()
+                    .followRedirects(HttpClient.Redirect.ALWAYS)
+                    .connectTimeout(Duration.ofSeconds(60L))
+                    .build()) {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(imgUrl))
+                        .timeout(Duration.ofMinutes(1))
+                        .GET()
+                        .build();
+                HttpResponse<InputStream> response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
+                FileUtils.copyInputStreamToFile(response.body(), new File(imgPath));
+            } catch (Exception e) {
+                throw new BotException(e.getMessage());
+            }
+
+            return MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
         }));
     }
 }
