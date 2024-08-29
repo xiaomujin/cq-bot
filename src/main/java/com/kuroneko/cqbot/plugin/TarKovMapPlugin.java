@@ -102,12 +102,12 @@ public class TarKovMapPlugin extends BotPlugin {
                                 let td_data_list = [];
                                 for (let j = 0; j < td_list.length; j++) {
                                     let td_line_data = td_list[j];
-                                    if(j == 0 && td_list.length == 17){
+                                    if(j == 0 && td_list.length == 16){
                                         caliber = td_line_data.innerText;
-                                    } else if(j == 0 && td_list.length == 16){
+                                    } else if(j == 0 && td_list.length == 15){
                                         td_data_list.push(caliber);
                                     }
-                                    if (j === (td_list.length - 16)) {
+                                    if (j === (td_list.length - 15)) {
                                         td_data_list.push(td_line_data.querySelector("a").innerText);
                                         let b = [];
                                         let b_list = td_line_data.querySelectorAll("b");
