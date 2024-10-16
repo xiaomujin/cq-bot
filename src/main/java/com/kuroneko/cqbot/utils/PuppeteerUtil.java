@@ -59,6 +59,7 @@ public class PuppeteerUtil {
         cookies.add(cookieParam2);
         COOKIES = cookies;
     }
+
     private PuppeteerUtil() {
     }
 
@@ -200,7 +201,6 @@ public class PuppeteerUtil {
         long start = System.currentTimeMillis();
         String screenshot = "";
         try {
-            FileUtil.mkdir(new File(path).getParentFile());
             //添加css
             if (StringUtil.isNotBlank(css)) {
                 StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, css);
@@ -211,26 +211,17 @@ public class PuppeteerUtil {
                 page.waitFor(selectorOrFunctionOrTimeout);
             }
             ScreenshotOptions screenshotOptions = new ScreenshotOptions();
-            screenshotOptions.setPath(path);
+            if (StringUtil.isNotBlank(path)) {
+                FileUtil.mkdir(new File(path).getParentFile());
+                screenshotOptions.setPath(path);
+            }
             if (StringUtil.isBlank(selector)) {
-                //设置截图范围
                 screenshotOptions.setFullPage(true);
-                //设置存放的路径
                 screenshot = page.screenshot(screenshotOptions);
             } else {
-                // 超时处理
-                Thread thread = new Thread(() -> {
-                    try {
-                        Thread.sleep(15000);
-                    } catch (InterruptedException e) {
-                        return;
-                    }
-                    safeClosePage(page);
-                });
-                thread.start();
-                //设置截图范围
-                ElementHandle elementHandle = page.waitForSelector(selector);
-                thread.interrupt();
+                WaitForSelectorOptions waitForSelectorOptions = new WaitForSelectorOptions();
+                waitForSelectorOptions.setTimeout(15000);
+                ElementHandle elementHandle = page.waitForSelector(selector, waitForSelectorOptions);
                 screenshot = elementHandle.screenshot(screenshotOptions);
             }
             long cost = System.currentTimeMillis() - start;
