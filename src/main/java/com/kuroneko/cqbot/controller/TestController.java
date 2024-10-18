@@ -23,7 +23,7 @@ import com.mikuac.shiro.common.utils.CommonUtils;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.common.utils.RegexUtils;
-import com.ruiyun.jvppeteer.core.page.Page;
+import com.ruiyun.jvppeteer.core.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestMapping;

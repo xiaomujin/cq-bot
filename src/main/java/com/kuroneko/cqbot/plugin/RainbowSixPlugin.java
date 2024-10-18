@@ -10,12 +10,9 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import com.ruiyun.jvppeteer.core.page.ElementHandle;
-import com.ruiyun.jvppeteer.core.page.Page;
-import com.ruiyun.jvppeteer.options.PageNavigateOptions;
-import com.ruiyun.jvppeteer.options.ScreenshotOptions;
-import com.ruiyun.jvppeteer.options.StyleTagOptions;
-import com.ruiyun.jvppeteer.options.Viewport;
+import com.ruiyun.jvppeteer.core.ElementHandle;
+import com.ruiyun.jvppeteer.core.Page;
+import com.ruiyun.jvppeteer.entities.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -85,14 +82,14 @@ public class RainbowSixPlugin extends BotPlugin {
 
         Page page = PuppeteerUtil.getBrowser().newPage();
         try {
-            PageNavigateOptions pageNavigateOptions = new PageNavigateOptions();
+            GoToOptions pageNavigateOptions = new GoToOptions();
             pageNavigateOptions.setTimeout(20000);
-            pageNavigateOptions.setWaitUntil(List.of("domcontentloaded"));
+            pageNavigateOptions.setWaitUntil(List.of(PuppeteerLifeCycle.DOMCONTENT_LOADED));
             Viewport viewport = new Viewport();
             viewport.setWidth(1455);
             page.setViewport(viewport);
             page.goTo(STR."https://r6.tracker.network/r6siege/profile/ubi/\{name}/\{selected}", pageNavigateOptions, true);
-            StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, ".bordered-ad {display:none} .primisslate {display:none}");
+            FrameAddStyleTagOptions styleTagOptions = new FrameAddStyleTagOptions(null, null, ".bordered-ad {display:none} .primisslate {display:none}");
             page.addStyleTag(styleTagOptions);
 
             BotUtil.sleep(500L);
@@ -123,10 +120,8 @@ public class RainbowSixPlugin extends BotPlugin {
 //                page.waitForFunction(fun);
 //            }
 
-            ScreenshotOptions screenshotOptions = new ScreenshotOptions();
             String img = STR."\{imgPath}\{name}.png";
-            screenshotOptions.setPath(img);
-            elementHandle.screenshot(screenshotOptions);
+            elementHandle.screenshot(img);
             msg.img(BotUtil.getLocalMedia(img));
         } catch (Exception e) {
             msg.text(e.getMessage());

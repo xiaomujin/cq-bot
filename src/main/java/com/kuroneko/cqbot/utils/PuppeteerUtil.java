@@ -2,13 +2,8 @@ package com.kuroneko.cqbot.utils;
 
 import cn.hutool.core.io.FileUtil;
 import com.kuroneko.cqbot.exception.BotException;
-import com.ruiyun.jvppeteer.core.Puppeteer;
-import com.ruiyun.jvppeteer.core.browser.Browser;
-import com.ruiyun.jvppeteer.core.browser.BrowserFetcher;
-import com.ruiyun.jvppeteer.core.page.ElementHandle;
-import com.ruiyun.jvppeteer.core.page.Page;
-import com.ruiyun.jvppeteer.options.*;
-import com.ruiyun.jvppeteer.protocol.network.CookieParam;
+import com.ruiyun.jvppeteer.core.*;
+import com.ruiyun.jvppeteer.entities.*;
 import com.ruiyun.jvppeteer.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,17 +16,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PuppeteerUtil {
     private static volatile Browser browser;
     private static final List<CookieParam> COOKIES;
-
     private static final AtomicInteger renderNum = new AtomicInteger(0);
-
     private static final int restartNum = 500;
-    private static final String savePath = "/opt";
-    private static final String VERSION = "1270719";
 
     public static Browser getBrowser() {
-        if (browser == null || !browser.isConnected()) {
+        if (browser == null || !browser.connected()) {
             synchronized (PuppeteerUtil.class) {
-                if (browser == null || !browser.isConnected()) {
+                if (browser == null || !browser.connected()) {
                     init();
                 }
             }
@@ -65,7 +56,7 @@ public class PuppeteerUtil {
 
     private static void init() {
         try {
-            BrowserFetcher.downloadIfNotExist(VERSION);
+            Puppeteer.downloadBrowser();
             long start = System.currentTimeMillis();
             List<String> list = List.of(
                     "--disable-gpu",
@@ -76,18 +67,9 @@ public class PuppeteerUtil {
 //                    "--single-process",
                     "--disable-blink-features=AutomationControlled",
                     "--disable-extensions",
-                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
                     "--no-zygote"
             );
             LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(true).build();
-//            FetcherOptions fetcherOptions = new FetcherOptions();
-            //chrome 保存路径
-//            fetcherOptions.setPath(savePath);
-//            BrowserFetcher browserFetcher = new BrowserFetcher(savePath, fetcherOptions);
-//            browserFetcher.download(VERSION);
-            //获得指定版本的执行路径
-//            String executablePath = browserFetcher.revisionInfo(VERSION).getExecutablePath();
-//            options.setExecutablePath(executablePath);
             browser = Puppeteer.launch(options);
             log.info("Chrome 启动成功 用时:{}", System.currentTimeMillis() - start);
         } catch (Exception e) {
@@ -178,54 +160,51 @@ public class PuppeteerUtil {
      * @param css      css属性 用于隐藏元素
      * @return base64
      */
-    public static String screenshot(String url, String path, String selector, String css, String selectorOrFunctionOrTimeout) {
+    public static String screenshot(String url, String path, String selector, String css, String function) {
         Page page = getNewPage(url);
-        return screenshot(page, path, selector, css, selectorOrFunctionOrTimeout);
+        return screenshot(page, path, selector, css, function);
     }
 
     /**
      * 截取选择的元素
      *
-     * @param page                        页面
-     * @param path                        保存路径
-     * @param selector                    选择器
-     * @param css                         css属性 用于隐藏元素
-     * @param selectorOrFunctionOrTimeout 选择器, 方法 或者 超时时间
-     *                                    <p>如果 selectorOrFunctionOrTimeout 是 string, 那么认为是 css 选择器或者一个xpath, 根据是不是'//'开头, 这时候此方法是 page.waitForSelector 或 page.waitForXPath的简写</p>
-     *                                    <p>如果 selectorOrFunctionOrTimeout 是 function, 那么认为是一个predicate，这时候此方法是page.waitForFunction()的简写</p>
-     *                                    <p>如果 selectorOrFunctionOrTimeout 是 number, 那么认为是超时时间，单位是毫秒，返回的是Promise对象,在指定时间后resolve</p>
-     *                                    <p>否则会报错
+     * @param page     页面
+     * @param path     保存路径
+     * @param selector 选择器
+     * @param css      css属性 用于隐藏元素
+     * @param function 等待提供的函数 pageFunction 在页面上下文中计算时返回真值。
      * @return base64
      */
-    public static String screenshot(Page page, String path, String selector, String css, String selectorOrFunctionOrTimeout) {
+    public static String screenshot(Page page, String path, String selector, String css, String function) {
         long start = System.currentTimeMillis();
         String screenshot = "";
         try {
-            //添加css
+            //添加 css
             if (StringUtil.isNotBlank(css)) {
-                StyleTagOptions styleTagOptions = new StyleTagOptions(null, null, css);
-                page.addStyleTag(styleTagOptions);
+                FrameAddStyleTagOptions frameAddStyleTagOptions = new FrameAddStyleTagOptions(null, null, css);
+                page.addStyleTag(frameAddStyleTagOptions);
             }
-            //添加 选择器, 方法 或者 超时时间
-            if (StringUtil.isNotBlank(selectorOrFunctionOrTimeout)) {
-                page.waitFor(selectorOrFunctionOrTimeout);
+            //添加 方法
+            if (StringUtil.isNotBlank(function)) {
+                page.waitForFunction(function);
             }
-            ScreenshotOptions screenshotOptions = new ScreenshotOptions();
+            //图片生成位置
             if (StringUtil.isNotBlank(path)) {
                 FileUtil.mkdir(new File(path).getParentFile());
-                screenshotOptions.setPath(path);
             }
             if (StringUtil.isBlank(selector)) {
+                ScreenshotOptions screenshotOptions = new ScreenshotOptions();
+                screenshotOptions.setPath(path);
                 screenshotOptions.setFullPage(true);
                 screenshot = page.screenshot(screenshotOptions);
             } else {
                 WaitForSelectorOptions waitForSelectorOptions = new WaitForSelectorOptions();
                 waitForSelectorOptions.setTimeout(15000);
                 ElementHandle elementHandle = page.waitForSelector(selector, waitForSelectorOptions);
-                screenshot = elementHandle.screenshot(screenshotOptions);
+                screenshot = elementHandle.screenshot(path);
             }
             long cost = System.currentTimeMillis() - start;
-            log.info("图片生成成功,耗时：{} ,url:{} ,path:{} ,selector:[{}] ,css:[{}] ", cost, page.mainFrame().getUrl(), path, selector, css);
+            log.info("图片生成成功,耗时：{} ,url:{} ,path:{} ,selector:[{}] ,css:[{}] ", cost, page.url(), path, selector, css);
         } catch (Exception e) {
             log.error("图片生成失败", e);
             throw new BotException("图片生成失败");
@@ -242,7 +221,7 @@ public class PuppeteerUtil {
     }
 
     public static Page getNewPage(String url, Integer width, Integer height) {
-        return getNewPage(url, "load", 15000, width, height);
+        return getNewPage(url, PuppeteerLifeCycle.LOAD, 15000, width, height);
     }
 
     /**
@@ -253,14 +232,14 @@ public class PuppeteerUtil {
      * @param timeout   超时时间
      * @return 页面
      */
-    public static Page getNewPage(String url, String waitUntil, Integer timeout, Integer width, Integer height) {
+    public static Page getNewPage(String url, PuppeteerLifeCycle waitUntil, Integer timeout, Integer width, Integer height) {
         long start = System.currentTimeMillis();
         Page page = getBrowser().newPage();
         Viewport viewport = new Viewport();
         viewport.setWidth(width);
         viewport.setHeight(height);
         page.setViewport(viewport);
-        PageNavigateOptions pageNavigateOptions = new PageNavigateOptions();
+        GoToOptions pageNavigateOptions = new GoToOptions();
         pageNavigateOptions.setTimeout(timeout);
         pageNavigateOptions.setWaitUntil(List.of(waitUntil));
         try {
@@ -271,7 +250,7 @@ public class PuppeteerUtil {
             safeClosePage(page);
         }
         long cost = System.currentTimeMillis() - start;
-        log.info("打开页面成功,耗时：{} ,url:{}", cost, page.mainFrame().getUrl());
+        log.info("打开页面成功,耗时：{} ,url:{}", cost, page.url());
         return page;
     }
 
@@ -306,7 +285,7 @@ public class PuppeteerUtil {
 
     public static void close() {
         log.info("关闭 Chrome");
-        if (browser != null && browser.isConnected()) {
+        if (browser != null && browser.connected()) {
             browser.close();
         }
     }

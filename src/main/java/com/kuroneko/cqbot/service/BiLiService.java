@@ -8,7 +8,7 @@ import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
-import com.ruiyun.jvppeteer.core.page.Page;
+import com.ruiyun.jvppeteer.core.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -53,7 +53,7 @@ public class BiLiService {
         try {
             String path = STR."\{imgPath}\{dynamicId}.png";
             Page page = PuppeteerUtil.getNewPage(STR."https://www.bilibili.com/opus/\{dynamicId}");
-            String redirect = page.mainFrame().getUrl();
+            String redirect = page.url();
             String selector = null;
             if (redirect.contains("bilibili.com/opus")) {
                 selector = "#app > div.opus-detail > div.bili-opus-view";

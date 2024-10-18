@@ -17,8 +17,7 @@
         <java.version>21</java.version>
         <shiro.version>2.2.3</shiro.version>
         <hutool.version>5.8.26</hutool.version>
-        <zip4j.version>2.11.5</zip4j.version>
-        <jvppeteer.version>1.1.6</jvppeteer.version>
+        <jvppeteer.version>2.0.0</jvppeteer.version>
         <jsoup.version>1.17.2</jsoup.version>
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <druid.version>1.2.22</druid.version>
@@ -91,34 +90,11 @@
             <version>${fastjson2.version}</version>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
-        <dependency>
-            <groupId>net.lingala.zip4j</groupId>
-            <artifactId>zip4j</artifactId>
-            <version>${zip4j.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.26.1</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/io.github.fanyong920/jvppeteer -->
         <dependency>
-            <groupId>io.github.cccy0</groupId>
+            <groupId>io.github.fanyong920</groupId>
             <artifactId>jvppeteer</artifactId>
             <version>${jvppeteer.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.lingala.zip4j</groupId>
-                    <artifactId>zip4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
         <dependency>

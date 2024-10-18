@@ -8,13 +8,13 @@ import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.ThreeDog;
 import com.mikuac.shiro.common.utils.MsgUtils;
-import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import com.ruiyun.jvppeteer.core.page.ElementHandle;
-import com.ruiyun.jvppeteer.core.page.JSHandle;
-import com.ruiyun.jvppeteer.core.page.Page;
+import com.ruiyun.jvppeteer.core.ElementHandle;
+import com.ruiyun.jvppeteer.core.JSHandle;
+import com.ruiyun.jvppeteer.core.Page;
+import com.ruiyun.jvppeteer.entities.PuppeteerLifeCycle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.CastUtils;
@@ -79,14 +79,10 @@ public class TarKovMapPlugin extends BotPlugin {
                 MsgUtils msg = MsgUtils.builder().text("开始更新子弹数据，大约需要60秒。");
                 bot.sendMsg(event, msg.build(), false);
 
-                Page page = PuppeteerUtil.getNewPage("https://escapefromtarkov.fandom.com/wiki/Ballistics", "domcontentloaded", 120000, 1650, 12000);
+                Page page = PuppeteerUtil.getNewPage("https://escapefromtarkov.fandom.com/wiki/Ballistics", PuppeteerLifeCycle.DOMCONTENT_LOADED, 120000, 1650, 12000);
                 ElementHandle b = page.$("div._2O--J403t2VqCuF8XJAZLK");
                 if (b != null) {
-                    try {
-                        b.click();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
+                    b.click();
                 }
 
                 String fun = """
@@ -126,7 +122,7 @@ public class TarKovMapPlugin extends BotPlugin {
                             return data_list;
                         }
                         """;
-                JSHandle jsHandle = page.waitFor(fun);
+                JSHandle jsHandle = page.waitForFunction(fun);
                 ArrayList<Object> jsonValue = CastUtils.cast(jsHandle.jsonValue());
                 new Thread(() -> bulletService.updateAllBullet(jsonValue)).start();
                 String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/BulletData.png";

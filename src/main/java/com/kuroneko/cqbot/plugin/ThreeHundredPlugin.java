@@ -11,7 +11,8 @@ import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import com.ruiyun.jvppeteer.core.page.Page;
+import com.ruiyun.jvppeteer.core.Page;
+import com.ruiyun.jvppeteer.entities.PuppeteerLifeCycle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -79,15 +80,11 @@ public class ThreeHundredPlugin extends BotPlugin {
         String format = String.format(fun, i);
         String path = imgPath + roleID + "_" + i + ".png";
         String url = "https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0";
-        Page newPage = PuppeteerUtil.getNewPage(url, "networkidle0", 30000, 1920, 3000);
-        try {
-            newPage.waitForFunction(format);
-            //等待页面切换图片加载
-            newPage.waitFor("500");
-        } catch (InterruptedException e) {
-            log.error("300战绩查询失败", e);
-            return MsgUtils.builder().text(roleName + "(" + roleID + ")" + "300战绩查询失败");
-        }
+        Page newPage = PuppeteerUtil.getNewPage(url, PuppeteerLifeCycle.NETWORKIDLE, 30000, 1920, 3000);
+        newPage.waitForFunction(format);
+        //等待页面切换图片加载
+        BotUtil.sleep(500);
+
         PuppeteerUtil.screenshot(newPage, path, "#app", "#app {height: 1200px;}");
         String absolutePath = new File(path).toURI().toASCIIString();
         log.info("{} 路径:{}", CmdConst.THREE_HUNDRED_KD, absolutePath);
