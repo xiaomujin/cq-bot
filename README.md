@@ -40,4 +40,4 @@ Shiro 以 [OneBot-v11](https://github.com/howmanybots/onebot/tree/master/v11/spe
 
 # Thanks
 [JetBrains](https://www.jetbrains.com/?from=cq-bot) offers free licenses to support open source projects.  
-[<img src="https://mikuac.com/images/jetbrains-variant-3.png" width="200"/>](https://www.jetbrains.com/?from=cq-bot)
+[<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png" width="200"/>](https://www.jetbrains.com/?from=cq-bot)
