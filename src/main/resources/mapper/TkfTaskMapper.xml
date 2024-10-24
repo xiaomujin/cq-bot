@@ -4,33 +4,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kuroneko.cqbot.mapper.TkfTaskMapper">
 
-    <resultMap id="BaseResultMap" type="com.kuroneko.cqbot.entity.TkfTask">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="sName" column="s_name" jdbcType="VARCHAR"/>
-        <result property="minLevel" column="min_level" jdbcType="INTEGER"/>
-        <result property="isKappa" column="is_kappa" jdbcType="TINYINT"/>
-        <result property="isLightkeeper" column="is_lightkeeper" jdbcType="TINYINT"/>
-        <result property="traderName" column="trader_name" jdbcType="VARCHAR"/>
-        <result property="traderImg" column="trader_img" jdbcType="VARCHAR"/>
-        <result property="taskImg" column="task_img" jdbcType="VARCHAR"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
-        <result property="finishReward" column="finish_reward" jdbcType="VARCHAR"/>
-        <result property="preTaskId" column="pre_task_id" jdbcType="VARCHAR"/>
-        <result property="idStr" column="id_str" jdbcType="VARCHAR"/>
-        <result property="preTask" column="pre_task_status" jdbcType="VARCHAR"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id
-        ,name,s_name,
-        min_level,is_kappa,is_lightkeeper,
-        trader_name,trader_img,task_img,
-        create_time,create_by,update_time,
-        update_by,finish_reward,pre_task_id,
-        id_str,pre_task
-    </sql>
 </mapper>
