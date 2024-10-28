@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.listener;
 
+import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.service.BotTaskService;
 import com.kuroneko.cqbot.service.TarKovMarketService;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
@@ -18,7 +19,7 @@ public class StartedListener implements ApplicationListener<ApplicationStartedEv
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        log.info("系统启动成功");
+        log.info(ConfigManager.ins.getAdminCfg().getStartedOut());
         PuppeteerUtil.getBrowser();
 //        botTaskService.refreshDaily();
 //        botTaskService.refreshRiLi();

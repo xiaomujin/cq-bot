@@ -37,7 +37,7 @@ public interface ConfigSave {
             String cfgName = ConfigManager.cfgPath + this.getClass().getSimpleName() + ".json";
             String jsonString = JSON.toJSONString(this, JSONWriter.Feature.PrettyFormat);
             Path path = Path.of(cfgName);
-            boolean _ = path.getParent().toFile().mkdirs();
+            path.getParent().toFile().mkdirs();
             Files.writeString(path, jsonString);
         } catch (IOException e) {
             throw new RuntimeException(e);
