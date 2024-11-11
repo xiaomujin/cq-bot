@@ -1,6 +1,5 @@
 package com.kuroneko.cqbot.utils;
 
-import cn.hutool.core.io.FileUtil;
 import com.kuroneko.cqbot.exception.BotException;
 import com.ruiyun.jvppeteer.core.*;
 import com.ruiyun.jvppeteer.entities.*;
@@ -70,7 +69,7 @@ public class PuppeteerUtil {
                     "--no-zygote",
                     "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
             );
-            LaunchOptions options = new LaunchOptionsBuilder().withArgs(list).withHeadless(true).build();
+            LaunchOptions options = LaunchOptions.builder().args(list).headless(true).build();
             browser = Puppeteer.launch(options);
             log.info("Chrome 启动成功 用时:{}", System.currentTimeMillis() - start);
         } catch (Exception e) {
@@ -191,7 +190,8 @@ public class PuppeteerUtil {
             }
             //图片生成位置
             if (StringUtil.isNotBlank(path)) {
-                FileUtil.mkdir(new File(path).getParentFile());
+                File parentFile = new File(path).getParentFile();
+                parentFile.mkdirs();
             }
             if (StringUtil.isBlank(selector)) {
                 ScreenshotOptions screenshotOptions = new ScreenshotOptions();
