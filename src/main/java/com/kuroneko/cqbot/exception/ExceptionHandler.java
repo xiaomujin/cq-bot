@@ -27,7 +27,7 @@ public class ExceptionHandler {
         } catch (BotException e) {
             push(event, bot, e.getMessage());
         } catch (Exception e) {
-            push(event, bot, STR."ERROR: \{e.getMessage()}");
+            push(event, bot, "ERROR: " + e.getMessage());
             log.error(event.getMessage(), e);
         }
     }

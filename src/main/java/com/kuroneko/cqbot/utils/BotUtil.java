@@ -104,7 +104,7 @@ public class BotUtil {
         } else {
             method = "getJpgImage";
         }
-        return OneBotMedia.builder().file(STR."\{getLocalHost()}\{method}?path=\{imgPath}").cache(cache);
+        return OneBotMedia.builder().file(getLocalHost() + method + "?path=" + imgPath).cache(cache);
     }
 
     public static OneBotMedia getLocalMedia(String imgPath) {

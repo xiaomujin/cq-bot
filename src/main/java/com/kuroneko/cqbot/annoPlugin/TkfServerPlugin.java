@@ -80,16 +80,16 @@ public class TkfServerPlugin {
                     } else if (StrUtil.isNotBlank(it.getWikiImg())) {
                         msg.img(it.getWikiImg());
                     }
-                    msg.text("\n名称：").text(STR."\{it.getCnName()}\n");
-                    msg.text("24h:").text(STR."\{it.getChange24()}%").text(" 7d:").text(STR."\{it.getChange7d()}%\n");
-                    msg.text("基础价格：").text(STR."\{it.getBasePrice()}₽\n");
-                    msg.text(it.getTraderName()).text("：").text(STR."\{it.getTraderPrice()}\{it.getTraderPriceCur()}\n");
+                    msg.text("\n名称：").text(it.getCnName() + "\n");
+                    msg.text("24h:").text(it.getChange24() + "%").text(" 7d:").text(it.getChange7d() + "%\n");
+                    msg.text("基础价格：").text(it.getBasePrice() + "₽\n");
+                    msg.text(it.getTraderName()).text("：").text(it.getTraderPrice() + it.getTraderPriceCur() + "\n");
                     if (it.isCanSellOnFlea()) {
-                        msg.text("跳蚤日价：").text(STR."\{it.getAvgDayPrice()}₽\n");
-                        msg.text("跳蚤周价：").text(STR."\{it.getAvgWeekPrice()}₽\n");
-                        msg.text("单格：").text(STR."\{it.getAvgDayPrice() / it.getSize()}₽");
+                        msg.text("跳蚤日价：").text(it.getAvgDayPrice() + "₽\n");
+                        msg.text("跳蚤周价：").text(it.getAvgWeekPrice() + "₽\n");
+                        msg.text("单格：").text(it.getAvgDayPrice() / it.getSize() + "₽");
                     } else {
-                        msg.text("单格：").text(STR."\{it.getTraderPrice() / it.getSize()}\{it.getTraderPriceCur()}\n");
+                        msg.text("单格：").text(it.getTraderPrice() / it.getSize() + it.getTraderPriceCur() + "\n");
                         msg.text("跳蚤禁售!");
                     }
                 });
@@ -145,7 +145,7 @@ public class TkfServerPlugin {
                                                 .replace("failed", "失败"))
                                 .collect(Collectors.joining(",", "(", ")"));
                         perTaskId.add(task.getString("id"));
-                        taskSb.append(STR."> \{task.getString("name").trim()} \{collect}  \n");
+                        taskSb.append("> ").append(task.getString("name").trim()).append(" ").append(collect).append("  \n");
                     }
                     tkfTask.setPreTaskId(String.join("|", perTaskId));
                 }
@@ -155,7 +155,7 @@ public class TkfServerPlugin {
                 tkfTask.setPreTask(taskSb.toString());
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(STR."> EXP ( \{jsonObject.getString("experience")} )  \n");
+                sb.append("> EXP ( ").append(jsonObject.getString("experience")).append(" )  \n");
                 JSONObject finishRewards = jsonObject.getJSONObject("finishRewards");
                 if (finishRewards != null) {
                     JSONArray traderStanding = finishRewards.getJSONArray("traderStanding");
@@ -164,7 +164,7 @@ public class TkfServerPlugin {
                             JSONObject traderStand = traderStanding.getJSONObject(j);
                             String tName = traderStand.getJSONObject("trader").getString("name");
                             String count = traderStand.getString("standing");
-                            sb.append(STR."> \{tName} ( \{count} )  \n");
+                            sb.append("> ").append(tName).append(" ( ").append(count).append(" )  \n");
                         }
                     }
 
@@ -174,7 +174,7 @@ public class TkfServerPlugin {
                             JSONObject itemsJSONObject = items.getJSONObject(j);
                             String tName = itemsJSONObject.getJSONObject("item").getString("name");
                             String count = itemsJSONObject.getString("count");
-                            sb.append(STR."> \{tName} ( \{count} )  \n");
+                            sb.append("> ").append(tName).append(" ( ").append(count).append(" )  \n");
                         }
                     }
 
@@ -184,7 +184,7 @@ public class TkfServerPlugin {
                             JSONObject skillLevel = skillLevelReward.getJSONObject(j);
                             String tName = skillLevel.getString("name");
                             String count = skillLevel.getString("level");
-                            sb.append(STR."> \{tName} ( \{count} )  \n");
+                            sb.append("> ").append(tName).append(" ( ").append(count).append(" )  \n");
                         }
                     }
                 }
@@ -442,7 +442,7 @@ public class TkfServerPlugin {
         ExceptionHandler.with(bot, event, () -> {
             List<TkfTask> tkfTasks = tkfTaskService.lambdaQuery().like(TkfTask::getSName, sName).list();
             if (tkfTasks.isEmpty()) {
-                return STR."未找到任务: \{sName}";
+                return "未找到任务: " + sName;
             }
             tkfTasks.sort(Comparator.comparing(
                     tkfTask -> tkfTask.getSName().length()
@@ -458,7 +458,7 @@ public class TkfServerPlugin {
                     TkfTask tkfTask = tkfTasks.get(i);
                     Keyboard.Button button = Keyboard.textButtonBuilder()
                             .label(tkfTask.getName())
-                            .data(STR."查任务 \{tkfTask.getSName()}")
+                            .data("查任务 " + tkfTask.getSName())
                             .enter(true)
                             .build();
                     keyboard.addRow().addButton(button);
@@ -472,8 +472,8 @@ public class TkfServerPlugin {
             }
             String id = first.getIdStr();
             CacheUtil.put(id, mdText, 5L, TimeUnit.SECONDS);
-            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Markdown/\{id}", 600, 200);
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}md/\{id}.png";
+            Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "Markdown/" + id, 600, 200);
+            String imgPath = Constant.BASE_IMG_PATH + "md/" + id + ".png";
             PuppeteerUtil.screenshot(page, imgPath);
             String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
 //            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
@@ -488,37 +488,34 @@ public class TkfServerPlugin {
         for (int i = 0; i < tkfTaskTargets.size(); i++) {
             TkfTaskTarget tkfTaskTarget = tkfTaskTargets.get(i);
             if (tkfTaskTarget.getIsOptional()) {
-                tkfTaskTarget.setDescription(STR."( 可选 ) \{tkfTaskTarget.getDescription()}");
+                tkfTaskTarget.setDescription("( 可选 ) " + tkfTaskTarget.getDescription());
             }
             String num = tkfTaskTarget.getCount().toString();
             if (tkfTaskTarget.getIsRaid()) {
                 tip = true;
-                num = STR."( \{num}√ )";
+                num = "( " + num + "√ )";
             } else {
-                num = STR."( \{num} )";
+                num = "( " + num + " )";
             }
-            stringBuilder.append(STR."> \{i + 1}. \{tkfTaskTarget.getDescription()}\{tkfTaskTarget.getCount() > 0 ? num : ""}  \n");
+            stringBuilder.append("> ").append(i + 1).append(". ").append(tkfTaskTarget.getDescription()).append(tkfTaskTarget.getCount() > 0 ? num : "").append("  \n");
         }
         if (tip) {
             stringBuilder.append("> Tip: √ 表示需要在战局中找到。\n");
         }
-        String mdText = STR."""
-                ![\{first.getTraderName()} #30px #30px](\{first.getTraderImg()}): \{first.getName()}
-                ***
-                \{first.getIsKappa() ? "3x4任务: ( √ )" : "~~3x4任务~~: ( × )"}  \s
-                \{first.getIsLightkeeper() ? "灯塔商人: ( √ )" : "~~灯塔商人~~: ( × )"}  \s
-                开启等级: \{first.getMinLevel()}  \s
-                任务目标:
-                ***
-                \{stringBuilder.toString()}
-                任务奖励:
-                ***
-                \{first.getFinishReward()}
-                前置任务:
-                ***
-                \{first.getPreTask()}
-                """;
-        return mdText;
+        return "![" + first.getTraderName() + " #30px #30px](" + first.getTraderImg() + "): " + first.getName() + "\n" +
+                "***\n" +
+                (first.getIsKappa() ? "3x4任务: ( √ )" : "~~3x4任务~~: ( × )") + "   \n" +
+                (first.getIsLightkeeper() ? "灯塔商人: ( √ )" : "~~灯塔商人~~: ( × )") + "   \n" +
+                "开启等级: " + first.getMinLevel() + "   \n" +
+                "任务目标:\n" +
+                "***\n" +
+                stringBuilder + "\n" +
+                "任务奖励:\n" +
+                "***\n" +
+                first.getFinishReward() + "\n" +
+                "前置任务:\n" +
+                "***\n" +
+                first.getPreTask() + "\n";
     }
 
 
@@ -537,7 +534,7 @@ public class TkfServerPlugin {
                 String request = getQueryRes(formatted);
                 JSONObject jsonObject = JSON.parseObject(request).getJSONObject("data").getJSONObject("item");
                 if (jsonObject == null) {
-                    return STR."查询失败或物品不存在：\{text}";
+                    return "查询失败或物品不存在：" + text;
                 }
                 jsonArray = JSONArray.of(jsonObject);
             } else {
@@ -545,7 +542,7 @@ public class TkfServerPlugin {
                 String request = getQueryRes(formatted);
                 jsonArray = JSON.parseObject(request).getJSONObject("data").getJSONArray("items");
                 if (jsonArray.isEmpty()) {
-                    return STR."查询失败或物品不存在：\{text}";
+                    return "查询失败或物品不存在：" + text;
                 }
             }
 
@@ -591,7 +588,7 @@ public class TkfServerPlugin {
                     }
                 }
 
-                taskSB.append(STR."> \{task.getString("name")}( \{needNum}\{foundInRaid ? "√" : ""} )  \n");
+                taskSB.append("> ").append(task.getString("name")).append("( ").append(needNum).append(foundInRaid ? "√" : "").append(" )  \n");
             }
             if (taskSB.isEmpty()) {
                 taskSB.append("> 无  \n");
@@ -612,28 +609,21 @@ public class TkfServerPlugin {
                         break;
                     }
                 }
-                craftSB.append(STR."> \{name} lv.\{level} ( \{count} )  \n");
+                craftSB.append("> ").append(name).append(" lv.").append(level).append(" ( ").append(count).append(" )  \n");
             }
             if (craftSB.isEmpty()) {
                 craftSB.append("> 无  ");
             }
 
-            String mdText = STR."""
-                ![icon #35px #35px](\{item.getString("iconLink")}): \{item.getString("name")}
-                ***
-                24h均价: \{avg24hPrice != 0 ? STR."\{avg24hPrice} ₽" : "跳蚤禁售"}  \s
-                跳蚤现价: \{avg24hPrice != 0 ? STR."\{lastLowPrice} ₽" : "跳蚤禁售"}  \s
-                商人价格: \{maxPrice} ₽  \s
-                任务需求:
-
-                \{taskSB.toString()}
-
-                藏身处需求:
-
-                \{craftSB.toString()}
-                ***
-                \{formatTime}
-                """;
+            String mdText = "![icon #35px #35px](" + item.getString("iconLink") + "): " + item.getString("name") + "\n" +
+                    "***\n" +
+                    "24h均价: " + (avg24hPrice != 0 ? avg24hPrice + " ₽" : "跳蚤禁售") + "   \n" +
+                    "跳蚤现价: " + (avg24hPrice != 0 ? lastLowPrice + " ₽" : "跳蚤禁售") + "   \n" +
+                    "商人价格: " + maxPrice + " ₽   \n任务需求:\n\n" + taskSB + "\n\n" +
+                    "藏身处需求:\n\n" +
+                    craftSB + "\n" +
+                    "***\n" +
+                    formatTime + "\n";
 
             Keyboard keyboard = Keyboard.builder();
             if (jsonArray.size() > 1) {
@@ -642,7 +632,7 @@ public class TkfServerPlugin {
                     String nameOther = jsonArray.getJSONObject(i).getString("name");
                     Keyboard.Button button = Keyboard.textButtonBuilder()
                             .label(nameOther)
-                            .data(STR."跳蚤 \{idOther}")
+                            .data("跳蚤 " + idOther)
                             .enter(true)
                             .build();
                     keyboard.addRow().addButton(button);
@@ -657,8 +647,8 @@ public class TkfServerPlugin {
 //            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
             String imgId = item.getString("id");
             CacheUtil.put(imgId, mdText, 5L, TimeUnit.SECONDS);
-            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Markdown/\{imgId}", 500, 200);
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}md/\{imgId}.png";
+            Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "Markdown/" + imgId, 500, 200);
+            String imgPath = Constant.BASE_IMG_PATH + "md/" + imgId + ".png";
             PuppeteerUtil.screenshot(page, imgPath);
             String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
             bot.sendMsg(event, msg, false);

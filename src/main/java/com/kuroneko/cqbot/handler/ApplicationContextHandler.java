@@ -21,7 +21,7 @@ public class ApplicationContextHandler implements ApplicationContextAware, Dispo
 
     /**
      * -- GETTER --
-     *  取得存储在静态变量中的ApplicationContext.
+     * 取得存储在静态变量中的ApplicationContext.
      */
     @Getter
     private static ApplicationContext applicationContext = null;
@@ -54,7 +54,7 @@ public class ApplicationContextHandler implements ApplicationContextAware, Dispo
      */
     public static void clearHolder() {
         if (log.isDebugEnabled()) {
-            log.debug(STR."清除ApplicationContextHandler中的ApplicationContext:\{applicationContext.toString()}");
+            log.debug("清除ApplicationContextHandler中的ApplicationContext:{}", applicationContext.toString());
         }
         applicationContext = null;
     }

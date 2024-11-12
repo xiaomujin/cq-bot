@@ -37,7 +37,7 @@ public class BangumiPlugin {
     public void bangumiCalendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), Regex.BANGUMI_CALENDAR);
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.BANGUMI_CALENDAR, 20, TimeUnit.MINUTES, () -> {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}BANGUMI_CALENDAR.png";
+            String imgPath = Constant.BASE_IMG_PATH + "BANGUMI_CALENDAR.png";
             Page newPage = PuppeteerUtil.getNewPage(Constant.AGE_HOST_URL);
             PuppeteerUtil.screenshot(newPage
                     , imgPath

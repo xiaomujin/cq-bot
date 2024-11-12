@@ -77,7 +77,7 @@ public class TarKovMarketService {
         StringBuilder sb = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatTime = LocalDateTime.now().format(formatter);
-        sb.append(STR."\{formatTime}\n");
+        sb.append(formatTime).append("\n");
         sb.append("服务器状态速报：\n");
         jsonArray.forEach(item -> {
             JSONObject jsonObject = (JSONObject) item;
@@ -95,15 +95,15 @@ public class TarKovMarketService {
                 case "Inventory operations" -> sb.append("库存操作：");
                 default -> sb.append(name);
             }
-            sb.append(STR."\{getCNStatus(status)}\n");
+            sb.append(getCNStatus(status)).append("\n");
         });
         String respGlobal = HttpUtil.get("https://status.escapefromtarkov.com/api/global/status");
         JSONObject jsonObject = JSON.parseObject(respGlobal);
         int status = jsonObject.getIntValue("status");
-        sb.append(STR."\n总体状态：\{getCNStatus(status)}\n");
+        sb.append("\n总体状态：").append(getCNStatus(status)).append("\n");
         String message = jsonObject.getString("message");
         if (!ObjectUtils.isEmpty(message)) {
-            sb.append(STR."信息：\{message}");
+            sb.append("信息：").append(message);
         }
         return MsgUtils.builder().text(sb.toString()).build();
     }

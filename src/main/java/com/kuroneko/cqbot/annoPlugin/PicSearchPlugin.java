@@ -87,7 +87,7 @@ public class PicSearchPlugin {
     }
 
     private Pair<MsgUtils, MsgUtils> getAscii2d(String url) {
-        String redirect = HttpUtil.getRedirect(STR."https://ascii2d.net/search/url/\{url}");
+        String redirect = HttpUtil.getRedirect("https://ascii2d.net/search/url/" + url);
         try {
             MsgUtils colorSearchResult = ascii2dRequest(0, redirect);
             MsgUtils bovwSearchResult = ascii2dRequest(1, redirect.replace("/color/", "/bovw/"));
@@ -109,10 +109,10 @@ public class PicSearchPlugin {
         return MsgUtils
                 .builder()
                 .img(thumbnail.attr("abs:src"))
-                .text(STR."\n标题：\{link.text()}")
-                .text(STR."\n作者：\{author.text()}")
-                .text(STR."\n链接：\{link.attr("abs:href")}")
-                .text(STR."\n数据来源：Ascii2d \{type == 0 ? "色合検索" : "特徴検索"}");
+                .text("\n标题：" + link.text())
+                .text("\n作者：" + author.text())
+                .text("\n链接：" + link.attr("abs:href"))
+                .text("\n数据来源：Ascii2d " + (type == 0 ? "色合検索" : "特徴検索"));
     }
 
     private Pair<String, MsgUtils> getSauceRes(String url) {
@@ -126,34 +126,34 @@ public class PicSearchPlugin {
         SauceDTO.ResultData data = first.getData();
         MsgUtils msgUtils = MsgUtils.builder()
                 .img(header.getThumbnail())
-                .text(STR."\n相似度：\{header.getSimilarity()}%");
+                .text("\n相似度：" + header.getSimilarity() + "%");
         switch (header.getIndexId()) {
             case 5 -> {
-                msgUtils.text(STR."\n标题：\{data.getTitle()}");
-                msgUtils.text(STR."\n画师：\{data.getAuthorName()}");
-                msgUtils.text(STR."\n作品主页：https://pixiv.net/i/\{data.getPixivId()}");
-                msgUtils.text(STR."\n画师主页：https://pixiv.net/u/\{data.getAuthorId()}");
-                msgUtils.text(STR."\n反代地址：https://i.loli.best/\{data.getPixivId()}");
+                msgUtils.text("\n标题：" + data.getTitle());
+                msgUtils.text("\n画师：" + data.getAuthorName());
+                msgUtils.text("\n作品主页：https://pixiv.net/i/" + data.getPixivId());
+                msgUtils.text("\n画师主页：https://pixiv.net/u/" + data.getAuthorId());
+                msgUtils.text("\n反代地址：https://i.loli.best/" + data.getPixivId());
                 msgUtils.text("\n数据来源：SauceNao (Pixiv)");
             }
             case 41 -> {
-                msgUtils.text(STR."\n链接：\{data.getExtUrls().getFirst()}");
-                msgUtils.text("\n用户：" + STR."https://twitter.com/\{data.getTwitterUserHandle()}");
+                msgUtils.text("\n链接：" + data.getExtUrls().getFirst());
+                msgUtils.text("\n用户：" + "https://twitter.com/" + data.getTwitterUserHandle());
                 msgUtils.text("\n数据来源：SauceNao (Twitter)");
             }
             case 18, 38 -> {
-                msgUtils.text(STR."\n来源：\{data.getSource()}");
-                msgUtils.text(STR."\n日文名：\{data.getJpName()}");
-                msgUtils.text(STR."\n英文名：\{data.getEngName()}");
+                msgUtils.text("\n来源：" + data.getSource());
+                msgUtils.text("\n日文名：" + data.getJpName());
+                msgUtils.text("\n英文名：" + data.getEngName());
                 msgUtils.text("\n数据来源：SauceNao (H-Misc)");
             }
             default -> {
                 List<String> extUrls = data.getExtUrls();
                 if (extUrls != null && !extUrls.isEmpty()) {
-                    msgUtils.text(STR."\n链接：\{extUrls.getFirst()}");
+                    msgUtils.text("\n链接：" + extUrls.getFirst());
                 }
                 msgUtils.text("\n数据来源：SauceNao");
-                msgUtils.text(STR."\n数据来源：SauceNao(\{header.getIndexId()})");
+                msgUtils.text("\n数据来源：SauceNao(" + header.getIndexId() + ")");
             }
         }
         return Pair.of(header.getSimilarity(), msgUtils);
@@ -162,7 +162,7 @@ public class PicSearchPlugin {
     @Synchronized
     private SauceDTO sauceRequest(String img) {
         try {
-            String api = STR."https://saucenao.com/search.php?api_key=\{sauceNaoKey}&output_type=2&numres=3&db=999&url=\{URLEncoder.encode(img, Charset.defaultCharset())}";
+            String api = "https://saucenao.com/search.php?api_key=" + sauceNaoKey + "&output_type=2&numres=3&db=999&url=" + URLEncoder.encode(img, Charset.defaultCharset());
             String resStr = HttpUtil.get(api);
             SauceDTO sauceDTO = JSON.parseObject(resStr, SauceDTO.class);
             if (sauceDTO.getHeader().getLongRemaining() <= 0) throw new BotException("今日的搜索配额已耗尽啦");

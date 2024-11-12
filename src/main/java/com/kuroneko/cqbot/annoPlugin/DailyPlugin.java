@@ -65,7 +65,7 @@ public class DailyPlugin {
                 throw new BotException("获取日报失败");
             }
             String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}Daily.png";
+            String imgPath = Constant.BASE_IMG_PATH + "Daily.png";
             try (HttpClient httpClient = HttpClient.newBuilder()
                     .followRedirects(HttpClient.Redirect.ALWAYS)
                     .connectTimeout(Duration.ofSeconds(60L))

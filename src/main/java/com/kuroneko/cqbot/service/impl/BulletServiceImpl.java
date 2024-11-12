@@ -99,7 +99,7 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
         if (size == 0) {
             return "";
         }
-        Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Bullet/\{URLEncoder.encode(name, StandardCharsets.UTF_8)}", size, 900);
+        Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "Bullet/" + URLEncoder.encode(name, StandardCharsets.UTF_8), size, 900);
         return PuppeteerUtil.screenshot(page, path, ".flex_div");
     }
 

@@ -38,7 +38,7 @@ public class BulletPlugin {
     public void handler(Bot bot, AnyMessageEvent event, Matcher matcher) {
         String name = matcher.group("name").trim();
         String sName = name.replace(" ", "%").replace("-", "%").replace("*", "x");
-        String imgPath = STR."\{Constant.BASE_IMG_PATH}SEARCH_BULLET\{event.getSender().getUserId()}.png";
+        String imgPath = Constant.BASE_IMG_PATH + "SEARCH_BULLET" + event.getSender().getUserId() + ".png";
         String screenshot = bulletService.screenshotBullet(sName, imgPath);
         MsgUtils msg = MsgUtils.builder();
         if (StrUtil.isEmpty(screenshot)) {
@@ -59,9 +59,7 @@ public class BulletPlugin {
         String time = dateTime.toLocalTime().format(DateTimeFormatter.ofPattern(LocalJavaTimeModule.NORM_TIME_PATTERN));
         String time2 = dateTime2.toLocalTime().format(DateTimeFormatter.ofPattern(LocalJavaTimeModule.NORM_TIME_PATTERN));
         MsgUtils msg = MsgUtils.builder()
-                .text(STR."""
-                \{time2}
-                \{time}""");
+                .text(time2 + "\n" + time);
         bot.sendMsg(event, msg.build(), false);
     }
 
@@ -69,8 +67,8 @@ public class BulletPlugin {
     @AnyMessageHandler()
     @MessageHandlerFilter(cmd = Regex.LIFE_RESTART)
     public void life(Bot bot, AnyMessageEvent event, Matcher matcher) {
-        String imgPath = STR."\{Constant.BASE_IMG_PATH}life/\{event.getGroupId()}_\{event.getSender().getUserId()}.png";
-        Page newPage = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}Life/\{event.getSender().getNickname()}", 500, 800);
+        String imgPath = Constant.BASE_IMG_PATH + "life/" + event.getGroupId() + "_" + event.getSender().getUserId() + ".png";
+        Page newPage = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "Life/" + event.getSender().getNickname(), 500, 800);
         PuppeteerUtil.screenshot(newPage, imgPath);
         MsgUtils msg = MsgUtils.builder();
         OneBotMedia localMedia = BotUtil.getLocalMedia(imgPath, false);

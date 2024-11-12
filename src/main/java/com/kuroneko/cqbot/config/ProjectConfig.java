@@ -16,6 +16,6 @@ public class ProjectConfig {
     private ProjectConfig(ServerProperties serverProperties) {
         ProjectConfig.serverProperties = serverProperties;
         ProjectConfig.port = ProjectConfig.serverProperties.getPort();
-        ProjectConfig.url = STR."http://localhost:\{ProjectConfig.port}/";
+        ProjectConfig.url = "http://localhost:" + ProjectConfig.port + "/";
     }
 }

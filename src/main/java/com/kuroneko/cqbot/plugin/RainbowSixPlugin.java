@@ -23,20 +23,10 @@ import java.util.List;
 public class RainbowSixPlugin extends BotPlugin {
     private static final String CMD = CmdConst.RAINBOW_KD;
 
-    String imgPath = STR."\{Constant.BASE_IMG_PATH}r6/";
+    String imgPath = Constant.BASE_IMG_PATH + "r6/";
 
     public RainbowSixPlugin() {
         FileUtil.mkdir(imgPath);
-    }
-
-
-    private String getText(String msg) {
-        String text = "";
-        if (msg.length() > CMD.length()) {
-            text = msg.substring(CMD.length()).trim();
-        }
-        log.info("text:{}", text);
-        return text;
     }
 
     @Override
@@ -88,7 +78,7 @@ public class RainbowSixPlugin extends BotPlugin {
             Viewport viewport = new Viewport();
             viewport.setWidth(1455);
             page.setViewport(viewport);
-            page.goTo(STR."https://r6.tracker.network/r6siege/profile/ubi/\{name}/\{selected}", pageNavigateOptions, true);
+            page.goTo("https://r6.tracker.network/r6siege/profile/ubi/" + name + "/" + selected, pageNavigateOptions, true);
             FrameAddStyleTagOptions styleTagOptions = new FrameAddStyleTagOptions(null, null, ".bordered-ad {display:none} .primisslate {display:none}");
             page.addStyleTag(styleTagOptions);
 
@@ -120,7 +110,7 @@ public class RainbowSixPlugin extends BotPlugin {
 //                page.waitForFunction(fun);
 //            }
 
-            String img = STR."\{imgPath}\{name}.png";
+            String img = imgPath + name + ".png";
             elementHandle.screenshot(img);
             msg.img(BotUtil.getLocalMedia(img));
         } catch (Exception e) {

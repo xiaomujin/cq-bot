@@ -114,8 +114,8 @@ public class SeTuPlugin extends BotPlugin {
             MsgUtils msg = MsgUtils.builder().img(imgUrl)
                     .text("标题：" + seTuData.getTitle() + Constant.XN)
                     .text("作者：" + seTuData.getAuthor() + Constant.XN)
-                    .text(STR."pid：\{seTuData.getPid()}\n")
-                    .text(STR."反代地址: https://i.loli.best/\{seTuData.getPid()}");
+                    .text("pid：" + seTuData.getPid() + "\n")
+                    .text("反代地址: https://i.loli.best/" + seTuData.getPid());
             two.setSeTuData(seTuData);
             two.setMsg(msg);
         }

@@ -54,9 +54,7 @@ public class DicePlugin {
             num2 = temp;
         }
         long nextLong = random(num1, num2);
-        return MsgUtils.builder().text(STR."""
-                范围：[\{num1}-\{num2}]
-                结果：\{nextLong}""");
+        return MsgUtils.builder().text("范围：[" + num1 + "-" + num2 + "]\n结果：" + nextLong);
     }
 
     private MsgUtils buildMsg1(String first) {

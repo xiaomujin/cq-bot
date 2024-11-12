@@ -110,7 +110,7 @@ public class BotTaskService {
         Set<Number> list = redisUtil.members(RedisKey.THREE_DOG);
         log.info("THREE_DOG 推送群聊：{}", list);
         if (!list.isEmpty()) {
-            MsgUtils msg = MsgUtils.builder().text(STR."三兄弟位置变更\{Constant.XN}").text(STR."\{oldThreeDog.getLocationCN()} -> \{threeDog.getLocationCN()}\{Constant.XN}").text(threeDog.getLastReported());
+            MsgUtils msg = MsgUtils.builder().text("三兄弟位置变更" + Constant.XN).text(oldThreeDog.getLocationCN() + " -> " + threeDog.getLocationCN() + Constant.XN).text(threeDog.getLastReported());
             BotUtil.sendToGroupList(list, msg.build());
         }
     }

@@ -75,14 +75,14 @@ public class WordCloudPlugin {
         if ("本群".equals(type)) {
             uid = 0L;
         }
-        String tmpCache = STR."\{type}_\{range}_\{event.getGroupId()}_\{uid}";
+        String tmpCache = type + "_" + range + "_" + event.getGroupId() + "_" + uid;
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(tmpCache, 10, TimeUnit.MINUTES, () -> {
             bot.sendGroupMsg(event.getGroupId(), "回想中，请耐心等待～", false);
             List<String> contents = getWords(event.getUserId(), event.getGroupId(), type, range);
             if (contents.isEmpty()) {
                 throw new BotException("唔呣～记忆里没有找到你的发言记录呢");
             }
-            return MsgUtils.builder().reply(msgId).img(STR."base64://\{generateWordCloud(contents)}").build();
+            return MsgUtils.builder().reply(msgId).img("base64://" + generateWordCloud(contents)).build();
         }));
     }
 

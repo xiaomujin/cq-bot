@@ -25,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class BiLiService {
     private final RestTemplate restTemplate;
-    String imgPath = STR."\{Constant.BASE_IMG_PATH}bili/";
+    String imgPath = Constant.BASE_IMG_PATH + "bili/";
 
     public BiLiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -38,7 +38,7 @@ public class BiLiService {
         headers.add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0");
         JSONObject httpObject = new JSONObject();
         HttpEntity<Object> httpEntity = new HttpEntity<>(httpObject, headers);
-        ResponseEntity<BiliDynamicVo> entity = restTemplate.exchange(Constant.BL_DYNAMIC_URL, HttpMethod.GET, httpEntity, BiliDynamicVo.class,uid);
+        ResponseEntity<BiliDynamicVo> entity = restTemplate.exchange(Constant.BL_DYNAMIC_URL, HttpMethod.GET, httpEntity, BiliDynamicVo.class, uid);
         List<BiliDynamicVo.BiliDynamicCard> items = Objects.requireNonNull(entity.getBody()).getData().getItems();
         return items.stream().min((o1, o2) -> o2.getModules().getModule_author().getPub_ts().compareTo(o1.getModules().getModule_author().getPub_ts()));
     }
@@ -51,8 +51,8 @@ public class BiLiService {
      */
     public String getNewScreenshot(String dynamicId, String uid) {
         try {
-            String path = STR."\{imgPath}\{dynamicId}.png";
-            Page page = PuppeteerUtil.getNewPage(STR."https://www.bilibili.com/opus/\{dynamicId}");
+            String path = imgPath + dynamicId + ".png";
+            Page page = PuppeteerUtil.getNewPage("https://www.bilibili.com/opus/" + dynamicId);
             String redirect = page.url();
             String selector = null;
             if (redirect.contains("bilibili.com/opus")) {
@@ -74,9 +74,9 @@ public class BiLiService {
         OneBotMedia localMedia = BotUtil.getLocalMedia(path, false);
         return MsgUtils.builder()
                 .img(localMedia)
-                .text(STR."up: \{card.getModules().getModule_author().getName()}\n")
-                .text(STR."uid: \{card.getModules().getModule_author().getMid()}\n")
-                .text(STR."https://www.bilibili.com/opus/\{card.getId_str()}");
+                .text("up: " + card.getModules().getModule_author().getName() + "\n")
+                .text("uid: " + card.getModules().getModule_author().getMid() + "\n")
+                .text("https://www.bilibili.com/opus/" + card.getId_str());
     }
 
 }

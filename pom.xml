@@ -184,7 +184,7 @@
                 <configuration>
                     <!--                    <source>21</source>-->
                     <!--                    <target>21</target>-->
-                    <compilerArgs>--enable-preview</compilerArgs>
+<!--                    <compilerArgs>&#45;&#45;enable-preview</compilerArgs>-->
                 </configuration>
             </plugin>
         </plugins>

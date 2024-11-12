@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -26,7 +25,6 @@ public class JsonUtil {
      * @param obj 需要转换的对象
      * @return json
      */
-    @Nullable
     public static String toString(Object obj) {
         if (obj == null) {
             return null;
@@ -42,7 +40,6 @@ public class JsonUtil {
         }
     }
 
-    @Nullable
     public static <T> T toBean(String json, Class<T> tClass) {
         try {
             return objectMapper.readValue(json, tClass);
@@ -52,7 +49,6 @@ public class JsonUtil {
         }
     }
 
-    @Nullable
     public static <E> List<E> toList(String json, Class<E> eClass) {
         try {
             return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, eClass));
@@ -62,7 +58,6 @@ public class JsonUtil {
         }
     }
 
-    @Nullable
     public static <K, V> Map<K, V> toMap(String json, Class<K> kClass, Class<V> vClass) {
         try {
             return objectMapper.readValue(json, objectMapper.getTypeFactory().constructMapType(Map.class, kClass, vClass));
@@ -72,7 +67,6 @@ public class JsonUtil {
         }
     }
 
-    @Nullable
     public static <T> T nativeRead(String json, TypeReference<T> type) {
         try {
             return objectMapper.readValue(json, type);

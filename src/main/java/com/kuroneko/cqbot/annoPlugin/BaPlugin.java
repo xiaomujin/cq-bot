@@ -53,8 +53,8 @@ public class BaPlugin {
                 arrayList.forEach(s -> bot.sendMsg(event, s, false));
                 return "";
             }
-            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}baRank", 880, 500);
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}ba/baRank.png";
+            Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "baRank", 880, 500);
+            String imgPath = Constant.BASE_IMG_PATH + "ba/baRank.png";
             PuppeteerUtil.screenshot(page, imgPath, "#app");
             String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
             expiringMap.put(Regex.BA_TOTAL_BATTLE, List.of(msg));
@@ -72,8 +72,8 @@ public class BaPlugin {
                 arrayList.forEach(s -> bot.sendMsg(event, s, false));
                 return "";
             }
-            Page page = PuppeteerUtil.getNewPage(STR."\{BotUtil.getLocalHost()}baCalendar", 1000, 400);
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}ba/baCalendar.png";
+            Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "baCalendar", 1000, 400);
+            String imgPath = Constant.BASE_IMG_PATH + "ba/baCalendar.png";
             PuppeteerUtil.screenshot(page, imgPath, "html");
             String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
             expiringMap.put(Regex.BA_CALENDAR, List.of(msg));

@@ -52,7 +52,7 @@ public class TarKovMapPlugin extends BotPlugin {
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
         if (event.getRawMessage().contains(CMD)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CMD);
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/";
 
             String rawMessage = event.getRawMessage();
             String imgName = null;
@@ -70,7 +70,7 @@ public class TarKovMapPlugin extends BotPlugin {
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().equals(CmdConst.ZI_DAN)) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/BulletData.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/BulletData.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
@@ -125,7 +125,7 @@ public class TarKovMapPlugin extends BotPlugin {
                 JSHandle jsHandle = page.waitForFunction(fun);
                 ArrayList<Object> jsonValue = CastUtils.cast(jsHandle.jsonValue());
                 new Thread(() -> bulletService.updateAllBullet(jsonValue)).start();
-                String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/BulletData.png";
+                String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/BulletData.png";
                 PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader", "._1MLS_xjiUjam_u2qmURY4i { display: none }");
             } catch (Exception e) {
                 log.error("子弹数据更新失败", e);
@@ -133,7 +133,7 @@ public class TarKovMapPlugin extends BotPlugin {
                 bot.sendMsg(event, msg.build(), false);
                 return MESSAGE_BLOCK;
             }
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/BulletData.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/BulletData.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).text("子弹数据更新成功");
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
@@ -147,37 +147,37 @@ public class TarKovMapPlugin extends BotPlugin {
             }
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("任务流程图")) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/TaskProcess.jpg";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/TaskProcess.jpg";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("任务物品图")) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/TaskItem.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/TaskItem.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("信誉栏位图")) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/reputation.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/reputation.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("boss刷新率")) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/bossRefreshRate.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/bossRefreshRate.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("boss丢包时间")) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/bossLossWrap.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/bossLossWrap.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("3x4道具")) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/3x4.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/3x4.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
         } else if (event.getRawMessage().startsWith("耳机强度")) {
-            String imgPath = STR."\{Constant.BASE_IMG_PATH}tarkov_map/headset.png";
+            String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/headset.png";
             MsgUtils msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath));
             bot.sendMsg(event, msg.build(), false);
             return MESSAGE_BLOCK;
