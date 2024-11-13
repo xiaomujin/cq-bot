@@ -489,10 +489,8 @@ public class TkfServerPlugin {
             Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "Markdown/" + id, 600, 200);
             String imgPath = Constant.BASE_IMG_PATH + "md/" + id + ".png";
             PuppeteerUtil.screenshot(page, imgPath);
-            String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
-//            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
-            bot.sendMsg(event, msg, false);
-            return "";
+            //            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
+            return MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
         });
     }
 

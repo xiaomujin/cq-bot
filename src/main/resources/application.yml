@@ -37,27 +37,6 @@ spring:
       filters: stat,wall,slf4j
       max-pool-prepared-statement-per-connection-size: -1
       use-global-data-source-stat: true
-      web-stat-filter:
-        # 是否启用StatFilter
-        enabled: false
-        # 添加过滤规则
-        url-pattern: /*
-        # 忽略过滤的格式
-        exclusions: /druid/*,*.js,*.gif,*.jpg,*.png,*.css,*.ico
-      stat-view-servlet:
-        # 是否启用StatViewServlet
-        enabled: false
-        # 访问路径为/druid时，跳转到StatViewServlet
-        url-pattern: /druid/*
-        # 是否能够重置数据
-        reset-enable: false
-        # 需要账号密码才能访问控制台，默认为root
-        login-username: druid
-        login-password: druid
-        # IP白名单
-        allow:
-        # IP黑名单（共同存在时，deny优先于allow）
-        deny:
   thymeleaf:
     cache: false
 
