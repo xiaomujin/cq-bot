@@ -209,9 +209,9 @@ public class TkfServerPlugin {
                             .parentId(id)
                             .type(target.getString("type"))
                             .description(target.getString("description"))
-                            .isOptional(target.getBoolean("optional"))
+                            .isOptional(target.getBooleanValue("optional", false))
                             .count(count)
-                            .isRaid(target.getBoolean("foundInRaid"))
+                            .isRaid(target.getBooleanValue("foundInRaid", false))
                             .build();
                     taskTargets.add(tkfTaskTarget);
                 }
@@ -664,9 +664,7 @@ public class TkfServerPlugin {
             Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "Markdown/" + imgId, 500, 200);
             String imgPath = Constant.BASE_IMG_PATH + "md/" + imgId + ".png";
             PuppeteerUtil.screenshot(page, imgPath);
-            String msg = MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
-            bot.sendMsg(event, msg, false);
-            return "";
+            return MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
         });
     }
 
