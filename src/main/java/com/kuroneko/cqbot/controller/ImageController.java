@@ -16,12 +16,15 @@ public class ImageController {
 
     @RequestMapping(value = "/getImage", produces = {MediaType.IMAGE_PNG_VALUE})
     public BufferedImage getImage(@RequestParam(defaultValue = "") String path) throws IOException {
-        File file = new File(path);
-        return ImageIO.read(file);
+        return getBufferedImage(path);
     }
 
     @RequestMapping(value = "/getJpgImage", produces = {MediaType.IMAGE_JPEG_VALUE})
     public BufferedImage getJpgImage(@RequestParam(defaultValue = "") String path) throws IOException {
+        return getBufferedImage(path);
+    }
+
+    private BufferedImage getBufferedImage(String path) throws IOException {
         File file = new File(path);
         if (!file.exists()) {
             try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/static/img/404.png")) {
