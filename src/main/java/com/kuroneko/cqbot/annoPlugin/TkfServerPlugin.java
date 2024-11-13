@@ -339,7 +339,7 @@ public class TkfServerPlugin {
                     ... on TaskObjectiveItem {
                       count
                       foundInRaid
-                      item {
+                      items {
                         id
                         name
                       }
@@ -391,7 +391,7 @@ public class TkfServerPlugin {
                     ... on TaskObjectiveItem {
                       count
                       foundInRaid
-                      item {
+                      items {
                         id
                         name
                       }
@@ -410,6 +410,20 @@ public class TkfServerPlugin {
                     }
                     count
                   }
+                }
+              }
+            }
+            """;
+
+    private static final String QUERY_BOSS_CHANCE = """
+            {
+              maps(gameMode: regular, lang: zh) {
+                name
+                bosses {
+                  boss {
+                    name
+                  }
+                  spawnChance
                 }
               }
             }
@@ -548,8 +562,8 @@ public class TkfServerPlugin {
 
             JSONObject item = jsonArray.getJSONObject(0);
 
-            Integer avg24hPrice = item.getInteger("avg24hPrice");
-            Integer lastLowPrice = item.getInteger("lastLowPrice");
+            int avg24hPrice = item.getIntValue("avg24hPrice", 0);
+            int lastLowPrice = item.getIntValue("lastLowPrice", 0);
             String updated = item.getString("updated");
             String id = item.getString("id");
             OffsetDateTime offsetDateTime = OffsetDateTime.parse(updated, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -576,7 +590,7 @@ public class TkfServerPlugin {
                 for (Object objective : objectives) {
                     JSONObject obj = (JSONObject) objective;
                     if (obj.getString("type").equalsIgnoreCase("giveItem")) {
-                        JSONArray objItems = obj.getJSONArray("item");
+                        JSONArray objItems = obj.getJSONArray("items");
                         for (Object objItem : objItems) {
                             JSONObject objItemJ = (JSONObject) objItem;
                             if (objItemJ.getString("id").equalsIgnoreCase(id)) {
