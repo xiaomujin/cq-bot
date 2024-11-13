@@ -2,10 +2,10 @@ package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.constant.RedisKey;
+import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.event.BiliSubscribeEvent;
 import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.kuroneko.cqbot.utils.BotUtil;
-import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.kuroneko.cqbot.vo.ThreeDog;
 import com.mikuac.shiro.common.utils.MsgUtils;
@@ -27,7 +27,6 @@ import java.util.*;
 public class BotTaskService {
 
     private final BiLiService biLiService;
-    private final RedisUtil redisUtil;
 
 
 //    public DailyVo getDailyVo() {
@@ -96,7 +95,7 @@ public class BotTaskService {
             Constant.CONFIG_CACHE.put(RedisKey.THREE_DOG, threeDog);
             //推送
             if (dog != null && !dog.getLocation().equals(threeDog.getLocation())) {
-                pushMsg(dog, threeDog);
+//                pushMsg(dog, threeDog);
             }
 
             log.info("刷新三兄弟在哪 成功");
@@ -106,17 +105,18 @@ public class BotTaskService {
     }
 
 
-    public void pushMsg(ThreeDog oldThreeDog, ThreeDog threeDog) {
-        Set<Number> list = redisUtil.members(RedisKey.THREE_DOG);
-        log.info("THREE_DOG 推送群聊：{}", list);
-        if (!list.isEmpty()) {
-            MsgUtils msg = MsgUtils.builder().text("三兄弟位置变更" + Constant.XN).text(oldThreeDog.getLocationCN() + " -> " + threeDog.getLocationCN() + Constant.XN).text(threeDog.getLastReported());
-            BotUtil.sendToGroupList(list, msg.build());
-        }
-    }
+//    public void pushMsg(ThreeDog oldThreeDog, ThreeDog threeDog) {
+//        Set<Number> list = redisUtil.members(RedisKey.THREE_DOG);
+//        log.info("THREE_DOG 推送群聊：{}", list);
+//        if (!list.isEmpty()) {
+//            MsgUtils msg = MsgUtils.builder().text("三兄弟位置变更" + Constant.XN).text(oldThreeDog.getLocationCN() + " -> " + threeDog.getLocationCN() + Constant.XN).text(threeDog.getLastReported());
+//            BotUtil.sendToGroupList(list, msg.build());
+//        }
+//    }
 
     public void refreshBiliSubscribe(boolean initSend) {
-        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
+        Set<String> allKeys = ConfigManager.ins.getBiliCfg().getAllSubUid();
+//        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
         allKeys.forEach(uid -> {
             Optional<BiliDynamicVo.BiliDynamicCard> firstCard = biLiService.getFirstCard(uid);
             if (firstCard.isPresent()) {

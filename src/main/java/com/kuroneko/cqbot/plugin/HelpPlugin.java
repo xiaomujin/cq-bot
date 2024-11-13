@@ -25,10 +25,6 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add(CmdConst.RI_LI);
         allCmd.add(CmdConst.TODAY_FANJU);
         allCmd.add(CmdConst.SE_TU);
-        allCmd.add(CmdConst.PA);
-        allCmd.add(CmdConst.TGRJ);
-        allCmd.add(CmdConst.TUI);
-        allCmd.add(CmdConst.TAO);
         allCmd.add(CmdConst.CHE_PAI);
         allCmd.add(CmdConst.TIAO_ZAO);
         allCmd.add(CmdConst.RAINBOW_KD);
@@ -47,7 +43,7 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add("耳机强度");
         allCmd.add(Regex.WORD_CLOUD);
         for (int i = 1; i <= allCmd.size(); i++) {
-            stringBuffer.append(i).append(".").append(allCmd.get(i - 1)).append(Constant.XN);
+            stringBuffer.append(i).append(". ").append(allCmd.get(i - 1)).append(Constant.XN);
         }
         return MsgUtils.builder().text(stringBuffer.toString());
     }

@@ -1,9 +1,8 @@
 package com.kuroneko.cqbot.annoPlugin;
 
 import com.kuroneko.cqbot.config.ProjectConfig;
+import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.enums.Regex;
-import com.kuroneko.cqbot.utils.RedisUtil;
-import com.kuroneko.cqbot.vo.UpdateCache;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
@@ -15,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 
 @Shiro
@@ -24,19 +21,18 @@ import java.util.regex.Matcher;
 @Component
 @AllArgsConstructor
 public class SystemPlugin {
-    private final RedisUtil redisUtil;
 
     @AnyMessageHandler()
     @MessageHandlerFilter(cmd = Regex.SYS_UPDATE)
     public void update(Bot bot, AnyMessageEvent event, Matcher matcher) {
         Long qq = event.getSender().getUserId();
-        if (!ProjectConfig.adminList.contains(qq)) {
+        if (!ConfigManager.ins.getAdminCfg().getAdminList().contains(qq)) {
             MsgUtils msg = MsgUtils.builder();
             msg.text("只有主人才能更新哦！");
             bot.sendMsg(event, msg.build(), false);
             return;
         }
-        redisUtil.set("SYS_UPDATE", new UpdateCache(event.getGroupId(), qq));
+        ConfigManager.ins.getUpdateCfg().update(event.getGroupId(), qq, false);
         MsgUtils msg = MsgUtils.builder();
         msg.text("开始更新，预计需要3分钟！");
         bot.sendMsg(event, msg.build(), false);

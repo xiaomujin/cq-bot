@@ -16,7 +16,6 @@ import com.kuroneko.cqbot.service.TarKovMarketService;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
-import com.kuroneko.cqbot.utils.RedisUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.mikuac.shiro.common.utils.CommonUtils;
@@ -49,7 +48,6 @@ import java.util.regex.Matcher;
 public class TestController {
     private final BiLiService biLiService;
     private final BulletService bulletService;
-    private final RedisUtil redisUtil;
     private final RestTemplate restTemplate;
     private final AiService aiService;
     private final TarKovMarketService tarKovMarketService;
@@ -66,8 +64,8 @@ public class TestController {
 //        redisUtil.add(RedisKey.BILI_SUB+":123456",1234);
 //        redisUtil.add(RedisKey.BILI_SUB+":12345",1234);
 //        redisUtil.remove(RedisKey.BILI_SUB + ":12345", 1234);
-        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
-        return allKeys;
+//        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
+        return Collections.emptyList();
     }
 
     @RequestMapping(value = "/testListener")
@@ -76,9 +74,9 @@ public class TestController {
 //        redisUtil.add(RedisKey.BILI_SUB+":123456",1234);
 //        redisUtil.add(RedisKey.BILI_SUB+":12345",1234);
 //        redisUtil.remove(RedisKey.BILI_SUB + ":12345", 1234);
-        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
-        ApplicationContextHandler.publishEvent(new BiliSubscribeEvent(new BiliDynamicVo.BiliDynamicCard()));
-        return allKeys;
+//        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);
+//        ApplicationContextHandler.publishEvent(new BiliSubscribeEvent(new BiliDynamicVo.BiliDynamicCard()));
+        return Collections.emptyList();
     }
 
     @RequestMapping(value = "/testBullet")

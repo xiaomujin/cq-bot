@@ -3,6 +3,7 @@ package com.kuroneko.cqbot.core.cfg;
 import com.alibaba.fastjson2.JSON;
 import com.kuroneko.cqbot.config.localCfg.AdminCfg;
 import com.kuroneko.cqbot.config.localCfg.BiliCfg;
+import com.kuroneko.cqbot.config.localCfg.UpdateCfg;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +20,7 @@ public class ConfigManager {
     public static final String cfgPath = "configs/";
     private AdminCfg adminCfg;
     private BiliCfg biliCfg;
+    private UpdateCfg updateCfg;
 
     private ConfigManager() {
         loadAll();

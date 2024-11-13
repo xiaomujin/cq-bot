@@ -7,6 +7,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.constant.Constant;
+import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.entity.TkfTask;
 import com.kuroneko.cqbot.entity.TkfTaskTarget;
 import com.kuroneko.cqbot.enums.Regex;
@@ -102,7 +103,7 @@ public class TkfServerPlugin {
     @MessageHandlerFilter(cmd = Regex.UPDATE_TKF_TASK)
     public void updateTkfTask(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
-            if (!ProjectConfig.adminList.contains(event.getSender().getUserId())) {
+            if (!ConfigManager.ins.getAdminCfg().getAdminList().contains(event.getSender().getUserId())) {
                 return "";
             }
             log.info("开始更新任务数据");

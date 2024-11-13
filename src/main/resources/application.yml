@@ -8,12 +8,12 @@ spring:
     banner-mode: log
   application:
     name: @project.artifactId@
-  data:
-    redis:
-      database: 0
-      host: 127.0.0.1
-      port: 6379
-      password:
+#  data:
+#    redis:
+#      database: 0
+#      host: 127.0.0.1
+#      port: 6379
+#      password:
   datasource:
 #    url: jdbc:mysql://127.0.0.1:3306/bot?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     url: jdbc:sqlite:bot.db
@@ -55,8 +55,6 @@ shiro:
     - com.kuroneko.cqbot.plugin.TarKovMapPlugin
     - com.kuroneko.cqbot.plugin.ZeroMagnetPlugin
     - com.kuroneko.cqbot.plugin.ThreeHundredPlugin
-    - com.kuroneko.cqbot.plugin.AddSetuSystemPlugin
-    - com.kuroneko.cqbot.plugin.AddSystemPlugin
     - com.kuroneko.cqbot.plugin.RecordPlugin
   # 拦截器
 #  interceptor: com.mikuac.example.interceptor.InterceptorExample

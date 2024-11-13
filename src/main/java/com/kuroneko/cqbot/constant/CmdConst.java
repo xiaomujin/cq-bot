@@ -71,16 +71,6 @@ public class CmdConst {
      * 提问ai
      */
     public static String TIWAN_AI = "提问";
-    /**
-     * 添加色图管理员
-     */
-    public static String ADD_SE_TU_SYSTEM = "添加涩图用户";
-    public static String DEL_SE_TU_SYSTEM = "取消涩图用户";
-    public static String ADD_SE_TU_ADMIN = "添加管理员";
-    public static String DEL_SE_TU_ADMIN = "删除管理员";
-    public static String ADD_SE_TU_PROTECTIVE = "添加涩图屏蔽群";
-    public static String DEL_SE_TU_PROTECTIVE = "删除涩图屏蔽群";
-
 
     public static List<String> getAllCmd() {
         ArrayList<String> cmd = new ArrayList<>();

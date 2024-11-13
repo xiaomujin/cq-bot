@@ -4,7 +4,6 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.utils.*;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
@@ -33,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 public class TarKovMarketService {
 
     private final RestTemplate restTemplate;
-    private final RedisUtil redisUtil;
 
     public List<TarKovMarketVo> search(String text) {
         HttpEntity<String> httpEntity = buildHttpEntity();
@@ -129,12 +127,12 @@ public class TarKovMarketService {
         String old = msg.iterator().next().substring(20);
         String now = tkfServerStatusMsg.substring(20);
         if (!old.equals(now)) {
-            pushTkfServerStatus(tkfServerStatusMsg);
+//            pushTkfServerStatus(tkfServerStatusMsg);
         }
     }
 
-    private void pushTkfServerStatus(String msg) {
-        Set<Number> list = redisUtil.members(RedisKey.TKF_INFO);
-        BotUtil.sendToGroupList(list, msg);
-    }
+//    private void pushTkfServerStatus(String msg) {
+//        Set<Number> list = redisUtil.members(RedisKey.TKF_INFO);
+//        BotUtil.sendToGroupList(list, msg);
+//    }
 }

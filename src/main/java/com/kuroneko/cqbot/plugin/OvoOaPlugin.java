@@ -4,7 +4,6 @@ import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.QqUtil;
-import com.kuroneko.cqbot.utils.RedisUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OvoOaPlugin extends BotPlugin {
 
-    private final RedisUtil redisUtil;
     private final RestTemplate restTemplate;
 
     private final QqUtil qqUtil;
@@ -39,7 +37,7 @@ public class OvoOaPlugin extends BotPlugin {
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TUI)) {
 
-            if (qqUtil.verifyQq(event)){
+            if (qqUtil.verifyQq(event.getUserId())){
                 MsgUtils msg = MsgUtils.builder().text("暂无使用权限");
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
                 return MESSAGE_BLOCK;
@@ -51,7 +49,7 @@ public class OvoOaPlugin extends BotPlugin {
             return MESSAGE_BLOCK;
         } else if (text.startsWith(CmdConst.TAO)) {
 
-            if (qqUtil.verifyQq(event)){
+            if (qqUtil.verifyQq(event.getUserId())){
                 MsgUtils msg = MsgUtils.builder().text("暂无使用权限");
                 bot.sendGroupMsg(event.getGroupId(), msg.build(), false);
                 return MESSAGE_BLOCK;
