@@ -24,9 +24,10 @@ public class ImageController {
     public BufferedImage getJpgImage(@RequestParam(defaultValue = "") String path) throws IOException {
         File file = new File(path);
         if (!file.exists()) {
-            InputStream resourceAsStream = this.getClass().getResourceAsStream("/static/img/404.png");
-            assert resourceAsStream != null;
-            return ImageIO.read(resourceAsStream);
+            try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/static/img/404.png")) {
+                assert resourceAsStream != null;
+                return ImageIO.read(resourceAsStream);
+            }
         }
         return ImageIO.read(file);
     }
