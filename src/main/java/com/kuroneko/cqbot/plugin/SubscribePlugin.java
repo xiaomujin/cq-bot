@@ -32,7 +32,6 @@ public class SubscribePlugin extends BotPlugin {
     public int onGroupMessage(Bot bot, GroupMessageEvent event) {
         MsgUtils msg = MsgUtils.builder();
         String message = event.getRawMessage();
-        System.out.println(ConfigManager.ins.getBiliCfg().getSubListByUid("349984754"));
 
         if (message.startsWith(CmdConst.BILI_SUBSCRIBE)) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.BILI_SUBSCRIBE);
