@@ -1,9 +1,7 @@
 package com.kuroneko.cqbot.plugin;
 
-import com.kuroneko.cqbot.config.localCfg.BiliCfg;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.constant.RedisKey;
 import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.utils.BotUtil;
@@ -13,7 +11,6 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
-import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
