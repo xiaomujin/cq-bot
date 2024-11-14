@@ -25,9 +25,9 @@ public class StartedListener implements ApplicationListener<ApplicationStartedEv
 //        botTaskService.refreshRiLi();
 //        botTaskService.refreshAgeListVo();
 //        tarKovMarketService.cacheTkfServerInfo();
-//        tarKovMarketService.cacheTkfServerStatusMsg();
-//        botTaskService.refreshThreeDog();
-//        botTaskService.refreshBiliSubscribe(true);
+        tarKovMarketService.cacheTkfServerStatusMsg();
+        botTaskService.refreshThreeDog();
+        botTaskService.refreshBiliSubscribe(true);
 //        banGuMiMoeService.cacheMoeList();
     }
 }
