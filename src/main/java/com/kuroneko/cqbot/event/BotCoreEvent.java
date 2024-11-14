@@ -24,8 +24,9 @@ public class BotCoreEvent extends CoreEvent {
         MsgUtils msg = MsgUtils.builder();
         long m = (now - startTime) / 60L;
         long s = (now - startTime) - m * 60L;
-        msg.at(updateCfg.getUserID()).text(" 重启耗时" + m + "分钟" + s + "秒");
+        msg.text(" 重启耗时" + m + "分钟" + s + "秒");
         if (updateCfg.getGroupId() != null) {
+            msg.at(updateCfg.getUserID());
             bot.sendGroupMsg(updateCfg.getGroupId(), msg.build(), false);
         } else if (updateCfg.getUserID() != null) {
             bot.sendPrivateMsg(updateCfg.getUserID(), msg.build(), false);
