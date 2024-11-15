@@ -16,8 +16,8 @@ public class ThreadPoolConfig {
     public ThreadPoolTaskExecutor listenerExecutor() {
         ThreadPoolTaskExecutor listenerExecutor = new ThreadPoolTaskExecutor();
         //设置线程池参数信息
-        listenerExecutor.setCorePoolSize(10);
-        listenerExecutor.setMaxPoolSize(40);
+        listenerExecutor.setCorePoolSize(2);
+        listenerExecutor.setMaxPoolSize(5);
         listenerExecutor.setQueueCapacity(200);
         listenerExecutor.setKeepAliveSeconds(60);
         listenerExecutor.setThreadNamePrefix("listener-");
