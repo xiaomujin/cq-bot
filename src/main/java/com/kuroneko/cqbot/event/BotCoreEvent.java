@@ -19,6 +19,9 @@ public class BotCoreEvent extends CoreEvent {
     @Override
     public void online(Bot bot) {
         UpdateCfg updateCfg = ConfigManager.ins.getUpdateCfg();
+        if (updateCfg.isRead()) {
+            return;
+        }
         long startTime = updateCfg.getStartTime();
         long now = Instant.now().getEpochSecond();
         MsgUtils msg = MsgUtils.builder();
