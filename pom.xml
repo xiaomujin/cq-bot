@@ -17,7 +17,7 @@
         <java.version>21</java.version>
         <shiro.version>2.3.3</shiro.version>
         <hutool.version>5.8.33</hutool.version>
-        <jvppeteer.version>2.2.2</jvppeteer.version>
+        <jvppeteer.version>2.2.3</jvppeteer.version>
         <jsoup.version>1.18.1</jsoup.version>
         <mybatis-plus.version>3.5.9</mybatis-plus.version>
         <druid.version>1.2.23</druid.version>
