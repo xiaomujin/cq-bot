@@ -1,13 +1,17 @@
 package com.kuroneko.cqbot.timer;
 
+import com.kuroneko.cqbot.entity.WordCloud;
 import com.kuroneko.cqbot.service.BotTaskService;
 import com.kuroneko.cqbot.service.TarKovMarketService;
+import com.kuroneko.cqbot.service.WordCloudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 @Slf4j
@@ -18,6 +22,7 @@ public class BotTask {
 
     private final BotTaskService botTaskService;
     private final TarKovMarketService tarKovMarketService;
+    private final WordCloudService wordCloudService;
 
     @Scheduled(cron = "0 0/10 * * * ? ")
     public void refreshThreeDog() {
@@ -60,6 +65,14 @@ public class BotTask {
         log.info("刷新哔哩订阅 开始");
         botTaskService.refreshBiliSubscribe(false);
         log.info("刷新哔哩订阅 结束");
+    }
+
+    @Scheduled(cron = "0 0 4 * * ? ")
+    public void cleanWordCloud() {
+        log.info("清理聊天日志 开始");
+        LocalDateTime localDateTime = LocalDateTime.now().minusMonths(2);
+        wordCloudService.lambdaUpdate().lt(WordCloud::getTime, localDateTime).remove();
+        log.info("清理聊天日志 结束");
     }
 
 
