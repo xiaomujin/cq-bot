@@ -201,7 +201,7 @@ public class TkfServerPlugin {
                 JSONArray objectives = jsonObject.getJSONArray("objectives");
                 for (int j = 0; j < objectives.size(); j++) {
                     JSONObject target = objectives.getJSONObject(j);
-                    Integer count = target.getInteger("count");
+                    Integer count = target.getIntValue("count", 0);
                     String typename = target.getString("__typename");
                     if ("TaskObjectiveSkill".equalsIgnoreCase(typename)) {
                         count = target.getJSONObject("skillLevel").getInteger("level");
@@ -503,14 +503,14 @@ public class TkfServerPlugin {
             if (tkfTaskTarget.getIsOptional()) {
                 tkfTaskTarget.setDescription("( 可选 ) " + tkfTaskTarget.getDescription());
             }
-            String num = tkfTaskTarget.getCount().toString();
+            String num = String.valueOf(tkfTaskTarget.getCount());
             if (tkfTaskTarget.getIsRaid()) {
                 tip = true;
                 num = "( " + num + "√ )";
             } else {
                 num = "( " + num + " )";
             }
-            stringBuilder.append("> ").append(i + 1).append(". ").append(tkfTaskTarget.getDescription()).append(tkfTaskTarget.getCount() > 0 ? num : "").append("  \n");
+            stringBuilder.append("> ").append(i + 1).append(". ").append(tkfTaskTarget.getDescription()).append(tkfTaskTarget.getCount() != null && tkfTaskTarget.getCount() > 0 ? num : "").append("  \n");
         }
         if (tip) {
             stringBuilder.append("> Tip: √ 表示需要在战局中找到。\n");

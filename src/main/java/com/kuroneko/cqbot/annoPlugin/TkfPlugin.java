@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 @RequiredArgsConstructor
 public class TkfPlugin {
 
-    @BotMsgHandler(model = sysPluginRegex.TKF_SYSTEM, cmd = Regex.TKF_BOSS_C)
+//    @BotMsgHandler(model = sysPluginRegex.TKF_SYSTEM, cmd = Regex.TKF_BOSS_C)
     public void handler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> {
 
