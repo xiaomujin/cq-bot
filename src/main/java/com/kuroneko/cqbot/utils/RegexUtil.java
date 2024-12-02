@@ -30,6 +30,12 @@ public class RegexUtil {
         return matcher.matches() ? Optional.of(matcher) : Optional.empty();
     }
 
+    public static Optional<Matcher> matcherFind(String regex, String text) {
+        Pattern pattern = cache.computeIfAbsent(regex, Pattern::compile);
+        Matcher matcher = pattern.matcher(text);
+        return matcher.find() ? Optional.of(matcher) : Optional.empty();
+    }
+
 
     public static boolean isNumber(String data) {
         return Pattern.matches(REGEX_NUM, data);

@@ -55,22 +55,38 @@ public class BotUtil {
         return Optional.of(params.getFirst());
     }
 
+    public static Optional<String> getOneParam(String msg) {
+        List<String> params = getParams(null, msg, 1);
+        if (params.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(params.getFirst());
+    }
+
     public static List<String> getParams(String cmd, String msg, int paramNum) {
         if (StrUtil.isBlank(msg)) {
             return List.of();
         }
-        ArrayList<String> list = new ArrayList<>();
-        if (msg.trim().length() > cmd.length()) {
+        if (Objects.isNull(cmd)) {
+            return getStrings(msg.trim(), paramNum);
+        } else if (msg.trim().length() > cmd.length()) {
             String mainMsg = msg.substring(cmd.length()).trim();
-            String[] split = mainMsg.split("\\s+", paramNum);
-            list.addAll(Arrays.asList(split));
+            return getStrings(mainMsg, paramNum);
         }
-        log.info("{}:getParams:{}", cmd, list);
-        return list;
+        return List.of();
+    }
+
+    private static ArrayList<String> getStrings(String msg, int paramNum) {
+        String[] split = msg.split("\\s+", paramNum);
+        return new ArrayList<>(Arrays.asList(split));
     }
 
     public static List<String> getParams(String cmd, String msg) {
         return getParams(cmd, msg, 0);
+    }
+
+    public static List<String> getParams(String msg) {
+        return getParams(null, msg, 0);
     }
 
     public static void sendToGroupList(Collection<Number> groupList, String msg) {
@@ -148,12 +164,13 @@ public class BotUtil {
 //            contents.add(keyboard);
 //        }
 //        return sendGroupMsg(bot, event, contents);
-////        List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
-////        ActionData<String> actionData = sendForwardMsg(bot, maps);
-////        if (actionData == null || StrUtil.isEmpty(actionData.getData())) {
-////            return null;
-////        }
-////        return STR."[CQ:longmsg,id=\{actionData.getData()}]";
+
+    /// /        List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
+    /// /        ActionData<String> actionData = sendForwardMsg(bot, maps);
+    /// /        if (actionData == null || StrUtil.isEmpty(actionData.getData())) {
+    /// /            return null;
+    /// /        }
+    /// /        return STR."[CQ:longmsg,id=\{actionData.getData()}]";
 //    }
 //
     public static ActionData<MsgId> at(Bot bot, Long userId, Long groupId, String msg) {
