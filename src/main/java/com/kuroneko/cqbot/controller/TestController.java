@@ -64,7 +64,7 @@ public class TestController {
         String m = "";
         String user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
         m = getM(user_agent, m);
-        finalKeyB64 = getFinalKeyB64(Long.parseLong(m));
+        finalKeyB64 = getFinalKeyB64(user_agent, Long.parseLong(m));
 
         System.out.println("key: " + finalKeyB64);
         String image_path = "C:\\Users\\Nekoko\\Pictures\\KuroNeko.jpg";
@@ -112,21 +112,16 @@ public class TestController {
             String body = response.body();
             // m: 2634375701776
             Optional<Matcher> matcher = RegexUtil.matcherFind("m:\\s*(\\d+)", body);
-            if (matcher.isEmpty()) {
-                System.out.println("m: ");
-            } else {
+            if (matcher.isPresent()) {
                 m = matcher.get().group(1);
-                System.out.println("m: " + m);
             }
-
         } catch (Exception e) {
             throw new BotException(e.getMessage());
         }
         return m;
     }
 
-    private static String getFinalKeyB64(long m) {
-        String user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
+    private static String getFinalKeyB64(String user_agent, long m) {
         long ts = Instant.now().getEpochSecond();
 
         long key = Math.round(Math.pow(ts, 2) + Math.pow(user_agent.length(), 2) + m) / 1000 * 1000;
