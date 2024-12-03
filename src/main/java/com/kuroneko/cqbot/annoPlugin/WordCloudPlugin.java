@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.annoPlugin;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.kennycason.kumo.CollisionMode;
 import com.kennycason.kumo.WordFrequency;
 import com.kennycason.kumo.bg.CircleBackground;
@@ -77,12 +78,15 @@ public class WordCloudPlugin {
         }
         String tmpCache = type + "_" + range + "_" + event.getGroupId() + "_" + uid;
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(tmpCache, 10, TimeUnit.MINUTES, () -> {
-            bot.sendGroupMsg(event.getGroupId(), "回想中，请耐心等待～", false);
+//            bot.sendGroupMsg(event.getGroupId(), "回想中，请耐心等待～", false);
+            bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
             List<String> contents = getWords(event.getUserId(), event.getGroupId(), type, range);
             if (contents.isEmpty()) {
                 throw new BotException("唔呣～记忆里没有找到你的发言记录呢");
             }
-            return MsgUtils.builder().reply(msgId).img("base64://" + generateWordCloud(contents)).build();
+            String generatedWordCloud = generateWordCloud(contents);
+            bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
+            return MsgUtils.builder().reply(msgId).img("base64://" + generatedWordCloud).build();
         }));
     }
 

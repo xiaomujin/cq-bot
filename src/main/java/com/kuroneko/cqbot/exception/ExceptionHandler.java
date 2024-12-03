@@ -11,6 +11,10 @@ import java.util.function.Supplier;
 @Slf4j
 public class ExceptionHandler {
     public static void with(Bot bot, MessageEvent event, Supplier<?> block) {
+        with(bot, event, block, null);
+    }
+
+    public static void with(Bot bot, MessageEvent event, Supplier<?> block, Supplier<?> f) {
         try {
             Object object = block.get();
             if (null == object) {
@@ -29,6 +33,10 @@ public class ExceptionHandler {
         } catch (Exception e) {
             push(event, bot, "ERROR: " + e.getMessage());
             log.error(event.getMessage(), e);
+        } finally {
+            if (null != f) {
+                f.get();
+            }
         }
     }
 
