@@ -8,35 +8,12 @@ spring:
     banner-mode: log
   application:
     name: @project.artifactId@
-#  data:
-#    redis:
-#      database: 0
-#      host: 127.0.0.1
-#      port: 6379
-#      password:
   datasource:
-#    url: jdbc:mysql://127.0.0.1:3306/bot?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     url: jdbc:sqlite:bot.db
-    type: com.alibaba.druid.pool.DruidDataSource
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: org.sqlite.JDBC
-#    username: root
-#    password: root
-    druid:
-      initial-size: 2
-      min-idle: 2
-      max-active: 20
-      max-wait: 60000
-      validation-query: select 1
-      test-while-idle: true
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 30000
-      test-on-borrow: false
-      test-on-return: false
-      pool-prepared-statements: false
-      filters: stat,wall,slf4j
-      max-pool-prepared-statement-per-connection-size: -1
-      use-global-data-source-stat: true
+    hikari:
+      minimum-idle: 1
   thymeleaf:
     cache: false
 
