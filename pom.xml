@@ -15,12 +15,12 @@
     <description>cq-bot</description>
     <properties>
         <java.version>21</java.version>
-        <shiro.version>2.3.4</shiro.version>
+        <shiro.version>2.3.5</shiro.version>
         <hutool.version>5.8.34</hutool.version>
         <jvppeteer.version>2.2.5</jvppeteer.version>
         <jsoup.version>1.18.3</jsoup.version>
         <mybatis-plus.version>3.5.9</mybatis-plus.version>
-        <druid.version>1.2.24</druid.version>
+        <druid.version>1.2.23</druid.version>
         <expiringmap.version>0.5.11</expiringmap.version>
         <fastjson2.version>2.0.53</fastjson2.version>
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
@@ -99,17 +99,17 @@
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.google.code.findbugs</groupId>-->
-<!--            <artifactId>annotations</artifactId>-->
-<!--            <version>3.0.1</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.google.code.findbugs</groupId>-->
+        <!--            <artifactId>annotations</artifactId>-->
+        <!--            <version>3.0.1</version>-->
+        <!--        </dependency>-->
         <!-- https://mvnrepository.com/artifact/com.github.spotbugs/spotbugs-annotations -->
-<!--        <dependency>-->
-<!--            <groupId>com.github.spotbugs</groupId>-->
-<!--            <artifactId>spotbugs-annotations</artifactId>-->
-<!--            <version>4.8.6</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.spotbugs</groupId>-->
+        <!--            <artifactId>spotbugs-annotations</artifactId>-->
+        <!--            <version>4.8.6</version>-->
+        <!--        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/net.jodah/expiringmap -->
         <dependency>
@@ -141,13 +141,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.netty/netty-common &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.netty</groupId>-->
-<!--            <artifactId>netty-common</artifactId>-->
-<!--            <version>4.1.114.Final</version>-->
-<!--        </dependency>-->
-
+        <!--        &lt;!&ndash; https://mvnrepository.com/artifact/io.netty/netty-common &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.netty</groupId>-->
+        <!--            <artifactId>netty-common</artifactId>-->
+        <!--            <version>4.1.114.Final</version>-->
+        <!--        </dependency>-->
 
 
         <!--        <dependency>-->
@@ -197,7 +196,7 @@
                 <configuration>
                     <!--                    <source>21</source>-->
                     <!--                    <target>21</target>-->
-<!--                    <compilerArgs>&#45;&#45;enable-preview</compilerArgs>-->
+                    <!--                    <compilerArgs>&#45;&#45;enable-preview</compilerArgs>-->
                 </configuration>
             </plugin>
         </plugins>
