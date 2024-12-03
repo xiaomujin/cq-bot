@@ -24,7 +24,7 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add(CmdConst.RI_BAO);
         allCmd.add(CmdConst.RI_LI);
         allCmd.add(CmdConst.TODAY_FANJU);
-        allCmd.add(CmdConst.SE_TU);
+//        allCmd.add(CmdConst.SE_TU);
         allCmd.add(CmdConst.CHE_PAI);
         allCmd.add(CmdConst.TIAO_ZAO);
         allCmd.add(CmdConst.RAINBOW_KD);
@@ -33,7 +33,7 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add(CmdConst.ZI_DAN);
         allCmd.add(CmdConst.BILI_SUBSCRIBE);
         allCmd.add(CmdConst.BILI_SUBSCRIBE_CANCEL);
-        allCmd.add(CmdConst.RECORD_SAY);
+//        allCmd.add(CmdConst.RECORD_SAY);
         allCmd.add("任务流程图");
         allCmd.add("任务物品图");
         allCmd.add("信誉栏位图");
@@ -41,7 +41,8 @@ public class HelpPlugin extends BotPlugin {
         allCmd.add("boss丢包时间");
         allCmd.add("3x4道具");
         allCmd.add("耳机强度");
-        allCmd.add(Regex.WORD_CLOUD);
+        allCmd.add("我的本周词云");
+        allCmd.add("");
         for (int i = 1; i <= allCmd.size(); i++) {
             stringBuffer.append(i).append(". ").append(allCmd.get(i - 1)).append(Constant.XN);
         }

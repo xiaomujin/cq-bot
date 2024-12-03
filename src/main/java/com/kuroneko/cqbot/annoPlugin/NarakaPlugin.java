@@ -29,6 +29,7 @@ public class NarakaPlugin {
 
     @BotMsgHandler(model = sysPluginRegex.NARAKA_SYSTEM, cmd = Regex.NARAKA_RECORD)
     public void recordHandler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event, Matcher matcher) {
+        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), "永劫战绩");
         String text = matcher.group("text");
         ExceptionHandler.with(bot, event, () -> {
             List<String> params = BotUtil.getParams(text);
