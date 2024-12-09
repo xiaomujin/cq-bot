@@ -416,19 +416,6 @@ public class TkfServerPlugin {
             }
             """;
 
-    private static final String QUERY_BOSS_CHANCE = """
-            {
-              maps(gameMode: regular, lang: zh) {
-                name
-                bosses {
-                  boss {
-                    name
-                  }
-                  spawnChance
-                }
-              }
-            }
-            """;
 
     private static String getQueryRes(String query) {
         HashMap<String, String> queryMap = new HashMap<>();

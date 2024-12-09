@@ -28,6 +28,6 @@ public class Regex {
     public static final String PIC_SEARCH = "^[搜识][图圖]$";
     public static final String UNSET_SEARCH_MODE = "^谢谢|退出搜图$";
     public static final String PIC_TEXT = "^图语 (?<text>.*)";
-    public static final String TKF_BOSS_C = "^(?i)(boss刷新)(?<text>.*)";
+    public static final String TKF_BOSS_CHANCE = "^(?i)(boss(刷|概))(?<text>.*)";
     public static final String NARAKA_RECORD = "^(?i)(战绩|record)(?<text>.*)";
 }
