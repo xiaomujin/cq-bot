@@ -17,7 +17,6 @@ import com.ruiyun.jvppeteer.core.Page;
 import com.ruiyun.jvppeteer.entities.PuppeteerLifeCycle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -123,7 +122,7 @@ public class TarKovMapPlugin extends BotPlugin {
                         }
                         """;
                 JSHandle jsHandle = page.waitForFunction(fun);
-                ArrayList<Object> jsonValue = CastUtils.cast(jsHandle.jsonValue());
+                ArrayList<Object> jsonValue = BotUtil.cast(jsHandle.jsonValue());
                 new Thread(() -> bulletService.updateAllBullet(jsonValue)).start();
                 String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/BulletData.png";
                 PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader", "._1MLS_xjiUjam_u2qmURY4i { display: none }");

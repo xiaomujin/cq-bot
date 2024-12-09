@@ -10,7 +10,6 @@ import com.kuroneko.cqbot.service.BulletService;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.ruiyun.jvppeteer.core.Page;
-import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +38,7 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
                     int isTracer = 0;
                     int isSubsonic = 0;
                     int isNoMarket = 0;
-                    ArrayList<String> shu = CastUtils.cast(v.get(2));
+                    ArrayList<String> shu = BotUtil.cast(v.get(2));
                     for (String s : shu) {
                         switch (s.toLowerCase()) {
                             case "t" -> isTracer = 1;
@@ -49,11 +48,11 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
                     }
                     return Bullet.builder()
                             .caliber(v.get(0).toString().replace("\n", " "))
-                            .name(CastUtils.cast(v.get(1)))
+                            .name(BotUtil.cast(v.get(1)))
                             .tracer(isTracer)
                             .subsonic(isSubsonic)
                             .noMarket(isNoMarket)
-                            .damage(CastUtils.cast(v.get(3)))
+                            .damage(BotUtil.cast(v.get(3)))
                             .penetrationPower(NumberUtil.parseInt((String) v.get(4), 0))
                             .armorDamage(NumberUtil.parseInt((String) v.get(5), 0))
                             .accuracy(NumberUtil.parseInt((String) v.get(6), 0))

@@ -131,6 +131,11 @@ public class BotUtil {
         return ProjectConfig.url;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T cast(Object object) {
+        return (T) object;
+    }
+
     //    public static List<Map<String, Object>> generateForwardMsg(String uin, String name, List<Object> contents) {
 //        List<Map<String, Object>> nodes = new ArrayList<>();
 //        Map<String, Object> node = new HashMap<>();

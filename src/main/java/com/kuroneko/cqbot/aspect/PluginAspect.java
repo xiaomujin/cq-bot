@@ -1,23 +1,9 @@
 package com.kuroneko.cqbot.aspect;
 
-import com.kuroneko.cqbot.constant.Constant;
-import com.mikuac.shiro.common.utils.MsgUtils;
-import com.mikuac.shiro.common.utils.ShiroUtils;
-import com.mikuac.shiro.core.Bot;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.data.util.CastUtils;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 //@Aspect
@@ -34,13 +20,13 @@ public class PluginAspect {
 //        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
 //        Method method = methodSignature.getMethod();
 //        String methodName = method.getName();
-        Object[] arguments = joinPoint.getArgs();
-        Bot bot = CastUtils.cast(arguments[0]);
-        MsgUtils msg1 = MsgUtils.builder().text(e.getMessage());
-        String stStr = Arrays.stream(e.getStackTrace()).limit(4).map(StackTraceElement::toString).collect(Collectors.joining(Constant.XN));
-        MsgUtils msg2 = MsgUtils.builder().text(stStr);
-        List<String> list = Arrays.asList(msg1.build(), msg2.build());
-        List<Map<String, Object>> mapList = ShiroUtils.generateForwardMsg(bot.getSelfId(), "出错了", list);
-        bot.sendPrivateForwardMsg(1419229777L, mapList);
+//        Object[] arguments = joinPoint.getArgs();
+//        Bot bot = CastUtils.cast(arguments[0]);
+//        MsgUtils msg1 = MsgUtils.builder().text(e.getMessage());
+//        String stStr = Arrays.stream(e.getStackTrace()).limit(4).map(StackTraceElement::toString).collect(Collectors.joining(Constant.XN));
+//        MsgUtils msg2 = MsgUtils.builder().text(stStr);
+//        List<String> list = Arrays.asList(msg1.build(), msg2.build());
+//        List<Map<String, Object>> mapList = ShiroUtils.generateForwardMsg(bot.getSelfId(), "出错了", list);
+//        bot.sendPrivateForwardMsg(1419229777L, mapList);
     }
 }

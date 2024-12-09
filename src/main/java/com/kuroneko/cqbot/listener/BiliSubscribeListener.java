@@ -3,13 +3,13 @@ package com.kuroneko.cqbot.listener;
 import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.event.BiliSubscribeEvent;
 import com.kuroneko.cqbot.service.BiLiService;
+import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.BotContainer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
-import org.springframework.data.util.CastUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class BiliSubscribeListener implements ApplicationListener<BiliSubscribeE
 
     @Override
     public void onApplicationEvent(BiliSubscribeEvent event) {
-        BiliDynamicVo.BiliDynamicCard source = CastUtils.cast(event.getSource());
+        BiliDynamicVo.BiliDynamicCard source = BotUtil.cast(event.getSource());
         String uid = source.getModules().getModule_author().getMid();
         String dynamicId = source.getId_str();
         List<Long> list = ConfigManager.ins.getBiliCfg().getSubListByUid(uid);
