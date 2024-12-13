@@ -60,13 +60,21 @@ public class BotPluginHandler implements ApplicationRunner {
     private void invokeMethod(HandlerMethod method, Map<Class<?>, Object> params) {
         Class<?>[] types = method.getMethod().getParameterTypes();
         Object[] objects = new Object[types.length];
-        Arrays.stream(types).forEach(consumerWithIndex((item, index) -> {
-            if (params.containsKey(item)) {
-                objects[index] = params.remove(item);
-                return;
+        for (int i = 0; i < types.length; i++) {
+            Class<?> type = types[i];
+            if (params.containsKey(type)) {
+                objects[i] = params.remove(type);
+                continue;
             }
-            objects[index] = null;
-        }));
+            objects[i] = null;
+        }
+//        Arrays.stream(types).forEach(consumerWithIndex((item, index) -> {
+//            if (params.containsKey(item)) {
+//                objects[index] = params.remove(item);
+//                return;
+//            }
+//            objects[index] = null;
+//        }));
         try {
             method.getMethod().invoke(method.getObject(), objects);
         } catch (Exception e) {
@@ -74,16 +82,16 @@ public class BotPluginHandler implements ApplicationRunner {
         }
     }
 
-    private <T> Consumer<T> consumerWithIndex(ObjIntConsumer<T> consumer) {
-        class O {
-            int i;
-        }
-        O object = new O();
-        return item -> {
-            int index = object.i++;
-            consumer.accept(item, index);
-        };
-    }
+//    private <T> Consumer<T> consumerWithIndex(ObjIntConsumer<T> consumer) {
+//        class O {
+//            int i;
+//        }
+//        O object = new O();
+//        return item -> {
+//            int index = object.i++;
+//            consumer.accept(item, index);
+//        };
+//    }
 
     private void initAnnotationHandler() {
         log.debug("Starting to collect beans with @BotHandler annotation");

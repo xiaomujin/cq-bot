@@ -2,14 +2,22 @@ package com.kuroneko.cqbot.utils;
 
 import com.kuroneko.cqbot.exception.BotException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.util.MultiValueMap;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.HashMap;
 
 
 @Slf4j
@@ -74,5 +82,51 @@ public class HttpUtil {
     public static String get(String url) {
         HttpClient httpClient = getHttpClient();
         return get(httpClient, url);
+    }
+
+    public static void ofMultipartData(MultiValueMap<String, Object> data, HttpRequest.Builder builder) {
+        String boundary = MimeTypeUtils.generateMultipartBoundaryString();
+        builder.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA_VALUE + "; boundary=" + boundary);
+        try (var out = new ByteArrayOutputStream()) {
+            for (var entry : data.toSingleValueMap().entrySet()) {
+                if (entry.getValue() instanceof Resource resource) {
+                    print(out, "--" + boundary);
+                    println(out);
+                    print(out, "Content-Disposition: form-data; name=\"" + entry.getKey() + "\"; filename=\"" + resource.getFilename() + "\"");
+                    println(out);
+                    print(out, "Content-Disposition: form-data; name=\"" + entry.getKey() + "\"");
+                    println(out);
+                    println(out);
+                    try (InputStream in = resource.getInputStream()) {
+                        in.transferTo(out);
+                    }
+                    println(out);
+                } else {
+                    print(out, "--" + boundary);
+                    println(out);
+                    print(out, "Content-Disposition: form-data; name=\"" + entry.getKey() + "\"");
+                    println(out);
+                    println(out);
+                    print(out, String.valueOf(entry.getValue()));
+                    println(out);
+                }
+            }
+
+            print(out, "--" + boundary + "--");
+            println(out);
+            builder.POST(HttpRequest.BodyPublishers.ofByteArray(out.toByteArray()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private static void println(OutputStream os) throws IOException {
+        os.write('\r');
+        os.write('\n');
+    }
+
+    private static void print(OutputStream os, String buf) throws IOException {
+        os.write(buf.getBytes(StandardCharsets.US_ASCII));
     }
 }
