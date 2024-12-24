@@ -16,7 +16,10 @@ import com.mikuac.shiro.model.ArrayMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -89,19 +92,37 @@ public class BotUtil {
         return getParams(null, msg, 0);
     }
 
-    public static void sendToGroupList(Collection<Number> groupList, String msg) {
-        sendToGroupList(groupList, Collections.singleton(msg));
+    public static void sendToGroupList(Bot bot, List<Long> groupList, String msg) {
+        sendToGroupList(bot, groupList, Collections.singletonList(msg));
     }
 
+    public static void sendToGroupList(Bot bot, List<Long> groupList, List<String> msgList) {
+        groupList.forEach(group -> {
+            sendToGroup(bot, group, msgList);
+            sleep(2600);
+        });
+    }
 
-    public static void sendToGroupList(Collection<Number> groupList, Collection<String> msgList) {
+    public static void sendToGroup(Bot bot, Long groupId, List<String> msgList) {
+        switch (msgList.size()) {
+            case 0 -> {
+            }
+            case 1 -> bot.sendGroupMsg(groupId, msgList.getFirst(), false);
+            default -> msgList.forEach(msg -> {
+                bot.sendGroupMsg(groupId, msg, false);
+                sleep(1600);
+            });
+        }
+    }
+
+    public static void sendToGroupList(List<Long> groupList, List<String> msgList) {
         BotContainer botContainer = ApplicationContextHandler.getBean(BotContainer.class);
         botContainer.robots.forEach((qq, bot) -> groupList.forEach(group -> {
             msgList.forEach(msg -> {
-                bot.sendGroupMsg(group.longValue(), msg, false);
-                sleep(600);
+                bot.sendGroupMsg(group, msg, false);
+                sleep(1600);
             });
-            sleep(1500);
+            sleep(2600);
         }));
     }
 
@@ -136,48 +157,6 @@ public class BotUtil {
         return (T) object;
     }
 
-    //    public static List<Map<String, Object>> generateForwardMsg(String uin, String name, List<Object> contents) {
-//        List<Map<String, Object>> nodes = new ArrayList<>();
-//        Map<String, Object> node = new HashMap<>();
-//        node.put("type", "node");
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("name", name);
-//        data.put("uin", uin);
-//        data.put("content", contents);
-//        node.put("data", data);
-//        nodes.add(node);
-//        return nodes;
-//    }
-//
-//    public static ActionData<String> sendForwardMsg(Bot bot, List<Map<String, Object>> msg) {
-//        JSONObject params = new JSONObject();
-//        params.put(ActionParams.MESSAGES, msg);
-//        JSONObject result = BotUtil.actionHandler.action(bot.getSession(), ActionPathEnum.SEND_FORWARD_MSG, params);
-//        return result != null ? result.to(new TypeReference<ActionData<String>>() {
-//        }.getType()) : null;
-//    }
-//
-//    public static ActionData<MsgId> sendMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText) {
-//        return sendMarkdownMsg(bot, event, mdText, null);
-//    }
-//
-//    public static ActionData<MsgId> sendMarkdownMsg(Bot bot, AnyMessageEvent event, String mdText, Keyboard keyboard) {
-//        List<Object> contents = new ArrayList<>();
-//        Markdown markdown = Markdown.Builder().setContent(mdText);
-//        contents.add(markdown);
-//        if (keyboard != null) {
-//            contents.add(keyboard);
-//        }
-//        return sendGroupMsg(bot, event, contents);
-
-    /// /        List<Map<String, Object>> maps = generateForwardMsg("100000", "小助手", contents);
-    /// /        ActionData<String> actionData = sendForwardMsg(bot, maps);
-    /// /        if (actionData == null || StrUtil.isEmpty(actionData.getData())) {
-    /// /            return null;
-    /// /        }
-    /// /        return STR."[CQ:longmsg,id=\{actionData.getData()}]";
-//    }
-//
     public static ActionData<MsgId> at(Bot bot, Long userId, Long groupId, String msg) {
         if (groupId != null && groupId != 0L) {
             return bot.sendGroupMsg(
@@ -189,19 +168,21 @@ public class BotUtil {
 
         return bot.sendPrivateMsg(userId, msg, false);
     }
-//
-//    public static ActionData<MsgId> sendGroupMsg(Bot bot, AnyMessageEvent event, Object msg) {
-//        JSONObject params = new JSONObject();
-//        if (ActionParams.PRIVATE.equals(event.getMessageType())) {
-//            params.put(ActionParams.USER_ID, event.getUserId());
-//        }
-//        if (ActionParams.GROUP.equals(event.getMessageType())) {
-//            params.put(ActionParams.GROUP_ID, event.getGroupId());
-//        }
-//        params.put(ActionParams.MESSAGE, msg);
-//        params.put(ActionParams.AUTO_ESCAPE, false);
-//        JSONObject result = actionHandler.action(bot.getSession(), ActionPathEnum.SEND_GROUP_MSG, params);
-//        return result != null ? result.to(new TypeReference<ActionData<MsgId>>() {
-//        }.getType()) : null;
-//    }
+
+    public static void closeQuietly(final AutoCloseable autoCloseable) {
+        closeQuietly(autoCloseable, null);
+    }
+
+    public static void closeQuietly(final AutoCloseable autoCloseable, final Consumer<Exception> consumer) {
+        if (autoCloseable != null) {
+            try {
+                autoCloseable.close();
+            } catch (final Exception e) {
+                if (consumer != null) {
+                    consumer.accept(e);
+                }
+            }
+        }
+    }
+
 }

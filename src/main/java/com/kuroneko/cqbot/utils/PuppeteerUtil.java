@@ -1,8 +1,12 @@
 package com.kuroneko.cqbot.utils;
 
 import com.kuroneko.cqbot.exception.BotException;
-import com.ruiyun.jvppeteer.core.*;
-import com.ruiyun.jvppeteer.entities.*;
+import com.ruiyun.jvppeteer.api.core.Browser;
+import com.ruiyun.jvppeteer.api.core.ElementHandle;
+import com.ruiyun.jvppeteer.api.core.Page;
+import com.ruiyun.jvppeteer.cdp.core.Puppeteer;
+import com.ruiyun.jvppeteer.cdp.entities.*;
+import com.ruiyun.jvppeteer.common.PuppeteerLifeCycle;
 import com.ruiyun.jvppeteer.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class PuppeteerUtil {
     private static volatile Browser browser;
-    private static final List<CookieParam> COOKIES;
+    private static final CookieParam[] COOKIES;
     private static final AtomicInteger renderNum = new AtomicInteger(0);
     private static final int restartNum = 500;
 
@@ -47,7 +51,7 @@ public class PuppeteerUtil {
         cookieParam2.setPath("/");
         cookieParam2.setExpires(1990454302000L);
         cookies.add(cookieParam2);
-        COOKIES = cookies;
+        COOKIES = cookies.toArray(CookieParam[]::new);
     }
 
     private PuppeteerUtil() {
@@ -222,7 +226,7 @@ public class PuppeteerUtil {
     }
 
     public static Page getNewPage(String url, Integer width, Integer height) {
-        return getNewPage(url, PuppeteerLifeCycle.LOAD, 15000, width, height);
+        return getNewPage(url, PuppeteerLifeCycle.load, 15000, width, height);
     }
 
     /**
@@ -236,14 +240,14 @@ public class PuppeteerUtil {
     public static Page getNewPage(String url, PuppeteerLifeCycle waitUntil, Integer timeout, Integer width, Integer height) {
         long start = System.currentTimeMillis();
         Page page = getBrowser().newPage();
-        Viewport viewport = new Viewport();
-        viewport.setWidth(width);
-        viewport.setHeight(height);
-        page.setViewport(viewport);
-        GoToOptions pageNavigateOptions = new GoToOptions();
-        pageNavigateOptions.setTimeout(timeout);
-        pageNavigateOptions.setWaitUntil(List.of(waitUntil));
         try {
+            Viewport viewport = new Viewport();
+            viewport.setWidth(width);
+            viewport.setHeight(height);
+            page.setViewport(viewport);
+            GoToOptions pageNavigateOptions = new GoToOptions();
+            pageNavigateOptions.setTimeout(timeout);
+            pageNavigateOptions.setWaitUntil(List.of(waitUntil));
             page.setCookie(COOKIES);
             page.goTo(url, pageNavigateOptions);
         } catch (Exception e) {
@@ -287,7 +291,7 @@ public class PuppeteerUtil {
     public static void close() {
         log.info("关闭 Chrome");
         if (browser != null && browser.connected()) {
-            browser.close();
+            BotUtil.closeQuietly(browser);
         }
     }
 

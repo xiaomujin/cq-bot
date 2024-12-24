@@ -11,10 +11,10 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import com.ruiyun.jvppeteer.core.ElementHandle;
-import com.ruiyun.jvppeteer.core.JSHandle;
-import com.ruiyun.jvppeteer.core.Page;
-import com.ruiyun.jvppeteer.entities.PuppeteerLifeCycle;
+import com.ruiyun.jvppeteer.api.core.ElementHandle;
+import com.ruiyun.jvppeteer.api.core.JSHandle;
+import com.ruiyun.jvppeteer.api.core.Page;
+import com.ruiyun.jvppeteer.common.PuppeteerLifeCycle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -78,7 +78,7 @@ public class TarKovMapPlugin extends BotPlugin {
                 MsgUtils msg = MsgUtils.builder().text("开始更新子弹数据，大约需要60秒。");
                 bot.sendMsg(event, msg.build(), false);
 
-                Page page = PuppeteerUtil.getNewPage("https://escapefromtarkov.fandom.com/wiki/Ballistics", PuppeteerLifeCycle.DOMCONTENT_LOADED, 120000, 1650, 12000);
+                Page page = PuppeteerUtil.getNewPage("https://escapefromtarkov.fandom.com/wiki/Ballistics", PuppeteerLifeCycle.domcontentloaded, 120000, 1650, 12000);
                 ElementHandle b = page.$("div._2O--J403t2VqCuF8XJAZLK");
                 if (b != null) {
                     b.click();

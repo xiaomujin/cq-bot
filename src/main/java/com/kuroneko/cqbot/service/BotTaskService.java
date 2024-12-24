@@ -8,8 +8,8 @@ import com.kuroneko.cqbot.handler.ApplicationContextHandler;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.kuroneko.cqbot.vo.ThreeDog;
-import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -114,6 +114,7 @@ public class BotTaskService {
 //        }
 //    }
 
+    @Synchronized
     public void refreshBiliSubscribe(boolean initSend) {
         Set<String> allKeys = ConfigManager.ins.getBiliCfg().getAllSubUid();
 //        Collection<String> allKeys = redisUtil.getAllKeys(RedisKey.BILI_SUB);

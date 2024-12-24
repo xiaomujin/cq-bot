@@ -11,8 +11,8 @@ import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import com.ruiyun.jvppeteer.core.Page;
-import com.ruiyun.jvppeteer.entities.PuppeteerLifeCycle;
+import com.ruiyun.jvppeteer.api.core.Page;
+import com.ruiyun.jvppeteer.common.PuppeteerLifeCycle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +24,8 @@ import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Component
@@ -80,8 +82,13 @@ public class ThreeHundredPlugin extends BotPlugin {
         String format = String.format(fun, i);
         String path = imgPath + roleID + "_" + i + ".png";
         String url = "https://300report.jumpw.com/#/MyScore?r=" + roleID + "&m=0";
-        Page newPage = PuppeteerUtil.getNewPage(url, PuppeteerLifeCycle.NETWORKIDLE, 30000, 1920, 3000);
-        newPage.waitForFunction(format);
+        Page newPage = PuppeteerUtil.getNewPage(url, PuppeteerLifeCycle.networkIdle, 30000, 1920, 3000);
+        try {
+            newPage.waitForFunction(format);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            log.error("waitForFunction error", e);
+            return MsgUtils.builder().text("查询失败" + roleName);
+        }
         //等待页面切换图片加载
         BotUtil.sleep(500);
 

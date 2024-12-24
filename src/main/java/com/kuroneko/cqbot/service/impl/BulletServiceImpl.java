@@ -9,7 +9,7 @@ import com.kuroneko.cqbot.mapper.BulletMapper;
 import com.kuroneko.cqbot.service.BulletService;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
-import com.ruiyun.jvppeteer.core.Page;
+import com.ruiyun.jvppeteer.api.core.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

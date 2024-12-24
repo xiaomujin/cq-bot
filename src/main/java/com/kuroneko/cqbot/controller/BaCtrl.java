@@ -28,8 +28,8 @@ public class BaCtrl {
     @RequestMapping(value = {"/baRank"})
     public String baRank(Model model) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", Constant.BA_TOKEN);
-//        headers.add("Authorization", "ba-token uuz:uuz");
+//        headers.add("Authorization", Constant.BA_TOKEN);
+        headers.add("Authorization", "ba-token uuz:uuz");
         JSONObject httpObject = new JSONObject();
         HttpEntity<Object> httpEntity = new HttpEntity<>(httpObject, headers);
         ResponseEntity<JSONObject> seasonList = restTemplate.exchange("https://api.arona.icu/api/season/list", HttpMethod.POST, httpEntity, JSONObject.class);

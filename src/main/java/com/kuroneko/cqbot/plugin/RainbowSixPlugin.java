@@ -10,9 +10,12 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
-import com.ruiyun.jvppeteer.core.ElementHandle;
-import com.ruiyun.jvppeteer.core.Page;
-import com.ruiyun.jvppeteer.entities.*;
+import com.ruiyun.jvppeteer.api.core.ElementHandle;
+import com.ruiyun.jvppeteer.api.core.Page;
+import com.ruiyun.jvppeteer.cdp.entities.FrameAddStyleTagOptions;
+import com.ruiyun.jvppeteer.cdp.entities.GoToOptions;
+import com.ruiyun.jvppeteer.cdp.entities.Viewport;
+import com.ruiyun.jvppeteer.common.PuppeteerLifeCycle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -72,13 +75,13 @@ public class RainbowSixPlugin extends BotPlugin {
 
         Page page = PuppeteerUtil.getBrowser().newPage();
         try {
-            GoToOptions pageNavigateOptions = new GoToOptions();
-            pageNavigateOptions.setTimeout(20000);
-            pageNavigateOptions.setWaitUntil(List.of(PuppeteerLifeCycle.DOMCONTENT_LOADED));
+            GoToOptions goToOptions = new GoToOptions();
+            goToOptions.setTimeout(20000);
+            goToOptions.setWaitUntil(List.of(PuppeteerLifeCycle.domcontentloaded));
             Viewport viewport = new Viewport();
             viewport.setWidth(1455);
             page.setViewport(viewport);
-            page.goTo("https://r6.tracker.network/r6siege/profile/ubi/" + name + "/" + selected, pageNavigateOptions, true);
+            page.goTo("https://r6.tracker.network/r6siege/profile/ubi/" + name + "/" + selected, goToOptions);
             FrameAddStyleTagOptions styleTagOptions = new FrameAddStyleTagOptions(null, null, ".bordered-ad {display:none} .primisslate {display:none}");
             page.addStyleTag(styleTagOptions);
 

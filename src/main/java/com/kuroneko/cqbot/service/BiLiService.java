@@ -8,7 +8,7 @@ import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.OneBotMedia;
-import com.ruiyun.jvppeteer.core.Page;
+import com.ruiyun.jvppeteer.api.core.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
