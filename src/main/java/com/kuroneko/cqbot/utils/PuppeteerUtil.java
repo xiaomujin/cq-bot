@@ -6,6 +6,7 @@ import com.ruiyun.jvppeteer.api.core.ElementHandle;
 import com.ruiyun.jvppeteer.api.core.Page;
 import com.ruiyun.jvppeteer.cdp.core.Puppeteer;
 import com.ruiyun.jvppeteer.cdp.entities.*;
+import com.ruiyun.jvppeteer.common.Product;
 import com.ruiyun.jvppeteer.common.PuppeteerLifeCycle;
 import com.ruiyun.jvppeteer.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,7 @@ public class PuppeteerUtil {
                     "--no-zygote",
                     "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
             );
-            LaunchOptions options = LaunchOptions.builder().args(list).headless(true).build();
+            LaunchOptions options = LaunchOptions.builder().product(Product.Chrome).args(list).headless(true).build();
             browser = Puppeteer.launch(options);
             log.info("Chrome 启动成功 用时:{}", System.currentTimeMillis() - start);
         } catch (Exception e) {
