@@ -2,6 +2,7 @@ package com.kuroneko.cqbot.annoPlugin;
 
 import com.kuroneko.cqbot.core.annotation.BotHandler;
 import com.kuroneko.cqbot.core.annotation.BotMsgHandler;
+import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.core.dto.MsgInfo;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.enums.sysPluginRegex;
@@ -34,7 +35,7 @@ public class NarakaPlugin {
             List<String> params = BotUtil.getParams(text);
             String name = null;
             int gameMode = 2;
-            int seasonId = 9620014;
+            int seasonId = ConfigManager.ins.getAdminCfg().getNarakaSeasonId();
             switch (params.size()) {
                 case 2:
                     gameMode = getGameMode(params.get(1));
