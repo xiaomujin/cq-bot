@@ -35,7 +35,7 @@ public interface ConfigSave {
         lock.writeLock().lock();
         try {
             String cfgName = ConfigManager.cfgPath + this.getClass().getSimpleName() + ".json";
-            String jsonString = JSON.toJSONString(this, JSONWriter.Feature.PrettyFormat);
+            String jsonString = JSON.toJSONString(this, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.FieldBased);
             Path path = Path.of(cfgName);
             path.getParent().toFile().mkdirs();
             Files.writeString(path, jsonString);

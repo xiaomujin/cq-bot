@@ -1,6 +1,8 @@
 package com.kuroneko.cqbot.core.cfg;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONReader;
+import com.alibaba.fastjson2.JSONWriter;
 import com.kuroneko.cqbot.config.localCfg.AdminCfg;
 import com.kuroneko.cqbot.config.localCfg.BiliCfg;
 import com.kuroneko.cqbot.config.localCfg.UpdateCfg;
@@ -56,7 +58,7 @@ public class ConfigManager {
             Path path = Path.of(cfgName);
             if (Files.exists(path)) {
                 String jsonString = Files.readString(path);
-                configSave = JSON.parseObject(jsonString, clazz);
+                configSave = JSON.parseObject(jsonString, clazz, JSONReader.Feature.FieldBased);
             } else {
                 configSave = clazz.getDeclaredConstructor().newInstance();
             }
