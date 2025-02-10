@@ -17,7 +17,7 @@
         <java.version>21</java.version>
         <shiro.version>2.3.5</shiro.version>
         <hutool.version>5.8.35</hutool.version>
-        <jvppeteer.version>3.1.4</jvppeteer.version>
+        <jvppeteer.version>3.1.8</jvppeteer.version>
         <jsoup.version>1.18.3</jsoup.version>
         <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
         <expiringmap.version>0.5.11</expiringmap.version>
