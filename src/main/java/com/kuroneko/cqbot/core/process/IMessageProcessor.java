@@ -7,6 +7,8 @@ import java.util.concurrent.Future;
 public interface IMessageProcessor {
     <T> Future<T> submit(Callable<T> message);
 
+    <T> T submitSync(Callable<T> message);
+
     void execute(Runnable message);
 
     ExecutorService getExecutor();

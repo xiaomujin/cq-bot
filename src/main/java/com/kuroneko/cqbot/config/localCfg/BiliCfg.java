@@ -1,56 +1,43 @@
 package com.kuroneko.cqbot.config.localCfg;
 
 import com.kuroneko.cqbot.core.cfg.ConfigSave;
+import com.kuroneko.cqbot.core.process.CommonProcessor;
 import lombok.Data;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Data
 public class BiliCfg implements ConfigSave {
     private HashMap<String, List<Long>> subMap = new HashMap<>();
 
     public void addSub(String uid, Long groupId) {
-        lock.writeLock().lock();
-        try {
+        CommonProcessor.getInstance().execute(() -> {
             List<Long> list = subMap.computeIfAbsent(uid, k -> new ArrayList<>());
             list.add(groupId);
-        } finally {
-            lock.writeLock().unlock();
-        }
-        save();
+            save();
+        });
     }
 
     public Boolean removeSub(String uid, Long groupId) {
-        boolean result;
-        lock.writeLock().lock();
-        try {
-            List<Long> list = subMap.getOrDefault(uid, Collections.emptyList());
+        return CommonProcessor.getInstance().submitSync(() -> {
+            boolean result;
+            List<Long> list = subMap.getOrDefault(uid, new ArrayList<>());
             result = list.remove(groupId);
             if (list.isEmpty()) {
                 subMap.remove(uid);
             }
-        } finally {
-            lock.writeLock().unlock();
-        }
-        save();
-        return result;
+            save();
+            return result;
+        });
     }
 
     public List<Long> getSubListByUid(String uid) {
-        lock.readLock().lock();
-        try {
-            return Optional.ofNullable(subMap.get(uid)).orElse(Collections.emptyList());
-        } finally {
-            lock.readLock().unlock();
-        }
+        return Optional.ofNullable(subMap.get(uid)).orElse(Collections.emptyList());
     }
 
     public Set<String> getAllSubUid() {
-        lock.readLock().lock();
-        try {
-            return subMap.keySet();
-        } finally {
-            lock.readLock().unlock();
-        }
+        return subMap.keySet();
     }
 }
