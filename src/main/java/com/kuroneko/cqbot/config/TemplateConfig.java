@@ -26,8 +26,8 @@ public class TemplateConfig {
     @Bean
     public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
         SSLConfig sslConfig = new SSLConfig();
-        sslConfig.setConnectTimeout(60 * 1000);
-        sslConfig.setReadTimeout(60 * 1000);
+        sslConfig.setConnectTimeout(90 * 1000);
+        sslConfig.setReadTimeout(90 * 1000);
         return sslConfig;
     }
 

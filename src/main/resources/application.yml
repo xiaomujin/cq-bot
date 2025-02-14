@@ -23,7 +23,7 @@ shiro:
   plugin-list:
     - com.kuroneko.cqbot.plugin.LogPlugin
     - com.kuroneko.cqbot.plugin.HelpPlugin
-    # - com.kuroneko.cqbot.plugin.AiPlugin
+    - com.kuroneko.cqbot.plugin.AiPlugin
     - com.kuroneko.cqbot.plugin.BiLiPlugin
     - com.kuroneko.cqbot.plugin.OvoOaPlugin
     - com.kuroneko.cqbot.plugin.RainbowSixPlugin
@@ -34,7 +34,7 @@ shiro:
     - com.kuroneko.cqbot.plugin.ThreeHundredPlugin
     - com.kuroneko.cqbot.plugin.RecordPlugin
   # 拦截器
-#  interceptor: com.mikuac.example.interceptor.InterceptorExample
+  #  interceptor: com.mikuac.example.interceptor.InterceptorExample
   # WebSocket 配置
   ws:
     server:

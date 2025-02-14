@@ -56,6 +56,13 @@ public class TestController {
         return Collections.emptyList();
     }
 
+    @RequestMapping(value = "/testAi")
+    public String testAi() {
+        String scnetDS = aiService.getScnetDS(1, "来一份关于爱情的作文");
+        log.info(scnetDS);
+        return scnetDS;
+    }
+
     @RequestMapping(value = "/testH")
     public String testH() throws IOException, InterruptedException {
         String finalKeyB64 = "";

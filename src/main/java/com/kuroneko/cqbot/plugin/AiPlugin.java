@@ -24,19 +24,25 @@ public class AiPlugin extends BotPlugin {
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
         if (BotUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
             log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.TIWAN_AI);
-            MsgUtils msg = getMsg(event.getGroupId(), BotUtil.getText(event.getArrayMsg()));
-            bot.sendMsg(event, msg.build(), false);
+            var msgId = event.getMessageId();
+            try {
+                bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
+                MsgUtils msg = getMsg(event.getGroupId(), msgId, BotUtil.getText(event.getArrayMsg()));
+                bot.sendMsg(event, msg.build(), false);
+            } finally {
+                bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
+            }
             return MESSAGE_BLOCK;
         }
         return MESSAGE_IGNORE;
     }
 
-    private MsgUtils getMsg(long groupId, String text) {
+    private MsgUtils getMsg(long groupId, int msgId, String text) {
         String answer = "你想问什么呢";
         if (!ObjectUtils.isEmpty(text)) {
-            answer = aiService.getWuGuoKai(groupId, text);
+            answer = aiService.getScnetDS(groupId, text);
         }
         log.info("问题：{} 的ai回答 {}", text, answer);
-        return MsgUtils.builder().text(answer);
+        return MsgUtils.builder().reply(msgId).text(answer);
     }
 }
