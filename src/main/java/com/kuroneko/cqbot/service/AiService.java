@@ -158,7 +158,9 @@ public class AiService {
             IOUtils.closeQuietly(reader);
         }
         String bodyString = resBody.toString();
-        return bodyString.substring(bodyString.lastIndexOf("think") + 15);
+        String answer = bodyString.substring(bodyString.lastIndexOf("think") + 15);
+        String replace = answer.replace("\\n\\n", "\n").replace("\\n", "\n").replace("\\\"", "\"");
+        return replace;
     }
 
     static class TokenTime {
