@@ -16,12 +16,12 @@
     <properties>
         <java.version>21</java.version>
         <shiro.version>2.3.5</shiro.version>
-        <hutool.version>5.8.35</hutool.version>
+        <hutool.version>5.8.36</hutool.version>
         <jvppeteer.version>3.2.0</jvppeteer.version>
         <jsoup.version>1.18.3</jsoup.version>
         <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
         <expiringmap.version>0.5.11</expiringmap.version>
-        <fastjson2.version>2.0.54</fastjson2.version>
+        <fastjson2.version>2.0.55</fastjson2.version>
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
         <commons-io.version>2.18.0</commons-io.version>
         <kumo-core.version>1.28</kumo-core.version>
