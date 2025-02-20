@@ -3,13 +3,14 @@ package com.kuroneko.cqbot.config.localCfg;
 import com.kuroneko.cqbot.core.cfg.ConfigSave;
 import com.kuroneko.cqbot.core.process.CommonProcessor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 @Data
-public class BiliCfg implements ConfigSave {
+@EqualsAndHashCode(callSuper = true)
+public class BiliCfg extends ConfigSave implements Serializable {
     private HashMap<String, List<Long>> subMap = new HashMap<>();
 
     public void addSub(String uid, Long groupId) {

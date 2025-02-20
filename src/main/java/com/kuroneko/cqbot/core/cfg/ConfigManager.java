@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 
 @Slf4j
@@ -28,41 +27,34 @@ public class ConfigManager {
     }
 
     public void loadAll() {
+        String declaredFieldName = "";
         try {
             Class<? extends ConfigManager> clazz = this.getClass();
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field declaredField : declaredFields) {
+                declaredFieldName = declaredField.getName();
                 Class<?> fieldType = declaredField.getType();
-                Class<?>[] interfaces = fieldType.getInterfaces();
-                boolean match = Arrays.asList(interfaces).contains(ConfigSave.class);
-                if (match) {
+                if (ConfigSave.class.isAssignableFrom(fieldType)) {
                     declaredField.setAccessible(true);
                     Object load = load(fieldType);
-//                    Object instance = fieldType.getDeclaredConstructor().newInstance();
-//                    Method load1 = ConfigSave.class.getMethod("load");
-//                    Object invoke = load1.invoke(instance);
                     declaredField.set(this, load);
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new RuntimeException(e);
+            log.error("Failed to load configuration for field: {}", declaredFieldName, e);
+            throw new RuntimeException("Failed to load configuration", e);
         }
     }
 
-    private <T> T load(Class<T> clazz) {
+    private <T> T load(Class<T> clazz) throws Exception {
         T configSave;
-        try {
-            String cfgName = cfgPath + clazz.getSimpleName() + ".json";
-            Path path = Path.of(cfgName);
-            if (Files.exists(path)) {
-                String jsonString = Files.readString(path);
-                configSave = JSON.parseObject(jsonString, clazz, JSONReader.Feature.FieldBased);
-            } else {
-                configSave = clazz.getDeclaredConstructor().newInstance();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        String cfgName = cfgPath + clazz.getSimpleName() + ".json";
+        Path path = Path.of(cfgName);
+        if (Files.exists(path)) {
+            String jsonString = Files.readString(path);
+            configSave = JSON.parseObject(jsonString, clazz, JSONReader.Feature.FieldBased);
+        } else {
+            configSave = clazz.getDeclaredConstructor().newInstance();
         }
         return configSave;
     }
