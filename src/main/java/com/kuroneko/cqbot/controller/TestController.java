@@ -58,7 +58,7 @@ public class TestController {
 
     @RequestMapping(value = "/testAi")
     public String testAi() {
-        String scnetDS = aiService.getScnetDS(1, "来一份关于爱情的作文");
+        String scnetDS = aiService.getScnetDS2(1, "你好");
         log.info(scnetDS);
         return scnetDS;
     }

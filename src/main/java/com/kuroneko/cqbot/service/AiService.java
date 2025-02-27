@@ -140,27 +140,87 @@ public class AiService {
             ResponseEntity<Resource> entity = restTemplate.exchange("https://chat.scnet.cn/api/chat/GetReplay?messageId=" + messageId + "&query=&modelType=" + modelType, HttpMethod.GET, requestEntity, Resource.class);
             assert entity.getBody() != null;
             reader = new BufferedReader(new InputStreamReader(entity.getBody().getInputStream(), StandardCharsets.UTF_8));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("data: ")) {
-                        String data = line.substring("data: ".length());
-                        // 处理接收到的数据
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("data: ")) {
+                    String data = line.substring("data: ".length());
+                    // 处理接收到的数据
 //                        log.info("Received data: {}", data);
-                        if (data.startsWith("\"")) {
-                            resBody.append(data, 1, data.length() - 1);
-                        }
+                    if (data.startsWith("\"")) {
+                        resBody.append(data, 1, data.length() - 1);
                     }
                 }
+            }
         } catch (Exception e) {
             log.error("提问获取失败", e);
             return "emmmm，出错了";
-        }finally {
+        } finally {
             IOUtils.closeQuietly(reader);
         }
         String bodyString = resBody.toString();
         String answer = bodyString.substring(bodyString.lastIndexOf("think") + 15);
         String replace = answer.replace("\\n\\n", "\n").replace("\\n", "\n").replace("\\\"", "\"");
         return replace;
+    }
+
+    public String getScnetDS2(long groupId, String text) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Referer", "https://www.scnet.cn/ui/chatbot/");
+        headers.set("Origin", "https://www.scnet.cn");
+        headers.set("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1");
+        HashMap<String, Object> request = new HashMap<>();
+        TokenTime tokenTime = DS_TOKEN_MAP.get(groupId);
+        if (tokenTime == null || tokenTime.time + 86400000 < System.currentTimeMillis()) {
+            tokenTime = new TokenTime();
+            tokenTime.time = System.currentTimeMillis();
+            DS_TOKEN_MAP.put(groupId, tokenTime);
+        }
+        int modelId = 2;
+        request.put("modelId", modelId);
+        request.put("conversationId", tokenTime.conversationId);
+        request.put("content", text);
+        request.put("online", 0);
+        request.put("thinking", 0);
+
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
+
+        BufferedReader reader = null;
+        StringBuilder resBody = new StringBuilder();
+        ArrayList<JSONObject> resList = new ArrayList<>();
+        try {
+            ResponseEntity<Resource> entity = restTemplate.exchange("https://www.scnet.cn/acx/chatbot/v1/chat/completion", HttpMethod.POST, requestEntity, Resource.class);
+            assert entity.getBody() != null;
+            reader = new BufferedReader(new InputStreamReader(entity.getBody().getInputStream(), StandardCharsets.UTF_8));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("data:")) {
+                    String data = line.substring("data:".length());
+                    resList.add(JSON.parseObject(data));
+                }
+            }
+        } catch (Exception e) {
+            log.error("提问获取失败", e);
+            return "emmmm，出错了";
+        } finally {
+            IOUtils.closeQuietly(reader);
+        }
+        String conversationId = "";
+        for (JSONObject jsonObject : resList) {
+            conversationId = jsonObject.getString("conversationId");
+            resBody.append(jsonObject.getString("content"));
+        }
+        tokenTime.conversationId = conversationId;
+        String bodyString = resBody.toString();
+        int lastIndexOfT = bodyString.lastIndexOf("</think>");
+        if (lastIndexOfT != -1) {
+            bodyString = bodyString.substring(lastIndexOfT + 8);
+        }
+        int lastIndexOf = bodyString.lastIndexOf("[done]");
+        if (lastIndexOf != -1) {
+            bodyString = bodyString.substring(0, lastIndexOf);
+        }
+        return bodyString.trim();
     }
 
     static class TokenTime {

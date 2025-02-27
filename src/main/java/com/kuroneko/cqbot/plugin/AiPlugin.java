@@ -40,7 +40,7 @@ public class AiPlugin extends BotPlugin {
     private MsgUtils getMsg(long groupId, int msgId, String text) {
         String answer = "你想问什么呢";
         if (!ObjectUtils.isEmpty(text)) {
-            answer = aiService.getScnetDS(groupId, text);
+            answer = aiService.getScnetDS2(groupId, text);
         }
         log.info("问题：{} 的ai回答 {}", text, answer);
         return MsgUtils.builder().reply(msgId).text(answer);
