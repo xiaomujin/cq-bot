@@ -21,8 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -66,18 +65,25 @@ public class DailyPlugin {
             }
             String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
             String imgPath = Constant.BASE_IMG_PATH + "Daily.png";
-            try (HttpClient httpClient = HttpClient.newBuilder()
-                    .followRedirects(HttpClient.Redirect.ALWAYS)
-                    .connectTimeout(Duration.ofSeconds(60L))
-                    .build()) {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(imgUrl))
-                        .timeout(Duration.ofMinutes(1))
-                        .GET()
-                        .build();
-                HttpResponse<InputStream> response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
-                FileUtils.copyInputStreamToFile(response.body(), new File(imgPath));
-            } catch (Exception e) {
+
+            String[] command = {
+                    "curl",
+                    "-o", imgPath,
+                    imgUrl
+            };
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.redirectErrorStream(true);
+
+            try {
+                Process process = processBuilder.start();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    log.info(line);
+                }
+                process.waitFor(2, TimeUnit.MINUTES);
+            } catch (IOException | InterruptedException e) {
                 throw new BotException(e.getMessage());
             }
 
