@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.controller;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.entity.WordCloud;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.service.*;
@@ -42,6 +43,7 @@ public class TestController {
     private final AiService aiService;
     private final TarKovMarketService tarKovMarketService;
     private final WordCloudService wordCloudService;
+    private final DeltaService deltaService;
 
     @RequestMapping(value = "/testBiLi")
     public BiliDynamicVo.BiliDynamicCard testBiLi() {
@@ -61,6 +63,12 @@ public class TestController {
         String scnetDS = aiService.getScnetDS2(1, "你好");
         log.info(scnetDS);
         return scnetDS;
+    }
+
+    @RequestMapping(value = "/testDelta")
+    public JSONObject testDelta() {
+        deltaService.updateCertificate();
+        return deltaService.getSwatUpgradeData();
     }
 
     @RequestMapping(value = "/testH")
