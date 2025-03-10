@@ -1,10 +1,9 @@
 package com.kuroneko.cqbot.service;
 
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.kuroneko.cqbot.exception.BotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Headers;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,51 +22,36 @@ public class DeltaService {
     private String version = "";
 
     public void updateCertificate() {
-        HttpHeaders headers = getHeader();
-        HttpEntity<Object> httpEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<String> menuRes = restTemplate.exchange("https://www.kkrb.net/getMenu", HttpMethod.POST, httpEntity, String.class);
-        JSONObject menuBody = JSON.parseObject(menuRes.getBody());
-        assert menuBody != null;
-        Integer code = menuBody.getInteger("code");
-        if (!code.equals(1)) {
-            log.error("DeltaService 获取证书失败");
-            return;
-        }
-        version = menuBody.getString("built_ver");
-
-        List<String> cookies = menuRes.getHeaders().get("Set-Cookie");
-        assert cookies != null;
-        for (String cookie : cookies) {
-            String[] parts = cookie.split(";");
-            for (String part : parts) {
-                if (part.trim().startsWith("PHPSESSID=")) {
-                    phpSessId = part.trim().substring("PHPSESSID=".length());
-                    break;
-                }
-            }
-        }
-    }
-
-    private Headers getHeader2() {
-        return new Headers.Builder()
-                .add("Origin", "https://www.kkrb.net")
-                .add("Referer", "https://www.kkrb.net/")
-                .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36")
-                .add("X-Requested-With", "XMLHttpRequest")
-                .build();
+        JSONObject resJSONObject = getResJSONObject("https://www.kkrb.net/getMenu");
+        version = resJSONObject.getString("built_ver");
     }
 
     public JSONObject getSwatUpgradeData() {
-        HttpHeaders headers = getHeader();
-        HttpEntity<Object> httpEntity = new HttpEntity<>("version=" + version, headers);
-        ResponseEntity<JSONObject> menuRes = restTemplate.exchange("https://www.kkrb.net/getSwatUpgradeData", HttpMethod.POST, httpEntity, JSONObject.class);
-        JSONObject menuBody = menuRes.getBody();
-        assert menuBody != null;
-        Integer code = menuBody.getInteger("code");
+        return getResJSONObject("https://www.kkrb.net/getSwatUpgradeData");
+    }
+
+    public JSONObject getResJSONObject(String url) {
+        HttpEntity<String> httpEntity = getHttpEntity();
+        ResponseEntity<JSONObject> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, JSONObject.class);
+        JSONObject resBody = res.getBody();
+        assert resBody != null;
+        Integer code = resBody.getInteger("code");
         if (!code.equals(1)) {
-            return null;
+            throw new BotException("获取数据失败");
         }
-        return menuBody;
+        List<String> cookies = res.getHeaders().get("Set-Cookie");
+        if (cookies != null) {
+            for (String cookie : cookies) {
+                String[] parts = cookie.split(";");
+                for (String part : parts) {
+                    if (part.trim().startsWith("PHPSESSID=")) {
+                        phpSessId = part.trim().substring("PHPSESSID=".length());
+                        break;
+                    }
+                }
+            }
+        }
+        return resBody;
     }
 
     private HttpHeaders getHeader() {
@@ -80,10 +64,16 @@ public class DeltaService {
         if (phpSessId == null || phpSessId.isEmpty()) {
             headers.set("Cookie", "PHPSESSID=" + phpSessId);
         }
-//        headers.add("Connection", "keep-alive");
-//        headers.add("Accept", "*/*");
-//        headers.add("Accept-Encoding", "gzip, deflate, br");
         return headers;
+    }
+
+    private HttpEntity<String> getHttpEntity() {
+        HttpHeaders headers = getHeader();
+        String versionStr = "version=" + version;
+        if (version == null || version.isEmpty()) {
+            versionStr = null;
+        }
+        return new HttpEntity<>(versionStr, headers);
     }
 
 
