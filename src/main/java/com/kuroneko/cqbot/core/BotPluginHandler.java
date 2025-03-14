@@ -62,11 +62,7 @@ public class BotPluginHandler implements ApplicationRunner {
         Object[] objects = new Object[types.length];
         for (int i = 0; i < types.length; i++) {
             Class<?> type = types[i];
-            if (params.containsKey(type)) {
-                objects[i] = params.remove(type);
-                continue;
-            }
-            objects[i] = null;
+            objects[i] = params.get(type);
         }
 //        Arrays.stream(types).forEach(consumerWithIndex((item, index) -> {
 //            if (params.containsKey(item)) {
