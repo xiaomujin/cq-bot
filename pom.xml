@@ -18,7 +18,7 @@
         <shiro.version>2.3.6</shiro.version>
         <hutool.version>5.8.36</hutool.version>
         <jvppeteer.version>3.2.0</jvppeteer.version>
-        <jsoup.version>1.18.3</jsoup.version>
+        <jsoup.version>1.19.1</jsoup.version>
         <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
         <expiringmap.version>0.5.11</expiringmap.version>
         <fastjson2.version>2.0.56</fastjson2.version>
