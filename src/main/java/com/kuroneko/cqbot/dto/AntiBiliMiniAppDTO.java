@@ -14,6 +14,7 @@ public class AntiBiliMiniAppDTO {
         private String bvid;
         private String pic;
         private String title;
+        private Long pubdate;
         private Owner owner;
         private Stat stat;
 
@@ -25,12 +26,12 @@ public class AntiBiliMiniAppDTO {
         @Data
         public static class Stat {
             private Long aid;
-            private Integer view;
-            private Integer danmaku;
-            private Integer reply;
-            private Integer coin;
-            private Integer share;
-            private Integer like;
+            private Long view;
+            private Long danmaku;
+            private Long reply;
+            private Long coin;
+            private Long share;
+            private Long like;
         }
     }
 

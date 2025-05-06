@@ -8,6 +8,7 @@ import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.NumberFormatter;
 import com.kuroneko.cqbot.utils.RegexUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.common.Shiro;
@@ -20,14 +21,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -79,13 +76,20 @@ public class BLPlugin {
     }
 
     private String buildMsg(AntiBiliMiniAppDTO.BLData data) {
+        Long pubdate = data.getPubdate();
+        String pubdateStr = "";
+        if (pubdate != null) {
+            String format = DateFormatUtils.format(pubdate * 1000L, "yyyy-MM-dd HH:mm:ss");
+            pubdateStr = "\n" + format;
+        }
         return MsgUtils.builder()
                 .img(data.getPic())
                 .text("\n" + ShiroUtils.escape2(data.getTitle()))
                 .text("\nUP：" + ShiroUtils.escape2(data.getOwner().getName()))
-                .text("\n播放：" + data.getStat().getView() + " 弹幕：" + data.getStat().getDanmaku())
-                .text("\n投币：" + data.getStat().getCoin() + " 点赞：" + data.getStat().getLike())
-                .text("\n评论：" + data.getStat().getReply() + " 分享：" + data.getStat().getShare())
+                .text("\n播放：" + NumberFormatter.formatNumberWithUnit(data.getStat().getView(), 1) + " 弹幕：" + NumberFormatter.formatNumberWithUnit(data.getStat().getDanmaku(), 1))
+                .text("\n投币：" + NumberFormatter.formatNumberWithUnit(data.getStat().getCoin(), 1) + " 点赞：" + NumberFormatter.formatNumberWithUnit(data.getStat().getLike(), 1))
+                .text("\n评论：" + NumberFormatter.formatNumberWithUnit(data.getStat().getReply(), 1) + " 分享：" + NumberFormatter.formatNumberWithUnit(data.getStat().getShare(), 1))
+                .text(pubdateStr)
                 .text("\nav" + data.getStat().getAid())
                 .text("\nhttps://www.bilibili.com/video/" + data.getBvid())
                 .build();
