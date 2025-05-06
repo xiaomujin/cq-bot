@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -39,7 +38,10 @@ public class BiLiService {
         JSONObject httpObject = new JSONObject();
         HttpEntity<Object> httpEntity = new HttpEntity<>(httpObject, headers);
         ResponseEntity<BiliDynamicVo> entity = restTemplate.exchange(Constant.BL_DYNAMIC_URL, HttpMethod.GET, httpEntity, BiliDynamicVo.class, uid);
-        List<BiliDynamicVo.BiliDynamicCard> items = Objects.requireNonNull(entity.getBody()).getData().getItems();
+        if (entity.getBody() == null || entity.getBody().getData() == null) {
+            return Optional.empty();
+        }
+        List<BiliDynamicVo.BiliDynamicCard> items = entity.getBody().getData().getItems();
         return items.stream().min((o1, o2) -> o2.getModules().getModule_author().getPub_ts().compareTo(o1.getModules().getModule_author().getPub_ts()));
     }
 
