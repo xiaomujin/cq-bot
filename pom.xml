@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.3</version>
+        <version>3.4.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.kuroneko</groupId>
@@ -15,13 +15,13 @@
     <description>cq-bot</description>
     <properties>
         <java.version>21</java.version>
-        <shiro.version>2.3.6</shiro.version>
+        <shiro.version>2.4.0</shiro.version>
         <hutool.version>5.8.36</hutool.version>
-        <jvppeteer.version>3.3.2</jvppeteer.version>
+        <jvppeteer.version>3.3.9</jvppeteer.version>
         <jsoup.version>1.19.1</jsoup.version>
-        <mybatis-plus.version>3.5.10.1</mybatis-plus.version>
+        <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <expiringmap.version>0.5.11</expiringmap.version>
-        <fastjson2.version>2.0.56</fastjson2.version>
+        <fastjson2.version>2.0.57</fastjson2.version>
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
         <commons-io.version>2.18.0</commons-io.version>
         <kumo-core.version>1.28</kumo-core.version>
