@@ -48,6 +48,10 @@ public class DailyPlugin {
                 throw new BotException("获取日历失败");
             }
             String url = moyuObject.getString("url");
+            int lastIndexOf = url.lastIndexOf("https");
+            if (lastIndexOf != -1) {
+                url = url.substring(lastIndexOf);
+            }
             OneBotMedia media = new OneBotMedia().file(url).cache(true);
             return MsgUtils.builder().img(media).build();
         }));
