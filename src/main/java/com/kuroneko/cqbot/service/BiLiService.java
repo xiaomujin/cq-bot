@@ -39,6 +39,7 @@ public class BiLiService {
         HttpEntity<Object> httpEntity = new HttpEntity<>(httpObject, headers);
         ResponseEntity<BiliDynamicVo> entity = restTemplate.exchange(Constant.BL_DYNAMIC_URL, HttpMethod.GET, httpEntity, BiliDynamicVo.class, uid);
         if (entity.getBody() == null || entity.getBody().getData() == null) {
+            log.info("bili动态获取失败, uid: {}", uid);
             return Optional.empty();
         }
         List<BiliDynamicVo.BiliDynamicCard> items = entity.getBody().getData().getItems();
