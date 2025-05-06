@@ -13,20 +13,16 @@ import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
-import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
@@ -47,13 +43,14 @@ public class DailyPlugin {
             if (!success) {
                 throw new BotException("获取日历失败");
             }
-            String url = moyuObject.getString("url");
-            int lastIndexOf = url.lastIndexOf("https");
+            String imgUrl = moyuObject.getString("url");
+            int lastIndexOf = imgUrl.lastIndexOf("https");
             if (lastIndexOf != -1) {
-                url = url.substring(lastIndexOf);
+                imgUrl = imgUrl.substring(lastIndexOf);
             }
-            OneBotMedia media = new OneBotMedia().file(url).cache(true);
-            return MsgUtils.builder().img(media).build();
+            String imgPath = Constant.BASE_IMG_PATH + "Calendar.png";
+            downloadFile(imgUrl, imgPath);
+            return MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
         }));
     }
 
@@ -70,29 +67,35 @@ public class DailyPlugin {
             String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
             String imgPath = Constant.BASE_IMG_PATH + "Daily.png";
 
-            String[] command = {
-                    "curl",
-                    "-o", imgPath,
-                    imgUrl
-            };
-
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            processBuilder.redirectErrorStream(true);
-
-            try {
-                Process process = processBuilder.start();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    log.info(line);
-                }
-                process.waitFor(2, TimeUnit.MINUTES);
-            } catch (IOException | InterruptedException e) {
-                throw new BotException(e.getMessage());
-            }
+            downloadFile(imgUrl, imgPath);
 
             return MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
         }));
+    }
+
+    private void downloadFile(String url, String path) {
+        String[] command = {
+                "curl",
+                "-o", path,
+                url
+        };
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true);
+        BufferedReader reader = null;
+        try {
+            Process process = processBuilder.start();
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                log.info(line);
+            }
+            process.waitFor(2, TimeUnit.MINUTES);
+        } catch (IOException | InterruptedException e) {
+            throw new BotException(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(reader);
+        }
     }
 }
 
