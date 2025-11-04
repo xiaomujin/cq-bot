@@ -51,7 +51,7 @@ public class ShiroPlugin {
         arrayMsg.forEach(msg -> {
             switch (msg.getType()) {
                 case at -> {
-                    String qq = msg.getData().get("qq");
+                    String qq = msg.getStringData("qq");
                     if (String.valueOf(selfId).equals(qq)) {
                         at.set(true);
                     } else {
@@ -59,11 +59,11 @@ public class ShiroPlugin {
                     }
                 }
                 case text -> {
-                    String text = msg.getData().get("text");
+                    String text = msg.getStringData("text");
                     builder.append(text).append("\n");
                 }
                 case image -> {
-                    String image = msg.getData().get("url");
+                    String image = msg.getStringData("url");
                     imgList.add(image);
                 }
             }

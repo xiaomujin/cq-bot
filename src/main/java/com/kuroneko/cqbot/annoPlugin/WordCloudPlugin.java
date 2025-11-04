@@ -18,6 +18,7 @@ import com.kuroneko.cqbot.utils.CacheUtil;
 import com.mikuac.shiro.annotation.GroupMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
+import com.mikuac.shiro.common.utils.MessageConverser;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
@@ -170,11 +171,11 @@ public class WordCloudPlugin {
         var contents = new ArrayList<String>();
         List<String> forRange = getWordsForRange(userId, groupId, type, range);
         forRange.forEach(raw -> {
-            List<ArrayMsg> arrayMsgs = ShiroUtils.rawToArrayMsg(raw);
+            List<ArrayMsg> arrayMsgs = MessageConverser.stringToArray(raw);
             List<String> textList = arrayMsgs.stream()
                     .filter(it -> it.getType() == MsgTypeEnum.text)
                     .map(it -> {
-                        String text = it.getData().get("text");
+                        String text = it.getStringData("text");
                         if (text != null) {
                             return text.trim();
                         }

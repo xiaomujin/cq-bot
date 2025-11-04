@@ -15,7 +15,7 @@
     <description>cq-bot</description>
     <properties>
         <java.version>21</java.version>
-        <shiro.version>2.4.2</shiro.version>
+        <shiro.version>2.4.9</shiro.version>
         <hutool.version>5.8.38</hutool.version>
         <jvppeteer.version>3.3.9</jvppeteer.version>
         <jsoup.version>1.20.1</jsoup.version>
@@ -71,12 +71,12 @@
             <groupId>com.mikuac</groupId>
             <artifactId>shiro</artifactId>
             <version>${shiro.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba.fastjson2</groupId>
-                    <artifactId>fastjson2</artifactId>
-                </exclusion>
-            </exclusions>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>com.alibaba.fastjson2</groupId>-->
+<!--                    <artifactId>fastjson2</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.github.fanyong920/jvppeteer -->

@@ -37,17 +37,19 @@ public class DailyPlugin {
     public void calendar(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.CALENDAR, 20, TimeUnit.MINUTES, () -> {
 //            String moyuStr = HttpUtil.get("https://api.j4u.ink/v1/store/other/proxy/remote/moyu.json");
-            String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
-            JSONObject moyuObject = JSON.parseObject(moyuStr);
-            Boolean success = moyuObject.getBoolean("success");
-            if (!success) {
-                throw new BotException("获取日历失败");
-            }
-            String imgUrl = moyuObject.getString("url");
-            int lastIndexOf = imgUrl.lastIndexOf("https");
-            if (lastIndexOf != -1) {
-                imgUrl = imgUrl.substring(lastIndexOf);
-            }
+            // https://api.j4u.ink/proxy/redirect/moyu/calendar/20250926.png
+            String imgUrl = "https://api.52vmy.cn/api/wl/moyu";
+//            String moyuStr = HttpUtil.get("https://api.vvhan.com/api/moyu?type=json");
+//            JSONObject moyuObject = JSON.parseObject(moyuStr);
+//            Boolean success = moyuObject.getBoolean("success");
+//            if (!success) {
+//                throw new BotException("获取日历失败");
+//            }
+//            String imgUrl = moyuObject.getString("url");
+//            int lastIndexOf = imgUrl.lastIndexOf("https");
+//            if (lastIndexOf != -1) {
+//                imgUrl = imgUrl.substring(lastIndexOf);
+//            }
             String imgPath = Constant.BASE_IMG_PATH + "Calendar.png";
             downloadFile(imgUrl, imgPath);
             return MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
