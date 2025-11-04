@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.entity.TkfTask;
@@ -81,7 +80,7 @@ public class TkfServerPlugin {
                     } else if (StrUtil.isNotBlank(it.getWikiImg())) {
                         msg.img(it.getWikiImg());
                     }
-                    msg.text("\n名称：").text(it.getCnName() + "\n");
+                    msg.text("\n名称：").text(it.getChName() + "\n");
                     msg.text("24h:").text(it.getChange24() + "%").text(" 7d:").text(it.getChange7d() + "%\n");
                     msg.text("基础价格：").text(it.getBasePrice() + "₽\n");
                     msg.text(it.getTraderName()).text("：").text(it.getTraderPrice() + it.getTraderPriceCur() + "\n");
