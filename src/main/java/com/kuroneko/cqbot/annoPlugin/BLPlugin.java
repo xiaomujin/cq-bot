@@ -98,7 +98,7 @@ public class BLPlugin {
     private void handleMiniApp(Bot bot, AnyMessageEvent event, Long id) {
         List<String> json = event.getArrayMsg().stream()
                 .filter(it -> MsgTypeEnum.json == it.getType())
-                .map(it -> it.getData().get("data"))
+                .map(it -> it.getStringData("data"))
                 .toList();
         if (!json.isEmpty()) {
             JSONObject jsonObject = JSON.parseObject(json.get(0));

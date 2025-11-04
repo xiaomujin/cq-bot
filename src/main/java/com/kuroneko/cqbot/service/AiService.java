@@ -17,10 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -176,12 +173,16 @@ public class AiService {
             tokenTime.time = System.currentTimeMillis();
             DS_TOKEN_MAP.put(groupId, tokenTime);
         }
-        int modelId = 2;
+//        int modelId = 120;
+        int modelId = 11;
         request.put("modelId", modelId);
         request.put("conversationId", tokenTime.conversationId);
         request.put("content", text);
-        request.put("online", 0);
-        request.put("thinking", 0);
+        request.put("onlineEnable", true);
+        request.put("thinkingEnable", false);
+        request.put("textFile", Collections.emptyList());
+        request.put("imageFile", Collections.emptyList());
+        request.put("clusterId", "");
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
 

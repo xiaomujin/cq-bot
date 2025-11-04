@@ -33,8 +33,8 @@ public class TarKovMarketVo {
 //    private String ruImg;
 //    private String ruName;
     private String bsgId;
-    private String cnName;
-    private String cnShortName;
+    private String chName;
+    private String chShortName;
 //    private String ruShortName;
 //    private String deName;
 //    private String deShortName;

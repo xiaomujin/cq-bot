@@ -46,7 +46,7 @@ public class BotUtil {
     public static String getText(List<ArrayMsg> arrayMsg, String join) {
         return arrayMsg.stream()
                 .filter(it -> MsgTypeEnum.text == it.getType())
-                .map(it -> it.getData().get("text"))
+                .map(it -> it.getStringData("text"))
                 .collect(Collectors.joining(join)).trim();
     }
 

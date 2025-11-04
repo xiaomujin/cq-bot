@@ -67,7 +67,7 @@ public class PicSearchPlugin {
             }
             modePlugin.resetExpiration(event.getUserId(), event.getGroupId());
             bot.sendMsg(event, MsgUtils.builder().reply(event.getMessageId()).text("收到了，搜索中……").build(), false);
-            String url = list.getFirst().getData().get("url");
+            String url = list.getFirst().getStringData("url");
             Pair<String, MsgUtils> sauceRes = getSauceRes(url);
             MsgUtils sauceResValue = sauceRes.getValue();
             if (sauceResValue != null) {
@@ -206,7 +206,7 @@ public class PicSearchPlugin {
             if (list.isEmpty()) {
                 return "";
             }
-            String url = list.getFirst().getData().get("url");
+            String url = list.getFirst().getStringData("url");
             OneBotMedia summary = OneBotMedia.builder().file(url).summary(searchMode.getExt());
             List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().img(summary).build();
             modePlugin.removeNow(event.getUserId(), event.getGroupId());
