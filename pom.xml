@@ -25,7 +25,7 @@
         <expiringmap.version>0.5.11</expiringmap.version>
         <fastjson2.version>2.0.57</fastjson2.version>
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
-        <commons-io.version>2.19.0</commons-io.version>
+        <commons-io.version>2.20.0</commons-io.version>
         <kumo-core.version>1.28</kumo-core.version>
     </properties>
     <dependencies>
