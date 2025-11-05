@@ -19,8 +19,6 @@
         <hutool.version>5.8.41</hutool.version>
         <jvppeteer.version>3.4.1</jvppeteer.version>
         <jsoup.version>1.21.2</jsoup.version>
-        <jvppeteer.version>3.4.1</jvppeteer.version>
-        <jsoup.version>1.20.1</jsoup.version>
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <expiringmap.version>0.5.11</expiringmap.version>
         <fastjson2.version>2.0.57</fastjson2.version>
