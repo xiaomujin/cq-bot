@@ -45,6 +45,7 @@ public class TarKovMapPlugin extends BotPlugin {
         keywordToImageMap.put("实验室", "TheLab.jpg");
         keywordToImageMap.put("疗养院", "ShorelineHose.jpg");
         keywordToImageMap.put("中心区", "Center.jpg");
+        keywordToImageMap.put("迷宫", "Maze.jpg");
     }
 
     @Override

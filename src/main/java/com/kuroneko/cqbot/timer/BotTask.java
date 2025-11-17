@@ -24,12 +24,12 @@ public class BotTask {
     private final TarKovMarketService tarKovMarketService;
     private final WordCloudService wordCloudService;
 
-    @Scheduled(cron = "0 0/10 * * * ? ")
-    public void refreshThreeDog() {
-        log.info("刷新三兄弟位置 开始");
-        botTaskService.refreshThreeDog();
-        log.info("刷新三兄弟位置 结束");
-    }
+//    @Scheduled(cron = "0 0/10 * * * ? ")
+//    public void refreshThreeDog() {
+//        log.info("刷新三兄弟位置 开始");
+//        botTaskService.refreshThreeDog();
+//        log.info("刷新三兄弟位置 结束");
+//    }
 
 //    @Scheduled(cron = "0 5 0/1 * * ? ")
 //    public void refreshDaily() {
