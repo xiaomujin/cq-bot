@@ -7,6 +7,7 @@ import com.kuroneko.cqbot.service.*;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.RegexUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
+import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -63,6 +64,12 @@ public class TestController {
         String scnetDS = aiService.getScnetDS2(1, "你好");
         log.info(scnetDS);
         return scnetDS;
+    }
+
+    @RequestMapping(value = "/testTarKovMarket")
+    public Object testTarKovMarket() {
+        Collection<TarKovMarketVo> search = tarKovMarketService.search("btc");
+        return search;
     }
 
     @RequestMapping(value = "/testDelta")
