@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Component
@@ -123,7 +122,7 @@ public class TarKovMapPlugin extends BotPlugin {
                         }
                         """;
                 JSHandle jsHandle = page.waitForFunction(fun);
-                ArrayList<Object> jsonValue = BotUtil.cast(jsHandle.jsonValue());
+                ArrayList<ArrayList<Object>> jsonValue = BotUtil.cast(jsHandle.jsonValue());
                 new Thread(() -> bulletService.updateAllBullet(jsonValue)).start();
                 String imgPath = Constant.BASE_IMG_PATH + "tarkov_map/BulletData.png";
                 PuppeteerUtil.screenshot(page, imgPath, "table.wikitable.sortable.stickyheader", "._1MLS_xjiUjam_u2qmURY4i { display: none }");

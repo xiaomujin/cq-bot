@@ -30,9 +30,8 @@ public class BulletServiceImpl extends ServiceImpl<BulletMapper, Bullet>
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateAllBullet(Collection<Object> jsonValue) {
+    public void updateAllBullet(ArrayList<ArrayList<Object>> jsonValue) {
         List<Bullet> list = jsonValue.stream()
-                .map(v -> (ArrayList<Object>) v)
                 .filter(v -> !v.isEmpty())
                 .map(v -> {
                     int isTracer = 0;

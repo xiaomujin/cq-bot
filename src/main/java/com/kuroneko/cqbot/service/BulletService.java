@@ -3,7 +3,7 @@ package com.kuroneko.cqbot.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.kuroneko.cqbot.entity.Bullet;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +12,7 @@ import java.util.List;
  * @createDate 2023-08-21 17:28:18
  */
 public interface BulletService extends IService<Bullet> {
-    void updateAllBullet(Collection<Object> list);
+    void updateAllBullet(ArrayList<ArrayList<Object>> list);
 
     List<Bullet> searchBulletList(String name);
 

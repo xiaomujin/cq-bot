@@ -1,8 +1,5 @@
 package com.kuroneko.cqbot.service;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.utils.*;
@@ -18,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -71,16 +69,15 @@ public class TarKovMarketService {
 
     public String getTkfServerStatusMsg() {
         String respServices = HttpUtil.get("https://status.escapefromtarkov.com/api/services");
-        JSONArray jsonArray = JSON.parseArray(respServices);
+        JsonNode jsonNode = JsonUtil.toNode(respServices);
         StringBuilder sb = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatTime = LocalDateTime.now().format(formatter);
         sb.append(formatTime).append("\n");
         sb.append("服务器状态速报：\n");
-        jsonArray.forEach(item -> {
-            JSONObject jsonObject = (JSONObject) item;
-            String name = jsonObject.getString("name");
-            int status = jsonObject.getIntValue("status");
+        jsonNode.forEach(jsonObject -> {
+            String name = jsonObject.get("name").asString();
+            int status = jsonObject.get("status").asInt();
             switch (name) {
                 case "Website" -> sb.append("游戏官网：");
                 case "Forum" -> sb.append("官方论坛：");
@@ -89,17 +86,17 @@ public class TarKovMarketService {
                 case "Group lobby" -> sb.append("组队功能：");
                 case "Trading" -> sb.append("交易功能：");
                 case "Matchmaking" -> sb.append("战局匹配：");
-                case "Friends and msg." -> sb.append("好友消息：");
+                case "Friends and msg" -> sb.append("好友消息：");
                 case "Inventory operations" -> sb.append("库存操作：");
                 default -> sb.append(name);
             }
             sb.append(getCNStatus(status)).append("\n");
         });
         String respGlobal = HttpUtil.get("https://status.escapefromtarkov.com/api/global/status");
-        JSONObject jsonObject = JSON.parseObject(respGlobal);
-        int status = jsonObject.getIntValue("status");
+        JsonNode jsonObject = JsonUtil.toNode(respGlobal);
+        int status = jsonObject.get("status").asInt();
         sb.append("\n总体状态：").append(getCNStatus(status)).append("\n");
-        String message = jsonObject.getString("message");
+        String message = jsonObject.get("message").asString();
         if (!ObjectUtils.isEmpty(message)) {
             sb.append("信息：").append(message);
         }

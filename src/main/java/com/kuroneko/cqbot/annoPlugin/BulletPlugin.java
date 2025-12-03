@@ -2,7 +2,7 @@ package com.kuroneko.cqbot.annoPlugin;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
-import com.kuroneko.cqbot.config.module.LocalJavaTimeModule;
+import com.kuroneko.cqbot.config.JacksonConfig;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.service.BulletService;
@@ -56,8 +56,8 @@ public class BulletPlugin {
         ZoneId zoneId = ZoneId.of("Europe/Moscow");
         LocalDateTime dateTime = LocalDateTimeUtil.of(Instant.now().toEpochMilli() * 7, zoneId);
         LocalDateTime dateTime2 = LocalDateTimeUtil.of(Instant.now().toEpochMilli() * 7 - 43200000, zoneId);
-        String time = dateTime.toLocalTime().format(DateTimeFormatter.ofPattern(LocalJavaTimeModule.NORM_TIME_PATTERN));
-        String time2 = dateTime2.toLocalTime().format(DateTimeFormatter.ofPattern(LocalJavaTimeModule.NORM_TIME_PATTERN));
+        String time = dateTime.toLocalTime().format(DateTimeFormatter.ofPattern(JacksonConfig.DATE_TIME_FORMAT));
+        String time2 = dateTime2.toLocalTime().format(DateTimeFormatter.ofPattern(JacksonConfig.DATE_TIME_FORMAT));
         MsgUtils msg = MsgUtils.builder()
                 .text(time2 + "\n" + time);
         bot.sendMsg(event, msg.build(), false);

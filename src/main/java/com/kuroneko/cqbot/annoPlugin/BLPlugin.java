@@ -1,13 +1,12 @@
 package com.kuroneko.cqbot.annoPlugin;
 
 import cn.hutool.core.util.ObjUtil;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.dto.AntiBiliMiniAppDTO;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.JsonUtil;
 import com.kuroneko.cqbot.utils.NumberFormatter;
 import com.kuroneko.cqbot.utils.RegexUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
@@ -24,6 +23,7 @@ import net.jodah.expiringmap.ExpiringMap;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Objects;
@@ -101,8 +101,8 @@ public class BLPlugin {
                 .map(it -> it.getStringData("data"))
                 .toList();
         if (!json.isEmpty()) {
-            JSONObject jsonObject = JSON.parseObject(json.get(0));
-            String url = jsonObject.getJSONObject("meta").getJSONObject("detail_1").getString("qqdocurl");
+            JsonNode jsonNode = JsonUtil.toNode(json.get(0));
+            String url = jsonNode.get("meta").get("detail_1").get("qqdocurl").asString();
             handleRequest(bot, event, id, parseBidByShortURL(url));
         }
     }

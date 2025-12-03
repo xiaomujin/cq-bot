@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.7</version>
+        <version>4.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.kuroneko</groupId>
@@ -16,14 +16,14 @@
     <properties>
         <java.version>25</java.version>
         <shiro.version>2.5.0</shiro.version>
-        <hutool.version>5.8.41</hutool.version>
+        <hutool.version>5.8.42</hutool.version>
         <jvppeteer.version>3.4.1</jvppeteer.version>
         <jsoup.version>1.21.2</jsoup.version>
-        <mybatis-plus.version>3.5.12</mybatis-plus.version>
+        <mybatis-plus.version>3.5.15</mybatis-plus.version>
         <expiringmap.version>0.5.11</expiringmap.version>
         <fastjson2.version>2.0.57</fastjson2.version>
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
-        <commons-io.version>2.19.0</commons-io.version>
+        <commons-io.version>2.21.0</commons-io.version>
         <kumo-core.version>1.28</kumo-core.version>
     </properties>
     <dependencies>
@@ -46,6 +46,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+            <version>4.0.0-M2</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
@@ -54,7 +55,7 @@
         <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter -->
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -71,12 +72,6 @@
             <groupId>com.mikuac</groupId>
             <artifactId>shiro</artifactId>
             <version>${shiro.version}</version>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>com.alibaba.fastjson2</groupId>-->
-<!--                    <artifactId>fastjson2</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.github.fanyong920/jvppeteer -->
@@ -84,6 +79,12 @@
             <groupId>io.github.fanyong920</groupId>
             <artifactId>jvppeteer</artifactId>
             <version>${jvppeteer.version}</version>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--                    <artifactId>jackson-databind</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
         <dependency>

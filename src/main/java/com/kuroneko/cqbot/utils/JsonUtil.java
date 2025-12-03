@@ -1,22 +1,22 @@
 package com.kuroneko.cqbot.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @Component
 public class JsonUtil {
-    public static ObjectMapper objectMapper;
+    public static JsonMapper mapper;
 
-    private JsonUtil(ObjectMapper objectMapper) {
-        JsonUtil.objectMapper = objectMapper;
+    private JsonUtil(JsonMapper mapper) {
+        JsonUtil.mapper = mapper;
     }
 
     /**
@@ -27,14 +27,30 @@ public class JsonUtil {
      */
     public static String toString(Object obj) {
         if (obj == null) {
-            return null;
+            return "";
         }
         if (obj.getClass() == String.class) {
             return (String) obj;
         }
         try {
-            return objectMapper.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
+            return mapper.writeValueAsString(obj);
+        } catch (JacksonException e) {
+            log.error("json解析出错：{}", obj, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static String toPrettyString(Object obj) {
+        if (obj == null) {
+            return "";
+        }
+        if (obj.getClass() == String.class) {
+            return (String) obj;
+        }
+        try {
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        } catch (JacksonException e) {
             log.error("json解析出错：{}", obj, e);
             throw new RuntimeException(e);
         }
@@ -42,8 +58,17 @@ public class JsonUtil {
 
     public static <T> T toBean(String json, Class<T> tClass) {
         try {
-            return objectMapper.readValue(json, tClass);
-        } catch (IOException e) {
+            return mapper.readValue(json, tClass);
+        } catch (JacksonException e) {
+            log.error("json解析出错：{}", json, e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static JsonNode toNode(String json) {
+        try {
+            return mapper.readTree(json);
+        } catch (JacksonException e) {
             log.error("json解析出错：{}", json, e);
             throw new RuntimeException(e);
         }
@@ -51,8 +76,8 @@ public class JsonUtil {
 
     public static <E> List<E> toList(String json, Class<E> eClass) {
         try {
-            return objectMapper.readValue(json, objectMapper.getTypeFactory().constructCollectionType(List.class, eClass));
-        } catch (IOException e) {
+            return mapper.readValue(json, mapper.getTypeFactory().constructCollectionType(List.class, eClass));
+        } catch (JacksonException e) {
             log.error("json解析出错：{}", json, e);
             throw new RuntimeException(e);
         }
@@ -60,8 +85,8 @@ public class JsonUtil {
 
     public static <K, V> Map<K, V> toMap(String json, Class<K> kClass, Class<V> vClass) {
         try {
-            return objectMapper.readValue(json, objectMapper.getTypeFactory().constructMapType(Map.class, kClass, vClass));
-        } catch (IOException e) {
+            return mapper.readValue(json, mapper.getTypeFactory().constructMapType(Map.class, kClass, vClass));
+        } catch (JacksonException e) {
             log.error("json解析出错：{}", json, e);
             throw new RuntimeException(e);
         }
@@ -69,8 +94,8 @@ public class JsonUtil {
 
     public static <T> T nativeRead(String json, TypeReference<T> type) {
         try {
-            return objectMapper.readValue(json, type);
-        } catch (IOException e) {
+            return mapper.readValue(json, type);
+        } catch (JacksonException e) {
             log.error("json解析出错：{}", json, e);
             throw new RuntimeException(e);
         }
