@@ -92,7 +92,7 @@ public class BaPlugin {
             if (baVo == null) {
                 throw new BotException("爱丽丝出错了");
             }
-            List<BaVo.BaImage> baImages = baVo.getData().toJavaList(BaVo.BaImage.class);
+            List<BaVo.BaImage> baImages = baVo.getData();
             if (baImages == null || baImages.isEmpty()) {
                 throw new BotException("爱丽丝什么都没有找到~");
             }

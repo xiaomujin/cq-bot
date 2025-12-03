@@ -1,7 +1,5 @@
 package com.kuroneko.cqbot.annoPlugin;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
@@ -9,6 +7,7 @@ import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.JsonUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
@@ -19,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -61,12 +61,12 @@ public class DailyPlugin {
     public void daily(Bot bot, AnyMessageEvent event, Matcher matcher) {
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.DAILY, 30, TimeUnit.MINUTES, () -> {
             String zaobaoStr = HttpUtil.get("https://v2.alapi.cn/api/zaobao?format=json&token=eCKR3lL7uFtt9PIm");
-            JSONObject zaobaoObject = JSON.parseObject(zaobaoStr);
-            int code = zaobaoObject.getIntValue("code", 0);
+            JsonNode zaobaoObject = JsonUtil.toNode(zaobaoStr);
+            int code = zaobaoObject.get("code").asInt(0);
             if (code != 200) {
                 throw new BotException("获取日报失败");
             }
-            String imgUrl = zaobaoObject.getJSONObject("data").getString("image");
+            String imgUrl = zaobaoObject.get("data").get("image").asString();
             String imgPath = Constant.BASE_IMG_PATH + "Daily.png";
 
             downloadFile(imgUrl, imgPath);

@@ -1,13 +1,14 @@
 package com.kuroneko.cqbot.vo;
 
-import com.alibaba.fastjson2.JSONArray;
 import lombok.Data;
+
+import java.util.ArrayList;
 
 @Data
 public class BaVo {
     private Integer code = 0;
     private String message;
-    private JSONArray data;
+    private ArrayList<BaImage> data;
 
     @Data
     public static class BaImage {
