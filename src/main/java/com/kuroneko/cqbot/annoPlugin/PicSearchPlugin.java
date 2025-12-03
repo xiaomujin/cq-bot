@@ -1,13 +1,13 @@
 package com.kuroneko.cqbot.annoPlugin;
 
 import cn.hutool.core.lang.Pair;
-import com.alibaba.fastjson2.JSON;
 import com.kuroneko.cqbot.dto.SauceDTO;
 import com.kuroneko.cqbot.dto.SearchMode;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.JsonUtil;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
@@ -164,7 +164,7 @@ public class PicSearchPlugin {
         try {
             String api = "https://saucenao.com/search.php?api_key=" + sauceNaoKey + "&output_type=2&numres=3&db=999&url=" + URLEncoder.encode(img, Charset.defaultCharset());
             String resStr = HttpUtil.get(api);
-            SauceDTO sauceDTO = JSON.parseObject(resStr, SauceDTO.class);
+            SauceDTO sauceDTO = JsonUtil.toBean(resStr, SauceDTO.class);
             if (sauceDTO.getHeader().getLongRemaining() <= 0) throw new BotException("今日的搜索配额已耗尽啦");
             if (sauceDTO.getHeader().getShortRemaining() <= 0) throw new BotException("短时间内搜索配额已耗尽啦");
             if (sauceDTO.getResults() == null || sauceDTO.getResults().isEmpty())
@@ -215,4 +215,3 @@ public class PicSearchPlugin {
         });
     }
 }
-

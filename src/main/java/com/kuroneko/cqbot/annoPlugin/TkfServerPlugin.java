@@ -2,9 +2,6 @@ package com.kuroneko.cqbot.annoPlugin;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.entity.TkfTask;
@@ -18,6 +15,7 @@ import com.kuroneko.cqbot.service.TkfTaskTargetService;
 import com.kuroneko.cqbot.utils.BotUtil;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.JsonUtil;
 import com.kuroneko.cqbot.utils.PuppeteerUtil;
 import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import com.mikuac.shiro.annotation.AnyMessageHandler;
@@ -32,6 +30,7 @@ import com.ruiyun.jvppeteer.api.core.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.JsonNode;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -108,7 +107,7 @@ public class TkfServerPlugin {
             log.info("开始更新任务数据");
             bot.sendMsg(event, "开始更新任务数据", false);
             String request = getQueryRes(QUERY_TASKS);
-            JSONArray jsonArray = JSON.parseObject(request).getJSONObject("data").getJSONArray("tasks");
+            JsonNode jsonArray = JsonUtil.toNode(request).get("data").get("tasks");
             if (jsonArray.isEmpty()) {
                 return "更新失败";
             }
@@ -117,35 +116,40 @@ public class TkfServerPlugin {
             ArrayList<TkfTaskTarget> taskTargets = new ArrayList<>();
             for (int i = 0; i < jsonArray.size(); i++) {
                 Long id = i + 1L;
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String name = jsonObject.getString("name");
+                JsonNode jsonObject = jsonArray.get(i);
+                String name = jsonObject.get("name").asString();
                 TkfTask tkfTask = TkfTask.builder()
                         .id(id)
                         .name(name)
                         .sName(name.replaceAll("[\\s-]", ""))
-                        .traderName(jsonObject.getJSONObject("trader").getString("name"))
-                        .traderImg(jsonObject.getJSONObject("trader").getString("imageLink"))
-                        .taskImg(jsonObject.getString("taskImageLink"))
-                        .minLevel(jsonObject.getInteger("minPlayerLevel"))
-                        .isKappa(jsonObject.getBoolean("kappaRequired"))
-                        .isLightkeeper(jsonObject.getBoolean("lightkeeperRequired"))
-                        .idStr(jsonObject.getString("id"))
+                        .traderName(jsonObject.get("trader").get("name").asString())
+                        .traderImg(jsonObject.get("trader").get("imageLink").asString())
+                        .taskImg(jsonObject.get("taskImageLink").asString())
+                        .minLevel(jsonObject.get("minPlayerLevel").asInt())
+                        .isKappa(jsonObject.get("kappaRequired").asBoolean())
+                        .isLightkeeper(jsonObject.get("lightkeeperRequired").asBoolean())
+                        .idStr(jsonObject.get("id").asString())
                         .build();
-                JSONArray taskRequirements = jsonObject.getJSONArray("taskRequirements");
+                JsonNode taskRequirements = jsonObject.get("taskRequirements");
                 StringBuilder taskSb = new StringBuilder();
                 if (taskRequirements != null && !taskRequirements.isEmpty()) {
                     ArrayList<String> perTaskId = new ArrayList<>();
                     for (int j = 0; j < taskRequirements.size(); j++) {
-                        JSONObject taskRequirement = taskRequirements.getJSONObject(j);
-                        JSONObject task = taskRequirement.getJSONObject("task");
-                        List<String> status = taskRequirement.getList("status", String.class);
+                        JsonNode taskRequirement = taskRequirements.get(j);
+                        JsonNode task = taskRequirement.get("task");
+                        ArrayList<String> status = new ArrayList<>();
+                        if (taskRequirement.get("status").isArray()) {
+                            for (JsonNode node : taskRequirement.get("status")) {
+                                status.add(node.asString());
+                            }
+                        }
                         String collect = status.stream().map(
                                         s -> s.replace("active", "进行中")
                                                 .replace("complete", "完成")
                                                 .replace("failed", "失败"))
                                 .collect(Collectors.joining(",", "(", ")"));
-                        perTaskId.add(task.getString("id"));
-                        taskSb.append("> ").append(task.getString("name").trim()).append(" ").append(collect).append("  \n");
+                        perTaskId.add(task.get("id").asString());
+                        taskSb.append("> ").append(task.get("name").asString().trim()).append(" ").append(collect).append("  \n");
                     }
                     tkfTask.setPreTaskId(String.join("|", perTaskId));
                 }
@@ -155,35 +159,35 @@ public class TkfServerPlugin {
                 tkfTask.setPreTask(taskSb.toString());
 
                 StringBuilder sb = new StringBuilder();
-                sb.append("> EXP ( ").append(jsonObject.getString("experience")).append(" )  \n");
-                JSONObject finishRewards = jsonObject.getJSONObject("finishRewards");
+                sb.append("> EXP ( ").append(jsonObject.get("experience").asString()).append(" )  \n");
+                JsonNode finishRewards = jsonObject.get("finishRewards");
                 if (finishRewards != null) {
-                    JSONArray traderStanding = finishRewards.getJSONArray("traderStanding");
+                    JsonNode traderStanding = finishRewards.get("traderStanding");
                     if (traderStanding != null && !traderStanding.isEmpty()) {
                         for (int j = 0; j < traderStanding.size(); j++) {
-                            JSONObject traderStand = traderStanding.getJSONObject(j);
-                            String tName = traderStand.getJSONObject("trader").getString("name");
-                            String count = traderStand.getString("standing");
+                            JsonNode traderStand = traderStanding.get(j);
+                            String tName = traderStand.get("trader").get("name").asString();
+                            String count = traderStand.get("standing").asString();
                             sb.append("> ").append(tName).append(" ( ").append(count).append(" )  \n");
                         }
                     }
 
-                    JSONArray items = finishRewards.getJSONArray("items");
+                    JsonNode items = finishRewards.get("items");
                     if (items != null && !items.isEmpty()) {
                         for (int j = 0; j < items.size(); j++) {
-                            JSONObject itemsJSONObject = items.getJSONObject(j);
-                            String tName = itemsJSONObject.getJSONObject("item").getString("name");
-                            String count = itemsJSONObject.getString("count");
+                            JsonNode itemsJSONObject = items.get(j);
+                            String tName = itemsJSONObject.get("item").get("name").asString();
+                            String count = itemsJSONObject.get("count").asString();
                             sb.append("> ").append(tName).append(" ( ").append(count).append(" )  \n");
                         }
                     }
 
-                    JSONArray skillLevelReward = finishRewards.getJSONArray("skillLevelReward");
+                    JsonNode skillLevelReward = finishRewards.get("skillLevelReward");
                     if (skillLevelReward != null && !skillLevelReward.isEmpty()) {
                         for (int j = 0; j < skillLevelReward.size(); j++) {
-                            JSONObject skillLevel = skillLevelReward.getJSONObject(j);
-                            String tName = skillLevel.getString("name");
-                            String count = skillLevel.getString("level");
+                            JsonNode skillLevel = skillLevelReward.get(j);
+                            String tName = skillLevel.get("name").asString();
+                            String count = skillLevel.get("level").asString();
                             sb.append("> ").append(tName).append(" ( ").append(count).append(" )  \n");
                         }
                     }
@@ -194,24 +198,24 @@ public class TkfServerPlugin {
                 tkfTask.setFinishReward(sb.toString());
 
                 tkfTasks.add(tkfTask);
-                if (!jsonObject.containsKey("objectives")) {
+                if (!jsonObject.has("objectives")) {
                     continue;
                 }
-                JSONArray objectives = jsonObject.getJSONArray("objectives");
+                JsonNode objectives = jsonObject.get("objectives");
                 for (int j = 0; j < objectives.size(); j++) {
-                    JSONObject target = objectives.getJSONObject(j);
-                    Integer count = target.getIntValue("count", 0);
-                    String typename = target.getString("__typename");
+                    JsonNode target = objectives.get(j);
+                    Integer count = target.has("count") ? target.get("count").asInt(0) : 0;
+                    String typename = target.get("__typename").asString();
                     if ("TaskObjectiveSkill".equalsIgnoreCase(typename)) {
-                        count = target.getJSONObject("skillLevel").getInteger("level");
+                        count = target.get("skillLevel").get("level").asInt();
                     }
                     TkfTaskTarget tkfTaskTarget = TkfTaskTarget.builder()
                             .parentId(id)
-                            .type(target.getString("type"))
-                            .description(target.getString("description"))
-                            .isOptional(target.getBooleanValue("optional", false))
+                            .type(target.get("type").asString())
+                            .description(target.get("description").asString())
+                            .isOptional(target.get("optional").asBoolean(false))
                             .count(count)
-                            .isRaid(target.getBooleanValue("foundInRaid", false))
+                            .isRaid(target.get("foundInRaid").asBoolean(false))
                             .build();
                     taskTargets.add(tkfTaskTarget);
                 }
@@ -425,7 +429,7 @@ public class TkfServerPlugin {
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(JSON.toJSONString(queryMap)))
+                .POST(HttpRequest.BodyPublishers.ofString(JsonUtil.toString(queryMap)))
                 .build();
         return HttpUtil.request(httpClient, url, httpRequest);
     }
@@ -527,84 +531,78 @@ public class TkfServerPlugin {
             if (text.isEmpty()) {
                 return "";
             }
-            JSONArray jsonArray;
+            JsonNode jsonArray;
             if (text.length() == 24) {
                 String formatted = QUERY_ITEM_ID.formatted(text);
                 String request = getQueryRes(formatted);
-                JSONObject jsonObject = JSON.parseObject(request).getJSONObject("data").getJSONObject("item");
-                if (jsonObject == null) {
+                JsonNode jsonObject = JsonUtil.toNode(request).get("data").get("item");
+                if (jsonObject == null || jsonObject.isNull()) {
                     return "查询失败或物品不存在：" + text;
                 }
-                jsonArray = JSONArray.of(jsonObject);
+                jsonArray = JsonUtil.toNode("[" + JsonUtil.toString(jsonObject) + "]");
             } else {
                 String formatted = QUERY_ITEMS.formatted(text);
                 String request = getQueryRes(formatted);
-                jsonArray = JSON.parseObject(request).getJSONObject("data").getJSONArray("items");
+                jsonArray = JsonUtil.toNode(request).get("data").get("items");
                 if (jsonArray.isEmpty()) {
                     return "查询失败或物品不存在：" + text;
                 }
             }
 
-            JSONObject item = jsonArray.getJSONObject(0);
+            JsonNode item = jsonArray.get(0);
 
-            int avg24hPrice = item.getIntValue("avg24hPrice", 0);
-            int lastLowPrice = item.getIntValue("lastLowPrice", 0);
-            String updated = item.getString("updated");
-            String id = item.getString("id");
+            int avg24hPrice = item.has("avg24hPrice") ? item.get("avg24hPrice").asInt(0) : 0;
+            int lastLowPrice = item.has("lastLowPrice") ? item.get("lastLowPrice").asInt(0) : 0;
+            String updated = item.get("updated").asString();
+            String id = item.get("id").asString();
             OffsetDateTime offsetDateTime = OffsetDateTime.parse(updated, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             LocalDateTime localDateTime = offsetDateTime.toLocalDateTime();
             String formatTime = LocalDateTimeUtil.formatNormal(localDateTime);
-            JSONArray sellFor = item.getJSONArray("sellFor");
+            JsonNode sellFor = item.get("sellFor");
             Integer maxPrice = 0;
-            for (Object o : sellFor) {
-                JSONObject sFor = (JSONObject) o;
-                String typename = sFor.getJSONObject("vendor").getString("__typename");
-                Integer priceRUB = sFor.getInteger("priceRUB");
+            for (JsonNode sFor : sellFor) {
+                String typename = sFor.get("vendor").get("__typename").asString();
+                Integer priceRUB = sFor.get("priceRUB").asInt(0);
                 if ("TraderOffer".equalsIgnoreCase(typename) && priceRUB > maxPrice) {
                     maxPrice = priceRUB;
                 }
             }
-            JSONArray usedInTasks = item.getJSONArray("usedInTasks");
+            JsonNode usedInTasks = item.get("usedInTasks");
             StringBuilder taskSB = new StringBuilder();
-            for (Object usedInTask : usedInTasks) {
-                JSONObject task = (JSONObject) usedInTask;
+            for (JsonNode task : usedInTasks) {
                 Integer needNum = 0;
                 Boolean foundInRaid = false;
-                task.getString("name");
-                JSONArray objectives = task.getJSONArray("objectives");
-                for (Object objective : objectives) {
-                    JSONObject obj = (JSONObject) objective;
-                    if (obj.getString("type").equalsIgnoreCase("giveItem")) {
-                        JSONArray objItems = obj.getJSONArray("items");
-                        for (Object objItem : objItems) {
-                            JSONObject objItemJ = (JSONObject) objItem;
-                            if (objItemJ.getString("id").equalsIgnoreCase(id)) {
-                                needNum = obj.getInteger("count");
-                                foundInRaid = obj.getBoolean("foundInRaid");
+                task.get("name").asString();
+                JsonNode objectives = task.get("objectives");
+                for (JsonNode obj : objectives) {
+                    if (obj.get("type").asString().equalsIgnoreCase("giveItem")) {
+                        JsonNode objItems = obj.get("items");
+                        for (JsonNode objItem : objItems) {
+                            if (objItem.get("id").asString().equalsIgnoreCase(id)) {
+                                needNum = obj.get("count").asInt(0);
+                                foundInRaid = obj.get("foundInRaid").asBoolean(false);
                                 break;
                             }
                         }
                     }
                 }
 
-                taskSB.append("> ").append(task.getString("name")).append("( ").append(needNum).append(foundInRaid ? "√" : "").append(" )  \n");
+                taskSB.append("> ").append(task.get("name").asString()).append("( ").append(needNum).append(foundInRaid ? "√" : "").append(" )  \n");
             }
             if (taskSB.isEmpty()) {
                 taskSB.append("> 无  \n");
             }
 
             StringBuilder craftSB = new StringBuilder();
-            JSONArray craftsUses = item.getJSONArray("craftsUsing");
-            for (Object craftsUs : craftsUses) {
-                JSONObject craft = (JSONObject) craftsUs;
-                String name = craft.getJSONObject("station").getString("name");
-                String level = craft.getString("level");
+            JsonNode craftsUses = item.get("craftsUsing");
+            for (JsonNode craft : craftsUses) {
+                String name = craft.get("station").get("name").asString();
+                String level = craft.get("level").asString();
                 Integer count = 0;
-                JSONArray requiredItems = craft.getJSONArray("requiredItems");
-                for (Object requiredItem : requiredItems) {
-                    JSONObject requiredItemJ = (JSONObject) requiredItem;
-                    if (requiredItemJ.getJSONObject("item").getString("id").equalsIgnoreCase(id)) {
-                        count = requiredItemJ.getInteger("count");
+                JsonNode requiredItems = craft.get("requiredItems");
+                for (JsonNode requiredItem : requiredItems) {
+                    if (requiredItem.get("item").get("id").asString().equalsIgnoreCase(id)) {
+                        count = requiredItem.get("count").asInt(0);
                         break;
                     }
                 }
@@ -614,7 +612,7 @@ public class TkfServerPlugin {
                 craftSB.append("> 无  ");
             }
 
-            String mdText = "![icon #35px #35px](" + item.getString("iconLink") + "): " + item.getString("name") + "\n" +
+            String mdText = "![icon #35px #35px](" + item.get("iconLink").asString() + "): " + item.get("name").asString() + "\n" +
                     "***\n" +
                     "24h均价: " + (avg24hPrice != 0 ? avg24hPrice + " ₽" : "跳蚤禁售") + "   \n" +
                     "跳蚤现价: " + (avg24hPrice != 0 ? lastLowPrice + " ₽" : "跳蚤禁售") + "   \n" +
@@ -627,8 +625,8 @@ public class TkfServerPlugin {
             Keyboard keyboard = Keyboard.builder();
             if (jsonArray.size() > 1) {
                 for (int i = 1; i < jsonArray.size(); i++) {
-                    String idOther = jsonArray.getJSONObject(i).getString("id");
-                    String nameOther = jsonArray.getJSONObject(i).getString("name");
+                    String idOther = jsonArray.get(i).get("id").asString();
+                    String nameOther = jsonArray.get(i).get("name").asString();
                     Keyboard.Button button = Keyboard.textButtonBuilder()
                             .label(nameOther)
                             .data("跳蚤 " + idOther)
@@ -644,7 +642,7 @@ public class TkfServerPlugin {
                 keyboard.addRow().addButton(button);
             }
 //            List<ArrayMsg> arrayMsgs = ArrayMsgUtils.builder().markdown(mdText).keyboard(keyboard).buildList();
-            String imgId = item.getString("id");
+            String imgId = item.get("id").asString();
             CacheUtil.put(imgId, mdText, 5L, TimeUnit.SECONDS);
             Page page = PuppeteerUtil.getNewPage(BotUtil.getLocalHost() + "Markdown/" + imgId, 500, 200);
             String imgPath = Constant.BASE_IMG_PATH + "md/" + imgId + ".png";
@@ -654,4 +652,3 @@ public class TkfServerPlugin {
     }
 
 }
-

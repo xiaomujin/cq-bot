@@ -1,8 +1,5 @@
 package com.kuroneko.cqbot.annoPlugin;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.core.annotation.BotHandler;
 import com.kuroneko.cqbot.core.annotation.BotMsgHandler;
@@ -13,6 +10,7 @@ import com.kuroneko.cqbot.enums.sysPluginRegex;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.utils.CacheUtil;
 import com.kuroneko.cqbot.utils.HttpUtil;
+import com.kuroneko.cqbot.utils.JsonUtil;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -50,12 +49,12 @@ public class TkfPlugin {
         Integer msgId = event.getMessageId();
         ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.TKF_BOSS_CHANCE, 10, TimeUnit.MINUTES, () -> {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
-            Optional<JSONObject> queryRes = getQueryRes2(QUERY_BOSS_CHANCE);
+            Optional<JsonNode> queryRes = getQueryRes2(QUERY_BOSS_CHANCE);
             if (queryRes.isEmpty()) {
                 return "查询失败";
             }
-            JSONArray jsonArray = queryRes.get().getJSONArray("maps");
-            List<Tkf.Map> maps = jsonArray.toJavaList(Tkf.Map.class);
+            JsonNode jsonArray = queryRes.get().get("maps");
+            List<Tkf.Map> maps = JsonUtil.toList(jsonArray.toString(), Tkf.Map.class);
             // 整理数据
             HashMap<String, HashMap<String, List<Double>>> hashMap = new HashMap<>();
             for (Tkf.Map map : maps) {
@@ -83,7 +82,7 @@ public class TkfPlugin {
     }
 
 
-    private Optional<JSONObject> getQueryRes(String query) {
+    private Optional<JsonNode> getQueryRes(String query) {
         String url = "https://api.tarkov.dev/graphql";
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put("query", query);
@@ -102,12 +101,12 @@ public class TkfPlugin {
             log.error(responseBody);
             return Optional.empty();
         }
-        JSONObject parse = JSON.parseObject(responseBody);
-        JSONObject bodyData = parse.getJSONObject("data");
+        JsonNode parse = JsonUtil.toNode(responseBody);
+        JsonNode bodyData = parse.get("data");
         return Optional.ofNullable(bodyData);
     }
 
-    private static Optional<JSONObject> getQueryRes2(String query) {
+    private static Optional<JsonNode> getQueryRes2(String query) {
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put("query", query);
         String url = "https://api.tarkov.dev/graphql";
@@ -116,11 +115,11 @@ public class TkfPlugin {
                 .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(JSON.toJSONString(queryMap)))
+                .POST(HttpRequest.BodyPublishers.ofString(JsonUtil.toString(queryMap)))
                 .build();
         String responseBody = HttpUtil.request(httpClient, url, httpRequest);
-        JSONObject parse = JSON.parseObject(responseBody);
-        JSONObject bodyData = parse.getJSONObject("data");
+        JsonNode parse = JsonUtil.toNode(responseBody);
+        JsonNode bodyData = parse.get("data");
         return Optional.ofNullable(bodyData);
     }
 
@@ -138,4 +137,3 @@ public class TkfPlugin {
             }
             """;
 }
-

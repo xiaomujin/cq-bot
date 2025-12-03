@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.controller;
 
-import com.alibaba.fastjson2.JSON;
+import com.kuroneko.cqbot.utils.JsonUtil;
+import tools.jackson.databind.JsonNode;
 import com.kuroneko.cqbot.entity.Bullet;
 import com.kuroneko.cqbot.service.BulletService;
 import com.kuroneko.cqbot.utils.CacheUtil;
@@ -55,7 +56,8 @@ public class BulletCtrl {
             System.out.println(e.getMessage());
         }
         model.addAttribute("name", name);
-        model.addAttribute("dataList", JSON.parseArray(dataStr));
+        JsonNode dataList = JsonUtil.toNode(dataStr);
+        model.addAttribute("dataList", dataList);
         return "Life";
     }
 }

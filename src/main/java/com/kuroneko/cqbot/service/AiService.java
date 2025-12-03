@@ -1,23 +1,24 @@
 package com.kuroneko.cqbot.service;
 
 import cn.hutool.crypto.digest.DigestUtil;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.constant.Constant;
-import jdk.jfr.consumer.EventStream;
+import com.kuroneko.cqbot.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -105,9 +106,9 @@ public class AiService {
         if (tokenTime == null || tokenTime.time + 86400000 < System.currentTimeMillis()) {
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
             ResponseEntity<String> loginTmp = restTemplate.postForEntity("https://chat.scnet.cn/api/oauth/LoginTemp", requestEntity, String.class);
-            JSONObject loginTmpObject = JSON.parseObject(loginTmp.getBody());
+            JsonNode loginTmpObject = JsonUtil.toNode(loginTmp.getBody());
             assert loginTmpObject != null;
-            String das_app_client_token_id = loginTmpObject.getString("data");
+            String das_app_client_token_id = loginTmpObject.get("data").asString();
             tokenTime = new TokenTime();
             tokenTime.token = das_app_client_token_id;
             tokenTime.time = System.currentTimeMillis();
@@ -123,11 +124,11 @@ public class AiService {
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
         ResponseEntity<String> ask = restTemplate.postForEntity("https://chat.scnet.cn/api/chat/Ask", requestEntity, String.class);
-        JSONObject askObject = JSON.parseObject(ask.getBody());
+        JsonNode askObject = JsonUtil.toNode(ask.getBody());
         assert askObject != null;
-        JSONObject askData = askObject.getJSONObject("data");
-        String messageId = askData.getString("messageId");
-        tokenTime.conversationId = askData.getJSONObject("conversation").getString("ConversationId");
+        JsonNode askData = askObject.get("data");
+        String messageId = askData.get("messageId").asString();
+        tokenTime.conversationId = askData.get("conversation").get("ConversationId").asString();
         request.clear();
         requestEntity = new HttpEntity<>(request, headers);
 
@@ -174,7 +175,7 @@ public class AiService {
             DS_TOKEN_MAP.put(groupId, tokenTime);
         }
 //        int modelId = 120;
-        int modelId = 11;
+        int modelId = 10;
         request.put("modelId", modelId);
         request.put("conversationId", tokenTime.conversationId);
         request.put("content", text);
@@ -188,29 +189,29 @@ public class AiService {
 
         BufferedReader reader = null;
         StringBuilder resBody = new StringBuilder();
-        ArrayList<JSONObject> resList = new ArrayList<>();
-        try {
-            ResponseEntity<Resource> entity = restTemplate.exchange("https://www.scnet.cn/acx/chatbot/v1/chat/completion", HttpMethod.POST, requestEntity, Resource.class);
-            assert entity.getBody() != null;
-            reader = new BufferedReader(new InputStreamReader(entity.getBody().getInputStream(), StandardCharsets.UTF_8));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("data:")) {
-                    String data = line.substring("data:".length());
-                    resList.add(JSON.parseObject(data));
+        ArrayList<JsonNode> resList = new ArrayList<>();
+            try {
+                ResponseEntity<Resource> entity = restTemplate.exchange("https://www.scnet.cn/acx/chatbot/v1/chat/completion", HttpMethod.POST, requestEntity, Resource.class);
+                assert entity.getBody() != null;
+                reader = new BufferedReader(new InputStreamReader(entity.getBody().getInputStream(), StandardCharsets.UTF_8));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("data:")) {
+                        String data = line.substring("data:".length());
+                        resList.add(JsonUtil.toNode(data));
+                    }
                 }
+            } catch (Exception e) {
+                log.error("提问获取失败", e);
+                return "emmmm，出错了";
+            } finally {
+                IOUtils.closeQuietly(reader);
             }
-        } catch (Exception e) {
-            log.error("提问获取失败", e);
-            return "emmmm，出错了";
-        } finally {
-            IOUtils.closeQuietly(reader);
-        }
-        String conversationId = "";
-        for (JSONObject jsonObject : resList) {
-            conversationId = jsonObject.getString("conversationId");
-            resBody.append(jsonObject.getString("content"));
-        }
+            String conversationId = "";
+            for (JsonNode jsonObject : resList) {
+                conversationId = jsonObject.get("conversationId").asString();
+                resBody.append(jsonObject.get("content").asString());
+            }
         tokenTime.conversationId = conversationId;
         String bodyString = resBody.toString();
         int lastIndexOfT = bodyString.lastIndexOf("</think>");

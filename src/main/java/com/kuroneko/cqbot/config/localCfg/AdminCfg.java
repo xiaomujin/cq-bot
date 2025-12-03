@@ -13,6 +13,6 @@ import java.util.List;
 public class AdminCfg extends ConfigSave implements Serializable {
     private String startedOut = "系统启动成功!";
     private List<Long> adminList = new ArrayList<>(List.of(1419229777L, 728109103L));
-    private Integer narakaSeasonId = 9620016;
+    private Integer narakaSeasonId = 9620018;
 }
 

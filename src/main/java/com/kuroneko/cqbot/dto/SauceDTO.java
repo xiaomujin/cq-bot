@@ -1,6 +1,6 @@
 package com.kuroneko.cqbot.dto;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -12,9 +12,9 @@ public class SauceDTO {
 
     @Data
     public static class Header {
-        @JSONField(name = "long_remaining")
+        @JsonProperty("long_remaining")
         private Integer shortRemaining;
-        @JSONField(name = "short_remaining")
+        @JsonProperty("short_remaining")
         private Integer longRemaining;
     }
 
@@ -26,37 +26,37 @@ public class SauceDTO {
 
     @Data
     public static class ResultData {
-        @JSONField(name = "ext_urls")
+        @JsonProperty("ext_urls")
         private List<String> extUrls;
-        @JSONField(name = "member_id")
+        @JsonProperty("member_id")
         private Long authorId;
-        @JSONField(name = "member_name")
+        @JsonProperty("member_name")
         private String authorName;
-        @JSONField(name = "pixiv_id")
+        @JsonProperty("pixiv_id")
         private Long pixivId;
-        @JSONField(name = "title")
+        @JsonProperty("title")
         private String title;
-        @JSONField(name = "source")
+        @JsonProperty("source")
         private String source;
-        @JSONField(name = "eng_name")
+        @JsonProperty("eng_name")
         private String engName;
-        @JSONField(name = "jp_name")
+        @JsonProperty("jp_name")
         private String jpName;
-        @JSONField(name = "tweet_id")
+        @JsonProperty("tweet_id")
         private String tweetId;
-        @JSONField(name = "twitter_user_id")
+        @JsonProperty("twitter_user_id")
         private String twitterUserId;
-        @JSONField(name = "twitter_user_handle")
+        @JsonProperty("twitter_user_handle")
         private String twitterUserHandle;
     }
 
     @Data
     public static class ResultHeader {
-        @JSONField(name = "index_id")
+        @JsonProperty("index_id")
         private Integer indexId;
-        @JSONField(name = "similarity")
+        @JsonProperty("similarity")
         private String similarity;
-        @JSONField(name = "thumbnail")
+        @JsonProperty("thumbnail")
         private String thumbnail;
     }
 }

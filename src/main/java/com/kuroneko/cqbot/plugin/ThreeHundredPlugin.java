@@ -1,7 +1,8 @@
 package com.kuroneko.cqbot.plugin;
 
 import cn.hutool.core.io.FileUtil;
-import com.alibaba.fastjson2.JSONObject;
+import com.kuroneko.cqbot.utils.JsonUtil;
+import tools.jackson.databind.JsonNode;
 import com.kuroneko.cqbot.constant.CmdConst;
 import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.utils.BotUtil;
@@ -66,12 +67,13 @@ public class ThreeHundredPlugin extends BotPlugin {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         HttpEntity<String> requestEntity = new HttpEntity<>(entity, headers);
-        JSONObject jsonObject = restTemplate.postForObject("https://300report.jumpw.com/api/battle/searchNormal?type=h5", requestEntity, JSONObject.class);
-        assert jsonObject != null;
-        if (jsonObject.getBoolean("success").equals(Boolean.FALSE)) {
-            return MsgUtils.builder().text(jsonObject.getString("msg"));
+        String response = restTemplate.postForObject("https://300report.jumpw.com/api/battle/searchNormal?type=h5", requestEntity, String.class);
+        assert response != null;
+        JsonNode jsonObject = JsonUtil.toNode(response);
+        if (!jsonObject.get("success").asBoolean()) {
+            return MsgUtils.builder().text(jsonObject.get("msg").asString());
         }
-        String roleID = jsonObject.getJSONObject("data").getLong("RoleID").toString();
+        String roleID = jsonObject.get("data").get("RoleID").asString();
         String fun = """
                 ()=>{
                     document.querySelectorAll(".select li a")[%s].click();

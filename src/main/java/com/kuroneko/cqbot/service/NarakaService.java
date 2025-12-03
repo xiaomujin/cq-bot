@@ -1,6 +1,6 @@
 package com.kuroneko.cqbot.service;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.kuroneko.cqbot.utils.JsonUtil;
 import com.kuroneko.cqbot.dto.Naraka;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 @Slf4j
 @Service
@@ -28,16 +29,17 @@ public class NarakaService {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.COOKIE, "session=6-F1vljKhCcvBwyLB395cvFuvRHv4c-6u-Z0WIf7");
         headers.add(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36");
-        JSONObject httpObject = new JSONObject();
-        HttpEntity<Object> httpEntity = new HttpEntity<>(httpObject, headers);
-        ResponseEntity<JSONObject> authRes = restTemplate.exchange(authUrl, HttpMethod.GET, httpEntity, JSONObject.class);
-        JSONObject authResBody = authRes.getBody();
-        if (!authRes.getStatusCode().is2xxSuccessful() || authResBody == null || !authResBody.getInteger("code").equals(1000)) {
+        // 使用空字符串作为请求体
+        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+        ResponseEntity<String> authRes = restTemplate.exchange(authUrl, HttpMethod.GET, httpEntity, String.class);
+        JsonNode authResBody = JsonUtil.toNode(authRes.getBody());
+        if (!authRes.getStatusCode().is2xxSuccessful() || authResBody == null || authResBody.get("code").asInt() != 1000) {
             return "用户不存在";
         }
         String careerUrl = "https://record.uu.163.com/api/naraka/career?game_mode=" + gameMode + "&season_id=" + seasonId;
-        ResponseEntity<JSONObject> careerRes = restTemplate.exchange(careerUrl, HttpMethod.GET, httpEntity, JSONObject.class);
-        Naraka.Career career = careerRes.getBody().getJSONObject("data").to(Naraka.Career.class);
+        ResponseEntity<String> careerRes = restTemplate.exchange(careerUrl, HttpMethod.GET, httpEntity, String.class);
+        JsonNode careerResBody = JsonUtil.toNode(careerRes.getBody());
+        Naraka.Career career = JsonUtil.toBean(careerResBody.get("data").toString(), Naraka.Career.class);
         return MsgUtils.builder().img(career.getGradeIconUrl())
                 .text(career.getRoleName() + ": " + career.getRoleId() + "\n" +
                         career.getGradeName() + "  " + career.getRankScore() + "分\n" +

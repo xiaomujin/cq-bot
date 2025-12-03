@@ -1,102 +1,102 @@
 package com.kuroneko.cqbot.dto;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 public class Naraka {
     @Data
     public static class Career {
-        @JSONField(name = "_id")
+        @JsonProperty("_id")
         private String _id;
 
-        @JSONField(name = "role_id")
+        @JsonProperty("role_id")
         private String roleId;
 
-        @JSONField(name = "role_name")
+        @JsonProperty("role_name")
         private String roleName;
 
-        @JSONField(name = "server_id")
+        @JsonProperty("server_id")
         private int serverId;
 
-        @JSONField(name = "server_name")
+        @JsonProperty("server_name")
         private String serverName;
 
-        @JSONField(name = "season_id")
+        @JsonProperty("season_id")
         private int seasonId;
 
-        @JSONField(name = "role_level")
+        @JsonProperty("role_level")
         private int roleLevel;
 
-        @JSONField(name = "head_icon")
+        @JsonProperty("head_icon")
         private int headIcon;
 
-        @JSONField(name = "head_icon_url")
+        @JsonProperty("head_icon_url")
         private String headIconUrl;
 
-        @JSONField(name = "game_time")
+        @JsonProperty("game_time")
         private int gameTime;
 
-        @JSONField(name = "total_time")
+        @JsonProperty("total_time")
         private int totalTime;
 
-        @JSONField(name = "game_mode")
+        @JsonProperty("game_mode")
         private int gameMode;
 
-        @JSONField(name = "grade_id")
+        @JsonProperty("grade_id")
         private int gradeId;
 
-        @JSONField(name = "grade_name")
+        @JsonProperty("grade_name")
         private String gradeName;
 
-        @JSONField(name = "grade_icon_url")
+        @JsonProperty("grade_icon_url")
         private String gradeIconUrl;
 
-        @JSONField(name = "rank_score")
+        @JsonProperty("rank_score")
         private int rankScore;
 
-        @JSONField(name = "round")
+        @JsonProperty("round")
         private int round;
 
-        @JSONField(name = "win")
+        @JsonProperty("win")
         private int win;
 
-        @JSONField(name = "top_five")
+        @JsonProperty("top_five")
         private int topFive;
 
-        @JSONField(name = "survive_time")
+        @JsonProperty("survive_time")
         private int surviveTime;
 
-        @JSONField(name = "kill")
+        @JsonProperty("kill")
         private int kill;
 
-        @JSONField(name = "damage")
+        @JsonProperty("damage")
         private int damage;
 
-        @JSONField(name = "cure")
+        @JsonProperty("cure")
         private int cure;
 
-        @JSONField(name = "rescue")
+        @JsonProperty("rescue")
         private int rescue;
 
-        @JSONField(name = "dead")
+        @JsonProperty("dead")
         private int dead;
 
-        @JSONField(name = "max_kill")
+        @JsonProperty("max_kill")
         private int maxKill;
 
-        @JSONField(name = "max_damage")
+        @JsonProperty("max_damage")
         private int maxDamage;
 
-        @JSONField(name = "max_cure")
+        @JsonProperty("max_cure")
         private int maxCure;
 
-        @JSONField(name = "max_survive_time")
+        @JsonProperty("max_survive_time")
         private int maxSurviveTime;
 
-        @JSONField(name = "max_rescue")
+        @JsonProperty("max_rescue")
         private int maxRescue;
 
-        @JSONField(name = "update_time")
+        @JsonProperty("update_time")
         private String updateTime;
     }
 }

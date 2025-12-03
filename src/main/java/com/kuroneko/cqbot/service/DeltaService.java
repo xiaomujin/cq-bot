@@ -1,6 +1,7 @@
 package com.kuroneko.cqbot.service;
 
-import com.alibaba.fastjson2.JSONObject;
+import com.kuroneko.cqbot.utils.JsonUtil;
+import tools.jackson.databind.JsonNode;
 import com.kuroneko.cqbot.exception.BotException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,27 +23,27 @@ public class DeltaService {
     private String version = "";
 
     public void updateCertificate() {
-        JSONObject resJSONObject = getResJSONObject("https://www.kkrb.net/getMenu");
-        version = resJSONObject.getString("built_ver");
+        JsonNode resJSONObject = getResJSONObject("https://www.kkrb.net/getMenu");
+        version = resJSONObject.get("built_ver").asText();
     }
 
-    public JSONObject getSwatUpgradeData() {
+    public JsonNode getSwatUpgradeData() {
         return getResJSONObject("https://www.kkrb.net/getSwatUpgradeData");
     }
 
-    public JSONObject getResJSONObject(String url) {
+    public JsonNode getResJSONObject(String url) {
         HttpEntity<String> httpEntity = getHttpEntity();
-        ResponseEntity<JSONObject> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, JSONObject.class);
-        JSONObject resBody = res.getBody();
+        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        JsonNode resBody = JsonUtil.toNode(res.getBody());
         assert resBody != null;
-        Integer code = resBody.getInteger("code");
+        Integer code = resBody.get("code").asInt();
         if (!code.equals(1)) {
             throw new BotException("获取数据失败");
         }
         List<String> cookies = res.getHeaders().get("Set-Cookie");
         if (cookies != null) {
             for (String cookie : cookies) {
-                String[] parts = cookie.split(";");
+                String[] parts = cookie.split(";\s*");
                 for (String part : parts) {
                     if (part.trim().startsWith("PHPSESSID=")) {
                         phpSessId = part.trim().substring("PHPSESSID=".length());

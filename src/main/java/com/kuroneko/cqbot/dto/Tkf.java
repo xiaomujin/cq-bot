@@ -1,6 +1,6 @@
 package com.kuroneko.cqbot.dto;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -8,25 +8,25 @@ import java.util.List;
 public class Tkf {
     @Data
     public static class Map {
-        @JSONField(name = "name")
+        @JsonProperty("name")
         private String name;
 
-        @JSONField(name = "bosses")
+        @JsonProperty("bosses")
         private List<Boss> bosses;
     }
 
     @Data
     public static class Boss {
-        @JSONField(name = "spawnChance")
+        @JsonProperty("spawnChance")
         private Double spawnChance;
 
-        @JSONField(name = "boss")
+        @JsonProperty("boss")
         private BossDetails boss;
     }
 
     @Data
     public static class BossDetails {
-        @JSONField(name = "name")
+        @JsonProperty("name")
         private String name;
     }
 }

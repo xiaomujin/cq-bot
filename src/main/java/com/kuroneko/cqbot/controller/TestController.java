@@ -1,6 +1,5 @@
 package com.kuroneko.cqbot.controller;
 
-import com.alibaba.fastjson2.JSONObject;
 import com.kuroneko.cqbot.entity.WordCloud;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.service.*;
@@ -16,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,6 +41,7 @@ public class TestController {
     private final BiLiService biLiService;
     private final BulletService bulletService;
     private final RestTemplate restTemplate;
+    private final NarakaService narakaService;
     private final AiService aiService;
     private final TarKovMarketService tarKovMarketService;
     private final WordCloudService wordCloudService;
@@ -61,19 +62,18 @@ public class TestController {
 
     @RequestMapping(value = "/testAi")
     public String testAi() {
-        String scnetDS = aiService.getScnetDS2(1, "你好");
+        String scnetDS = aiService.getScnetDS2(1, "现在的时间是");
         log.info(scnetDS);
         return scnetDS;
     }
 
     @RequestMapping(value = "/testTarKovMarket")
     public Object testTarKovMarket() {
-        Collection<TarKovMarketVo> search = tarKovMarketService.search("btc");
-        return search;
+        return narakaService.getRecord("诗与单相思", 1, 9620018);
     }
 
     @RequestMapping(value = "/testDelta")
-    public JSONObject testDelta() {
+    public JsonNode testDelta() {
         deltaService.updateCertificate();
         return deltaService.getSwatUpgradeData();
     }
