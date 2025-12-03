@@ -39,7 +39,7 @@ public class PuppeteerUtil {
         CookieParam cookieParam = new CookieParam();
         cookieParam.setUrl("https://t.bilibili.com");
         cookieParam.setName("buvid3");
-        cookieParam.setValue("46C88013-513D-84FD-05D6-4A5A546E8A7E92960infoc");
+        cookieParam.setValue("D9440E6F-A342-4CD6-461C-A66BCB5CA5A555172infoc");
         cookieParam.setDomain(".bilibili.com");
         cookieParam.setPath("/");
         cookieParam.setExpires(1990454302000L);
@@ -47,7 +47,7 @@ public class PuppeteerUtil {
         CookieParam cookieParam2 = new CookieParam();
         cookieParam2.setUrl("https://www.bilibili.com");
         cookieParam2.setName("buvid3");
-        cookieParam2.setValue("46C88013-513D-84FD-05D6-4A5A546E8A7E92960infoc");
+        cookieParam2.setValue("D9440E6F-A342-4CD6-461C-A66BCB5CA5A555172infoc");
         cookieParam2.setDomain(".bilibili.com");
         cookieParam2.setPath("/");
         cookieParam2.setExpires(1990454302000L);
