@@ -7,7 +7,7 @@ _✨ 基于 [Shiro](https://github.com/MisakaTAT/Shiro) QQ机器人工具 ✨_
 </div>
 
 <p align="center">
-    <a href="https://www.oracle.com/java/technologies/downloads/"><img src="https://img.shields.io/badge/JDK-21+-brightgreen.svg?style=flat-square" alt="jdk-version"></a>
+    <a href="https://www.oracle.com/java/technologies/downloads/"><img src="https://img.shields.io/badge/JDK-25+-brightgreen.svg?style=flat-square" alt="jdk-version"></a>
     <a href="https://github.com/xiaomujin/cq-bot"><img src="https://img.shields.io/badge/GitHub-blue.svg?style=flat-square" alt="GitCode"></a>
     <a href="https://gitee.com/Kuro_Neko_Ruri/cq-bot"><img src="https://img.shields.io/badge/Gitee-blue.svg?style=flat-square" alt="GitCode"></a>
     <a href="https://gitcode.com/KuroNekovo/cq-bot/overview"><img src="https://img.shields.io/badge/GitCode-blue.svg?style=flat-square" alt="GitCode"></a>
@@ -26,7 +26,7 @@ _✨ 基于 [Shiro](https://github.com/MisakaTAT/Shiro) QQ机器人工具 ✨_
 
 # QuickStart
 
-JDK21 以上的开发环境运行即可
+JDK25 以上的开发环境运行即可
 
 # Client
 
