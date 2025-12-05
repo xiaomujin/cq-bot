@@ -30,4 +30,5 @@ public class Regex {
     public static final String PIC_TEXT = "^图语 (?<text>.*)";
     public static final String TKF_BOSS_CHANCE = "^(?i)(boss(刷|概))(?<text>.*)";
     public static final String NARAKA_RECORD = "^(?i)(战绩|record)(?<text>.*)";
+    public static final String DF_MARKET = "^(?i)(集市|market)(?<text>.*)";
 }
