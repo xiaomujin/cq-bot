@@ -8,7 +8,6 @@ import java.util.List;
 public class KkrbData<T> {
     private int code;
     private String msg;
-    private String built_ver;
     private T data;
 
     @Data

@@ -29,45 +29,47 @@ public class DeltaForceService {
     private String version = "";
 
     public void updateCertificate() {
-        HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity2 = getHttpEntity();
-        ResponseEntity<String> res2 = restTemplate.exchange("https://www.kkrb.net/?viewpage=view%2Foverview", HttpMethod.GET, httpEntity2, String.class);
-        updateCookie(res2.getHeaders());
+        // 使用通用方法处理GET请求
         HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = getHttpEntity();
-        httpEntity.getBody().add("globalData", false);
-        ResponseEntity<JsonNode> res = restTemplate.exchange("https://www.kkrb.net/getMenu", HttpMethod.POST, httpEntity, JsonNode.class);
-        version = res.getBody().get("built_ver").asString();
+        ResponseEntity<String> res = restTemplate.exchange("https://www.kkrb.net/?viewpage=view%2Foverview", HttpMethod.GET, httpEntity, String.class);
+        updateCookie(res.getHeaders());
+
+        // 再发送POST请求获取版本信息
+        HttpEntity<LinkedMultiValueMap<String, Object>> versionEntity = getHttpEntity();
+        versionEntity.getBody().add("globalData", false);
+        ResponseEntity<JsonNode> versionRes = restTemplate.exchange("https://www.kkrb.net/getMenu", HttpMethod.POST, versionEntity, JsonNode.class);
+        updateCookie(versionRes.getHeaders());
+        if (versionRes.getBody() != null) {
+            version = versionRes.getBody().get("built_ver").asString();
+        }
     }
 
     public KkrbData.OVData getOVData() {
         if (ovData != null) {
             return ovData;
         }
-        HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = getHttpEntity();
-        httpEntity.getBody().add("globalData", false);
-        ResponseEntity<KkrbData<KkrbData.OVData>> res = restTemplate.exchange("https://www.kkrb.net/getOVData", HttpMethod.POST, httpEntity, new ParameterizedTypeReference<>() {
+        LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("globalData", false);
+        KkrbData<KkrbData.OVData> res = getResJSONObject("https://www.kkrb.net/getOVData", body, new ParameterizedTypeReference<>() {
         });
-        updateCookie(res.getHeaders());
-        KkrbData<KkrbData.OVData> resBody = res.getBody();
-        Integer code = resBody.getCode();
-        if (!code.equals(1)) {
-            throw new BotException("获取数据失败");
-        }
-        ovData = resBody.getData();
-        return resBody.getData();
+        ovData = res.getData();
+        return ovData;
     }
 
-    public <T> KkrbData<T> getResJSONObject(String url, LinkedMultiValueMap<String, Object> body) {
+    public <T> KkrbData<T> getResJSONObject(String url, LinkedMultiValueMap<String, Object> body, ParameterizedTypeReference<KkrbData<T>> typeReference) {
         HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = getHttpEntity();
         if (body != null) {
             httpEntity.getBody().putAll(body);
         }
-        ResponseEntity<KkrbData<T>> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, new ParameterizedTypeReference<>() {
-        });
+        ResponseEntity<KkrbData<T>> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, typeReference);
         updateCookie(res.getHeaders());
         KkrbData<T> resBody = res.getBody();
+        if (resBody == null) {
+            throw new BotException("请求失败，响应体为空");
+        }
         Integer code = resBody.getCode();
         if (!code.equals(1)) {
-            throw new BotException("获取数据失败");
+            throw new BotException("获取数据失败，错误码：" + code);
         }
         return resBody;
     }
