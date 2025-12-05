@@ -28,17 +28,23 @@ public class DeltaForcePlugin {
     @BotMsgHandler(model = sysPluginRegex.DELTA_FORCE_SYSTEM, cmd = Regex.DF_MARKET)
     public void marketHandler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event, Matcher matcher) {
         log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), "三角洲集市");
-        String text = matcher.group("text");
-        var msgId = event.getMessageId();
+//        String text = matcher.group("text");
+//        var msgId = event.getMessageId();
         ExceptionHandler.with(bot, event, () -> {
             KkrbData.OVData ovData = deltaForceService.getOVData();
             MsgUtils builder = MsgUtils.builder();
-            builder.text("三角洲集市");
-            ovData.getAriiData().forEach(item -> {
-                builder.img(item.getPic())
-                        .text("名称：").text(item.getItemName())
-                        .text("当前价格：").text(String.valueOf(item.getCurrectPrice()));
-            });
+            builder.text("三角洲集市物品\n");
+            if (ovData.getAriiData() != null && !ovData.getAriiData().isEmpty()) {
+                KkrbData.AriiItem first = ovData.getAriiData().getFirst();
+                builder.text(first.getActivityTime());
+                ovData.getAriiData().forEach(item -> {
+                    builder.img(item.getPic())
+                            .text("名称：").text(item.getItemName()).text("\n")
+                            .text("当前价格：").text(String.valueOf(item.getCurrectPrice())).text("\n")
+                            .text("建议价格：").text(String.valueOf(item.getActivitySuggestedPrice())).text("\n")
+                    ;
+                });
+            }
             return builder.build();
         });
     }

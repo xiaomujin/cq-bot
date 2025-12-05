@@ -5,6 +5,7 @@ import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.utils.JsonUtil;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -27,6 +29,8 @@ public class DeltaForceService {
     private KkrbData.OVData ovData;
     private String cookie = "";
     private String version = "";
+    private long lastUpdateTime = 0;
+    private final HashMap<String, Long> cacheTime = new HashMap<>();
 
     public void updateCertificate() {
         // 使用通用方法处理GET请求
@@ -42,10 +46,13 @@ public class DeltaForceService {
         if (versionRes.getBody() != null) {
             version = versionRes.getBody().get("built_ver").asString();
         }
+        lastUpdateTime = System.currentTimeMillis(); // Update last update time
     }
 
+    @Synchronized
     public KkrbData.OVData getOVData() {
-        if (ovData != null) {
+        long upTime = cacheTime.getOrDefault("OVData", 0L);
+        if (ovData != null && System.currentTimeMillis() - upTime < 1000 * 60 * 5) {
             return ovData;
         }
         LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -53,10 +60,14 @@ public class DeltaForceService {
         KkrbData<KkrbData.OVData> res = getResJSONObject("https://www.kkrb.net/getOVData", body, new ParameterizedTypeReference<>() {
         });
         ovData = res.getData();
+        cacheTime.put("OVData", System.currentTimeMillis());
         return ovData;
     }
 
     public <T> KkrbData<T> getResJSONObject(String url, LinkedMultiValueMap<String, Object> body, ParameterizedTypeReference<KkrbData<T>> typeReference) {
+        if (System.currentTimeMillis() - lastUpdateTime > 1000 * 60 * 30) {
+            updateCertificate();
+        }
         HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = getHttpEntity();
         if (body != null) {
             httpEntity.getBody().putAll(body);
@@ -115,7 +126,7 @@ public class DeltaForceService {
     @Scheduled(cron = "10 0 0 * * ? ")
     public void dailyClean() {
         log.info("清理df数据 开始");
-        ovData = null;
+        cacheTime.clear();
         log.info("清理df数据 结束");
     }
 
