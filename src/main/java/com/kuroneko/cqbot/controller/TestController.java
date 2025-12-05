@@ -6,10 +6,11 @@ import com.kuroneko.cqbot.service.*;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.RegexUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
-import com.kuroneko.cqbot.vo.TarKovMarketVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +46,7 @@ public class TestController {
     private final AiService aiService;
     private final TarKovMarketService tarKovMarketService;
     private final WordCloudService wordCloudService;
-    private final DeltaService deltaService;
+    private final DeltaForceService deltaForceService;
 
     @RequestMapping(value = "/testBiLi")
     public BiliDynamicVo.BiliDynamicCard testBiLi() {
@@ -73,9 +74,9 @@ public class TestController {
     }
 
     @RequestMapping(value = "/testDelta")
-    public JsonNode testDelta() {
-        deltaService.updateCertificate();
-        return deltaService.getSwatUpgradeData();
+    public Object testDelta() {
+        deltaForceService.updateCertificate();
+        return deltaForceService.getOVData();
     }
 
     @RequestMapping(value = "/testH")

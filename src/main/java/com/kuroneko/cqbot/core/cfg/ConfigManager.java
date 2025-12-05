@@ -71,7 +71,7 @@ public class ConfigManager {
                 throw new RuntimeException("Failed to read configuration file: " + fileName, e);
             }
         } else {
-            log.info("Configuration file not found, creating default: {}", fileName);
+            log.info("Configuration file not found, use default: {}", fileName);
 
             Constructor<T> constructor = configClass.getDeclaredConstructor();
             constructor.setAccessible(true);
