@@ -49,6 +49,51 @@ public class DeltaForcePlugin {
         });
     }
 
+    @BotMsgHandler(model = sysPluginRegex.DELTA_FORCE_SYSTEM, cmd = Regex.DF_BC)
+    public void bcHandler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event, Matcher matcher) {
+        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), "三角洲脑机");
+//        String text = matcher.group("text");
+//        var msgId = event.getMessageId();
+        ExceptionHandler.with(bot, event, () -> {
+            KkrbData.OVData ovData = deltaForceService.getOVData();
+            MsgUtils builder = MsgUtils.builder();
+            builder.text("三角洲脑机物品\n");
+            if (ovData.getBcicData() != null && !ovData.getBcicData().isEmpty()) {
+                ovData.getBcicData().forEach(item -> {
+                    builder.img("https://www.kkrb.net" + item.getPic().substring(1))
+                            .text("名称：").text(item.getName()).text("\n")
+                            .text("消耗能量：").text(String.valueOf(item.getEnergy())).text("\n")
+                    ;
+                });
+            }
+            return builder.build();
+        });
+    }
+
+    @BotMsgHandler(model = sysPluginRegex.DELTA_FORCE_SYSTEM, cmd = Regex.DF_PASSWORD)
+    public void passwordHandler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event, Matcher matcher) {
+        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), "三角洲密码");
+//        String text = matcher.group("text");
+//        var msgId = event.getMessageId();
+        ExceptionHandler.with(bot, event, () -> {
+            KkrbData.OVData ovData = deltaForceService.getOVData();
+            MsgUtils builder = MsgUtils.builder();
+            builder.text("三角洲密码门\n");
+            String updated = ovData.getBdData().getDb().getUpdated();// 20251209015448
+            String updatedTime = updated.substring(0, 4) + "-" + updated.substring(4, 6) + "-" + updated.substring(6, 8);
+            builder.text("更新时间：").text(updatedTime).text("\n");
+            if (ovData.getBdData() != null) {
+                builder.text("零号大坝：").text(ovData.getBdData().getDb().getPassword()).text("\n")
+                        .text("长弓溪谷：").text(ovData.getBdData().getCgxg().getPassword()).text("\n")
+                        .text("巴 克 什：").text(ovData.getBdData().getBks().getPassword()).text("\n")
+                        .text("航天基地：").text(ovData.getBdData().getHtjd().getPassword()).text("\n")
+                        .text("潮汐监狱：").text(ovData.getBdData().getCxjy().getPassword()).text("\n")
+                ;
+            }
+            return builder.build();
+        });
+    }
+
 
 }
 

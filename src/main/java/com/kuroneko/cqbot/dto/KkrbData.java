@@ -16,6 +16,7 @@ public class KkrbData<T> {
         private SpData spData;
         private SphData sphData;
         private List<AriiItem> ariiData;
+        private List<BcicItem> bcicData;
     }
 
     @Data
@@ -120,5 +121,12 @@ public class KkrbData<T> {
         private int itemGrade;
         private double currectPrice;
         private double activitySuggestedPrice;
+    }
+
+    @Data
+    public static class BcicItem {
+        private String name;
+        private String pic;
+        private String energy;
     }
 }

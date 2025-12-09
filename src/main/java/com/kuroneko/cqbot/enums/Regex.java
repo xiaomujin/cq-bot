@@ -31,4 +31,6 @@ public class Regex {
     public static final String TKF_BOSS_CHANCE = "^(?i)(boss(刷|概))(?<text>.*)";
     public static final String NARAKA_RECORD = "^(?i)(战绩|record)(?<text>.*)";
     public static final String DF_MARKET = "^(?i)(集市|market)(?<text>.*)";
+    public static final String DF_BC = "^(?i)(脑机|bc)(?<text>.*)";
+    public static final String DF_PASSWORD = "^(?i)(密码|password)(?<text>.*)";
 }
