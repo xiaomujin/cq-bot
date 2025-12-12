@@ -2,8 +2,6 @@ package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.dto.KkrbData;
 import com.kuroneko.cqbot.exception.BotException;
-import com.kuroneko.cqbot.utils.JsonUtil;
-import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +37,7 @@ public class DeltaForceService {
         updateCookie(res.getHeaders());
 
         // 再发送POST请求获取版本信息
-        HttpEntity<LinkedMultiValueMap<String, Object>> versionEntity = getHttpEntity();
+        HttpEntity<LinkedMultiValueMap<String, Object>> versionEntity = postHttpEntity();
         versionEntity.getBody().add("globalData", false);
         ResponseEntity<JsonNode> versionRes = restTemplate.exchange("https://www.kkrb.net/getMenu", HttpMethod.POST, versionEntity, JsonNode.class);
         updateCookie(versionRes.getHeaders());
@@ -68,7 +66,7 @@ public class DeltaForceService {
         if (System.currentTimeMillis() - lastUpdateTime > 1000 * 60 * 30) {
             updateCertificate();
         }
-        HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = getHttpEntity();
+        HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = postHttpEntity();
         if (body != null) {
             httpEntity.getBody().putAll(body);
         }
@@ -114,13 +112,18 @@ public class DeltaForceService {
         return headers;
     }
 
-    private HttpEntity<LinkedMultiValueMap<String, Object>> getHttpEntity() {
+    private HttpEntity<LinkedMultiValueMap<String, Object>> postHttpEntity() {
         HttpHeaders headers = getHeader();
         LinkedMultiValueMap<String, Object> hashMap = new LinkedMultiValueMap<>();
         if (version != null && !version.isEmpty()) {
             hashMap.add("version", version);
         }
         return new HttpEntity<>(hashMap, headers);
+    }
+
+    private HttpEntity<LinkedMultiValueMap<String, Object>> getHttpEntity() {
+        HttpHeaders headers = getHeader();
+        return new HttpEntity<>(null, headers);
     }
 
     @Scheduled(cron = "10 0 0 * * ? ")
