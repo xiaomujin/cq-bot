@@ -11,7 +11,7 @@ _✨ 基于 [Shiro](https://github.com/MisakaTAT/Shiro) QQ机器人工具 ✨_
     <a href="https://github.com/xiaomujin/cq-bot"><img src="https://img.shields.io/badge/GitHub-blue.svg?style=flat-square" alt="GitCode"></a>
     <a href="https://gitee.com/Kuro_Neko_Ruri/cq-bot"><img src="https://img.shields.io/badge/Gitee-blue.svg?style=flat-square" alt="GitCode"></a>
     <a href="https://gitcode.com/KuroNekovo/cq-bot/overview"><img src="https://img.shields.io/badge/GitCode-blue.svg?style=flat-square" alt="GitCode"></a>
-    <a href="https://qm.qq.com/q/XabLpsKPWQ"><img src="https://img.shields.io/badge/QQ群-174706945-brightgreen.svg?style=flat-square" alt="qq-group"></a>
+    <a href="https://qm.qq.com/q/en5jEcJCnu"><img src="https://img.shields.io/badge/QQ群-787828189-brightgreen.svg?style=flat-square" alt="qq-group"></a>
 </p>
 
 <p align="center">
@@ -47,4 +47,5 @@ Shiro 以 [OneBot-v11](https://github.com/howmanybots/onebot/tree/master/v11/spe
 # Thanks
 
 [JetBrains](https://www.jetbrains.com/?from=cq-bot) offers free licenses to support open source projects.  
+
 [<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.png" width="200"/>](https://www.jetbrains.com/?from=cq-bot)
