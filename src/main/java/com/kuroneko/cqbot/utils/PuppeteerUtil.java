@@ -39,7 +39,7 @@ public class PuppeteerUtil {
         CookieParam cookieParam = new CookieParam();
         cookieParam.setUrl("https://t.bilibili.com");
         cookieParam.setName("buvid3");
-        cookieParam.setValue("D9440E6F-A342-4CD6-461C-A66BCB5CA5A555172infoc");
+        cookieParam.setValue("11CE4181-D4A7-D91E-92AD-E0213612BC2113883infoc");
         cookieParam.setDomain(".bilibili.com");
         cookieParam.setPath("/");
         cookieParam.setExpires(1990454302000L);
@@ -47,7 +47,7 @@ public class PuppeteerUtil {
         CookieParam cookieParam2 = new CookieParam();
         cookieParam2.setUrl("https://www.bilibili.com");
         cookieParam2.setName("buvid3");
-        cookieParam2.setValue("D9440E6F-A342-4CD6-461C-A66BCB5CA5A555172infoc");
+        cookieParam2.setValue("11CE4181-D4A7-D91E-92AD-E0213612BC2113883infoc");
         cookieParam2.setDomain(".bilibili.com");
         cookieParam2.setPath("/");
         cookieParam2.setExpires(1990454302000L);
@@ -72,7 +72,7 @@ public class PuppeteerUtil {
                     "--disable-blink-features=AutomationControlled",
                     "--disable-extensions",
                     "--no-zygote",
-                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+                    "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
             );
             LaunchOptions options = LaunchOptions.builder().product(Product.Chrome).args(list).headless(true).build();
             browser = Puppeteer.launch(options);

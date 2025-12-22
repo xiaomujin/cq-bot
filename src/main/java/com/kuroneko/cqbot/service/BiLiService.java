@@ -32,8 +32,8 @@ public class BiLiService {
 
     public Optional<BiliDynamicVo.BiliDynamicCard> getFirstCard(String uid) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Cookie", "buvid3=D9440E6F-A342-4CD6-461C-A66BCB5CA5A555172infoc");
-        headers.add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36");
+        headers.add("Cookie", "buvid3=11CE4181-D4A7-D91E-92AD-E0213612BC2113883infoc");
+        headers.add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36");
         HttpEntity<Object> httpEntity = new HttpEntity<>(headers);
         ResponseEntity<BiliDynamicVo> entity = restTemplate.exchange(Constant.BL_DYNAMIC_URL, HttpMethod.GET, httpEntity, BiliDynamicVo.class, uid);
         if (entity.getBody() == null || entity.getBody().getData() == null) {
