@@ -20,6 +20,7 @@ public class JacksonConfig {
         return builder -> builder
                 .defaultDateFormat(new SimpleDateFormat(DATE_TIME_FORMAT))
                 .defaultTimeZone(TimeZone.getDefault())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
     }
 }
