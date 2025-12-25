@@ -1,6 +1,5 @@
 package com.kuroneko.cqbot.annoPlugin;
 
-import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.core.annotation.BotHandler;
 import com.kuroneko.cqbot.core.annotation.BotMsgHandler;
 import com.kuroneko.cqbot.core.dto.MsgInfo;
@@ -15,12 +14,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 
 import java.net.URI;
@@ -41,7 +35,7 @@ import java.util.regex.Matcher;
 @RequiredArgsConstructor
 public class TkfPlugin {
 
-    private final RestTemplate restTemplate;
+    // private final RestTemplate restTemplate;
 
     @BotMsgHandler(model = sysPluginRegex.TKF_SYSTEM, cmd = Regex.TKF_BOSS_CHANCE)
     public void handler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event, Matcher matcher) {
@@ -82,29 +76,29 @@ public class TkfPlugin {
     }
 
 
-    private Optional<JsonNode> getQueryRes(String query) {
-        String url = "https://api.tarkov.dev/graphql";
-        HashMap<String, String> queryMap = new HashMap<>();
-        queryMap.put("query", query);
+    // private Optional<JsonNode> getQueryRes(String query) {
+    //     String url = "https://api.tarkov.dev/graphql";
+    //     HashMap<String, String> queryMap = new HashMap<>();
+    //     queryMap.put("query", query);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
-        headers.add(HttpHeaders.ACCEPT, "application/json");
-        headers.add(HttpHeaders.ORIGIN, "https://api.tarkov.dev");
-        headers.add(HttpHeaders.REFERER, "https://api.tarkov.dev/");
-        headers.add(HttpHeaders.USER_AGENT, ProjectConfig.USER_AGENT);
+    //     HttpHeaders headers = new HttpHeaders();
+    //     headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+    //     headers.add(HttpHeaders.ACCEPT, "application/json");
+    //     headers.add(HttpHeaders.ORIGIN, "https://api.tarkov.dev");
+    //     headers.add(HttpHeaders.REFERER, "https://api.tarkov.dev/");
+    //     headers.add(HttpHeaders.USER_AGENT, ProjectConfig.USER_AGENT);
 
-        HttpEntity<HashMap<String, String>> httpEntity = new HttpEntity<>(queryMap, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
-        String responseBody = response.getBody();
-        if (!response.getStatusCode().is2xxSuccessful() || responseBody == null) {
-            log.error(responseBody);
-            return Optional.empty();
-        }
-        JsonNode parse = JsonUtil.toNode(responseBody);
-        JsonNode bodyData = parse.get("data");
-        return Optional.ofNullable(bodyData);
-    }
+    //     HttpEntity<HashMap<String, String>> httpEntity = new HttpEntity<>(queryMap, headers);
+    //     ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+    //     String responseBody = response.getBody();
+    //     if (!response.getStatusCode().is2xxSuccessful() || responseBody == null) {
+    //         log.error(responseBody);
+    //         return Optional.empty();
+    //     }
+    //     JsonNode parse = JsonUtil.toNode(responseBody);
+    //     JsonNode bodyData = parse.get("data");
+    //     return Optional.ofNullable(bodyData);
+    // }
 
     private static Optional<JsonNode> getQueryRes2(String query) {
         HashMap<String, String> queryMap = new HashMap<>();

@@ -1,6 +1,5 @@
 package com.kuroneko.cqbot.annoPlugin;
 
-import com.kuroneko.cqbot.config.ProjectConfig;
 import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.enums.Regex;
 import com.mikuac.shiro.annotation.AnyMessageHandler;

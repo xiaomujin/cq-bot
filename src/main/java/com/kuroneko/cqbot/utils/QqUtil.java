@@ -1,7 +1,6 @@
 package com.kuroneko.cqbot.utils;
 
 import com.kuroneko.cqbot.core.cfg.ConfigManager;
-import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

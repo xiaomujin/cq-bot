@@ -16,7 +16,7 @@ public class TKFEvent {
      * 元事件分发
      */
     public void handler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event) {
-        String msg = msgInfo.getMsg();
+        // String msg = msgInfo.getMsg();
         // 注解执行对应方法
     }
 

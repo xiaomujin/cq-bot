@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
-import java.io.Serializable;
-
 import lombok.*;
 
 /**
@@ -19,7 +17,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Bullet extends BaseEntity implements Serializable {
+public class Bullet extends BaseEntity {
     /**
      *
      */

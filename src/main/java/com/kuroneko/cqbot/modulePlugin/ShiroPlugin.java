@@ -66,6 +66,8 @@ public class ShiroPlugin {
                     String image = msg.getStringData("url");
                     imgList.add(image);
                 }
+                default -> {
+                }
             }
         });
         return MsgInfo.builder()

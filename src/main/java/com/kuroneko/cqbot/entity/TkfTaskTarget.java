@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
-import java.io.Serializable;
-
 import lombok.*;
 
 /**
@@ -20,7 +18,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TkfTaskTarget extends BaseEntity implements Serializable {
+public class TkfTaskTarget extends BaseEntity {
     /**
      * 
      */

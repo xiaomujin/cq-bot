@@ -5,12 +5,11 @@ import com.kuroneko.cqbot.core.process.CommonProcessor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
 import java.util.*;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BiliCfg extends ConfigSave implements Serializable {
+public class BiliCfg extends ConfigSave {
     private HashMap<String, List<Long>> subMap = new HashMap<>();
 
     public void addSub(String uid, Long groupId) {

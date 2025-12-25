@@ -273,9 +273,6 @@ public class PuppeteerUtil {
     }
 
     private static void timesRestart() {
-        if (restartNum == 0) {
-            return;
-        }
         if (renderNum.incrementAndGet() % restartNum == 0) {
             log.info("到达重启次数:{}", renderNum.get());
             if (browser.pages().size() == 1) {
