@@ -79,6 +79,11 @@ public class TestController {
         return deltaForceService.getOVData();
     }
 
+    @RequestMapping(value = "/testDeltaScreenshot")
+    public String testDeltaScreenshot() {
+        return deltaForceService.getOverviewScreenshot();
+    }
+
     @RequestMapping(value = "/testH")
     public String testH() throws IOException, InterruptedException {
         String finalKeyB64 = "";

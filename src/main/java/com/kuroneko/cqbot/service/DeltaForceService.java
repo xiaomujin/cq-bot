@@ -1,7 +1,11 @@
 package com.kuroneko.cqbot.service;
 
+import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.dto.KkrbData;
 import com.kuroneko.cqbot.exception.BotException;
+import com.kuroneko.cqbot.utils.PuppeteerUtil;
+import com.ruiyun.jvppeteer.api.core.Page;
+import com.ruiyun.jvppeteer.common.PuppeteerLifeCycle;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -131,6 +135,37 @@ public class DeltaForceService {
         log.info("清理df数据 开始");
         cacheTime.clear();
         log.info("清理df数据 结束");
+    }
+
+    /**
+     * 截取三角洲行动概览页面（去掉弹框）
+     *
+     * @param path 保存路径（可选，默认值为空字符串）
+     * @return base64 编码的截图
+     */
+    public String getOverviewScreenshot(String path) {
+        // 用于隐藏弹框的 CSS，具体选择器根据实际页面调整
+        String function = """
+                () => {
+                    localStorage.setItem('layui-theme-df-ytl','dark')
+                    document.querySelector('#LAY_preview > blockquote')?.remove()
+                    document.querySelector('body > ul')?.remove()
+                    document.querySelector('#layui-layer2')?.remove()
+                    document.querySelector('#layui-layer-shade2')?.remove()
+                    document.querySelector('body > div.layui-layout.layui-layout-admin > div.layui-header')?.remove()
+                    document.querySelector('body > div.layui-layout.layui-layout-admin > div.layui-footer')?.remove()
+                    return true
+                }
+                """;
+        Page newPage = PuppeteerUtil.getNewPage("https://www.kkrb.net/?viewpage=view%2Foverview", PuppeteerLifeCycle.networkIdle2, 15000, 1300, 800);
+        return PuppeteerUtil.screenshot(newPage, path, "#LAY_preview", null, function);
+    }
+
+    /**
+     * @return base64 编码的截图
+     */
+    public String getOverviewScreenshot() {
+        return getOverviewScreenshot(Constant.BASE_IMG_PATH + "kkrb/kkrbMain.png");
     }
 
 }
