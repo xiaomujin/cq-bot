@@ -19,7 +19,7 @@
         <hutool.version>5.8.42</hutool.version>
         <jvppeteer.version>3.5.0</jvppeteer.version>
         <jsoup.version>1.21.2</jsoup.version>
-        <mybatis-plus.version>3.5.15</mybatis-plus.version>
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
         <expiringmap.version>0.5.11</expiringmap.version>
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
         <commons-io.version>2.21.0</commons-io.version>
