@@ -75,7 +75,7 @@ public class TestController {
 
     @RequestMapping(value = "/testDelta")
     public Object testDelta() {
-        deltaForceService.updateCertificate();
+//        deltaForceService.updateCertificate();
         return deltaForceService.getOVData();
     }
 
