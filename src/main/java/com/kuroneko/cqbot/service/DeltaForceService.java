@@ -122,6 +122,7 @@ public class DeltaForceService {
         if (version != null && !version.isEmpty()) {
             hashMap.add("version", version);
         }
+        hashMap.add("globalData", false);
         return new HttpEntity<>(hashMap, headers);
     }
 
