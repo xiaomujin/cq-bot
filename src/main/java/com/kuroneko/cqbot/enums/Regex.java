@@ -33,4 +33,5 @@ public class Regex {
     public static final String DF_MARKET = "^(?i)(集市|market)(?<text>.*)";
     public static final String DF_BC = "^(?i)(脑机|bc)(?<text>.*)";
     public static final String DF_PASSWORD = "^(?i)(密码|password)(?<text>.*)";
+    public static final String DF_OV = "^(?i)(一图流|ov)(?<text>.*)";
 }

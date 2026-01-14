@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.annoPlugin;
 
+import com.kuroneko.cqbot.constant.Constant;
 import com.kuroneko.cqbot.core.annotation.BotHandler;
 import com.kuroneko.cqbot.core.annotation.BotMsgHandler;
 import com.kuroneko.cqbot.core.dto.MsgInfo;
@@ -8,6 +9,8 @@ import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.enums.sysPluginRegex;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
 import com.kuroneko.cqbot.service.DeltaForceService;
+import com.kuroneko.cqbot.utils.BotUtil;
+import com.kuroneko.cqbot.utils.CacheUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
@@ -15,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 
 @BotHandler
@@ -92,6 +96,18 @@ public class DeltaForcePlugin {
             }
             return builder.build();
         });
+    }
+
+    @BotMsgHandler(model = sysPluginRegex.DELTA_FORCE_SYSTEM, cmd = Regex.DF_OV)
+    public void ovHandler(MsgInfo msgInfo, Bot bot, AnyMessageEvent event, Matcher matcher) {
+        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), "三角洲一图流");
+//        String text = matcher.group("text");
+//        var msgId = event.getMessageId();
+        ExceptionHandler.with(bot, event, () -> CacheUtil.getOrPut(Regex.DF_OV, 5, TimeUnit.MINUTES, () -> {
+            String imgPath = Constant.BASE_IMG_PATH + "kkrb/kkrbMain.png";
+            deltaForceService.getOverviewScreenshot(imgPath);
+            return MsgUtils.builder().img(BotUtil.getLocalMedia(imgPath)).build();
+        }));
     }
 
 
