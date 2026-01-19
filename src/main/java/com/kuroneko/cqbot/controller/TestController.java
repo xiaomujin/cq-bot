@@ -1,11 +1,13 @@
 package com.kuroneko.cqbot.controller;
 
 import com.kuroneko.cqbot.entity.WordCloud;
+import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.service.*;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.RegexUtil;
 import com.kuroneko.cqbot.vo.BiliDynamicVo;
+import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -52,6 +54,23 @@ public class TestController {
     public BiliDynamicVo.BiliDynamicCard testBiLi() {
         Optional<BiliDynamicVo.BiliDynamicCard> firstCard = biLiService.getFirstCard("152065343");
         return firstCard.orElse(null);
+    }
+
+    @RequestMapping(value = "/testRedirect")
+    public Object testRedirect() {
+        String r = "(?s).*?(?<sUrl>(\\w*)\\.?bilibili.com/\\w*/?\\w+).*";
+//        String r = "(?s).*(?<sUrl>(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]).*";
+        String url = RegexUtil.group("sUrl", "bilibili.com/a", r).orElseThrow(() -> new BotException("解析失败0"));
+        String url2 = RegexUtil.group("sUrl", "解析下https://t.bilibili.com/1151722276789420041?spm_id_from=333.1387.0.0这个地址", r).orElseThrow(() -> new BotException("解析失败0"));
+        log.info(url);
+        String substring = url.substring(url.lastIndexOf("/") + 1);
+        log.info(substring);
+        log.info(url2);
+        String substring2 = url2.substring(url2.lastIndexOf("/") + 1);
+        log.info(substring2);
+        String path = biLiService.getNewScreenshot(substring2, null);
+        MsgUtils msg = biLiService.buildDynamicMsgLess(path, substring2);
+        return msg.build();
     }
 
     @RequestMapping(value = "/testRedis")

@@ -5,6 +5,7 @@ import com.kuroneko.cqbot.dto.AntiBiliMiniAppDTO;
 import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.exception.ExceptionHandler;
+import com.kuroneko.cqbot.service.BiLiService;
 import com.kuroneko.cqbot.utils.HttpUtil;
 import com.kuroneko.cqbot.utils.JsonUtil;
 import com.kuroneko.cqbot.utils.NumberFormatter;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class BLPlugin {
     private final RestTemplate restTemplate;
+    private final BiLiService biLiService;
     private final ExpiringMap<Long, String> expiringMap = ExpiringMap.builder()
             .variableExpiration()
             .expirationPolicy(ExpirationPolicy.CREATED)
@@ -47,16 +49,73 @@ public class BLPlugin {
             String msg = event.getMessage();
             Long id = ObjUtil.defaultIfNull(event.getGroupId(), event.getUserId());
             if (msg.contains("com.tencent.miniapp_01") && msg.contains("哔哩哔哩")) {
+                // qq json卡片
                 handleMiniApp(bot, event, id);
-            } else if (msg.contains("bilibili.com/video/BV")) {
-                handleURL(bot, event, id);
+            } else if (msg.contains("bilibili.com/")) {
+                handleBiliUrl(bot, event, id, event.getMessage());
             } else if (msg.contains("b23.tv/")) {
                 handleShortURL(bot, event, id);
             }
-
             return "";
         });
 
+    }
+
+    private void handleBiliUrl(Bot bot, AnyMessageEvent event, Long id, String msg) {
+        handleURL(bot, event, id, msg);
+    }
+
+
+    private void handleMiniApp(Bot bot, AnyMessageEvent event, Long id) {
+        List<String> json = event.getArrayMsg().stream()
+                .filter(it -> MsgTypeEnum.json == it.getType())
+                .map(it -> it.getStringData("data"))
+                .toList();
+        if (!json.isEmpty()) {
+            JsonNode jsonNode = JsonUtil.toNode(json.get(0));
+            String url = jsonNode.get("meta").get("detail_1").get("qqdocurl").asString();
+            String redirect = HttpUtil.getRedirect(url);
+            handleURL(bot, event, id, redirect);
+        }
+    }
+
+    private void handleShortURL(Bot bot, AnyMessageEvent event, Long id) {
+        String sUrl = RegexUtil.group("sUrl", event.getMessage(), Regex.BILIBILI_SHORT_URL).orElseThrow(() -> new BotException("解析失败3"));
+        String redirect = HttpUtil.getRedirect("https://" + sUrl);
+        handleURL(bot, event, id, redirect);
+    }
+
+    /**
+     * https://t.bilibili.com/1151722276789420041
+     * https://www.bilibili.com/opus/1158188375814963207
+     * https://www.bilibili.com/read/cv19282068
+     * https://www.bilibili.com/video/BV1mokxBtEZh
+     */
+    private void handleURL(Bot bot, AnyMessageEvent event, Long id, String url) {
+        // 从文本中提取链接
+        url = RegexUtil.group("sUrl", url, Regex.BILIBILI_URL).orElseThrow(() -> new BotException("解析失败0"));
+        url = "https://" + url;
+        if (url.contains("/read")) {
+            url = HttpUtil.getRedirect(url);
+        }
+        String substring = url.substring(url.lastIndexOf("/") + 1);
+        if (substring.contains("BV")) {
+            handleRequest(bot, event, id, substring);
+            return;
+        }
+        String path = biLiService.getNewScreenshot(substring, null);
+        MsgUtils msg = biLiService.buildDynamicMsgLess(path, substring);
+        bot.sendMsg(event, msg.build(), false);
+    }
+
+    private void handleRequest(Bot bot, AnyMessageEvent event, Long id, String bid) {
+        String oldBid = expiringMap.get(id);
+        if (Objects.equals(oldBid, bid)) {
+            return;
+        }
+        expiringMap.put(id, bid);
+        AntiBiliMiniAppDTO request = request(bid);
+        bot.sendMsg(event, buildMsg(request.getData()), false);
     }
 
     public AntiBiliMiniAppDTO request(String bid) {
@@ -68,11 +127,6 @@ public class BLPlugin {
             throw new BotException(data.getMessage());
         }
         return data;
-    }
-
-    public String parseBidByShortURL(String url) {
-        String redirect = HttpUtil.getRedirect(url);
-        return RegexUtil.group("BVId", redirect, Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败1"));
     }
 
     private String buildMsg(AntiBiliMiniAppDTO.BLData data) {
@@ -95,34 +149,4 @@ public class BLPlugin {
                 .build();
     }
 
-    private void handleMiniApp(Bot bot, AnyMessageEvent event, Long id) {
-        List<String> json = event.getArrayMsg().stream()
-                .filter(it -> MsgTypeEnum.json == it.getType())
-                .map(it -> it.getStringData("data"))
-                .toList();
-        if (!json.isEmpty()) {
-            JsonNode jsonNode = JsonUtil.toNode(json.get(0));
-            String url = jsonNode.get("meta").get("detail_1").get("qqdocurl").asString();
-            handleRequest(bot, event, id, parseBidByShortURL(url));
-        }
-    }
-
-    private void handleURL(Bot bot, AnyMessageEvent event, Long id) {
-        handleRequest(bot, event, id, RegexUtil.group("BVId", event.getMessage(), Regex.BILIBILI_BID).orElseThrow(() -> new BotException("解析失败2")));
-    }
-
-    private void handleShortURL(Bot bot, AnyMessageEvent event, Long id) {
-        String sUrl = RegexUtil.group("sUrl", event.getMessage(), Regex.BILIBILI_SHORT_URL).orElseThrow(() -> new BotException("解析失败3"));
-        handleRequest(bot, event, id, parseBidByShortURL("https://" + sUrl));
-    }
-
-    private void handleRequest(Bot bot, AnyMessageEvent event, Long id, String bid) {
-        String oldBid = expiringMap.get(id);
-        if (Objects.equals(oldBid, bid)) {
-            return;
-        }
-        expiringMap.put(id, bid);
-        AntiBiliMiniAppDTO request = request(bid);
-        bot.sendMsg(event, buildMsg(request.getData()), false);
-    }
 }

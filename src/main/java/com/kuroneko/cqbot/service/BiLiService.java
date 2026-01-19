@@ -63,7 +63,7 @@ public class BiLiService {
             } else if (redirect.contains("bilibili.com/read")) {
                 selector = "#app > div > div.article-container";
             }
-            PuppeteerUtil.screenshot(page, path, selector, ".z-top-container { display: none } .international-header { display: none } .van-popper { display: none } .bili-mini-mask { display: none }");
+            PuppeteerUtil.screenshot(page, path, selector, ".z-top-container { display: none } .international-header { display: none } .van-popper { display: none } .bili-mini-mask { display: none } .login-tip { display: none }");
             return path;
         } catch (Exception e) {
             log.error("动态截图异常", e);
@@ -78,6 +78,13 @@ public class BiLiService {
                 .text("up: " + card.getModules().getModule_author().getName() + "\n")
                 .text("uid: " + card.getModules().getModule_author().getMid() + "\n")
                 .text("https://www.bilibili.com/opus/" + card.getId_str());
+    }
+
+    public MsgUtils buildDynamicMsgLess(String path, String dynamicId) {
+        OneBotMedia localMedia = BotUtil.getLocalMedia(path, false);
+        return MsgUtils.builder()
+                .img(localMedia)
+                .text("https://www.bilibili.com/opus/" + dynamicId);
     }
 
 }
