@@ -15,7 +15,7 @@
     <description>cq-bot</description>
     <properties>
         <java.version>25</java.version>
-        <shiro.version>2.5.2</shiro.version>
+        <shiro.version>2.5.3</shiro.version>
         <hutool.version>5.8.43</hutool.version>
         <jvppeteer.version>3.6.1</jvppeteer.version>
         <jsoup.version>1.22.1</jsoup.version>
