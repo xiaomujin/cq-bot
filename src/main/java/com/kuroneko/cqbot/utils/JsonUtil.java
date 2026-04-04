@@ -4,19 +4,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 @Slf4j
 @Component
 public class JsonUtil {
-    public static JsonMapper mapper;
+    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static JsonMapper mapper = JsonMapper.builder()
+            .defaultDateFormat(new SimpleDateFormat(DATE_TIME_FORMAT))
+            .defaultTimeZone(TimeZone.getDefault())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false).build();
 
-    private JsonUtil(JsonMapper mapper) {
-        JsonUtil.mapper = mapper;
+    private JsonUtil() {
     }
 
     /**

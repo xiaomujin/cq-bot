@@ -10,6 +10,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotContainer;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
+import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import com.mikuac.shiro.enums.MsgTypeEnum;
 import com.mikuac.shiro.handler.ActionHandler;
 import com.mikuac.shiro.model.ArrayMsg;
@@ -183,4 +184,10 @@ public class BotUtil {
         }
     }
 
+    public static void sendMsgList(Bot bot, AnyMessageEvent event, List<String> msgList, boolean b) {
+        msgList.forEach(msg -> {
+            bot.sendMsg(event, msg, false);
+            sleep(300);
+        });
+    }
 }

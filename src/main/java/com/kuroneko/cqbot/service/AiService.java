@@ -53,10 +53,7 @@ public class AiService {
 
     public String getAiAnswer(long groupId, String text) {
         if (!enabled) {
-            return "AI 功能未启用，请先配置 BOT_AI_ENABLED=true 以及 OpenAI 参数";
-        }
-        if (chatClient == null || chatMemory == null) {
-            return "AI 模型未初始化，请检查 Spring AI starter、ChatClient 与 ChatMemory 配置";
+            return "AI 功能未启用";
         }
         if (!StringUtils.hasText(text)) {
             return "你想问什么呢";

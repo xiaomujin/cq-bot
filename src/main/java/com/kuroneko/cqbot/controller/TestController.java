@@ -27,10 +27,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 
 @Slf4j
@@ -77,10 +74,11 @@ public class TestController {
     }
 
     @RequestMapping(value = "/testAi")
-    public String testAi() {
-        String scnetDS = aiService.getAiAnswer(1, "帮助,调用help工具");
-        log.info(scnetDS);
-        return scnetDS;
+    public Object testAi() {
+        String scnetDS = aiService.getAiAnswer(1, "妃咲的弱点是什么");
+        String[] split = scnetDS.split("\n\n");
+        Arrays.stream(split).forEach(System.out::println);
+        return split;
     }
 
     @RequestMapping(value = "/testTarKovMarket")

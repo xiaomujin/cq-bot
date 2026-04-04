@@ -11,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Slf4j
 @Component
 public class AiPlugin extends BotPlugin {
@@ -32,20 +35,31 @@ public class AiPlugin extends BotPlugin {
         var msgId = event.getMessageId();
         try {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
-            MsgUtils msg = getMsg(event.getGroupId(), msgId, BotUtil.getText(event.getArrayMsg()));
-            bot.sendMsg(event, msg.build(), false);
+            List<String> msgList = getMsgList(event.getGroupId(), msgId, BotUtil.getText(event.getArrayMsg()));
+            BotUtil.sendMsgList(bot, event, msgList, false);
         } finally {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
         }
         return MESSAGE_BLOCK;
     }
 
-    private MsgUtils getMsg(long groupId, int msgId, String text) {
+    private List<String> getMsgList(long groupId, int msgId, String text) {
         String answer = "你想问什么呢";
         if (!ObjectUtils.isEmpty(text)) {
             answer = aiService.getAiAnswer(groupId, text);
         }
         log.info("问题：{} 的ai回答 {}", text, answer);
-        return MsgUtils.builder().reply(msgId).text(answer);
+        String[] split = answer.split("\n\n");
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < split.length; i++) {
+            String build;
+            if (i == 0) {
+                build = MsgUtils.builder().reply(msgId).text(split[i]).build();
+            } else {
+                build = MsgUtils.builder().text(split[i]).build();
+            }
+            list.add(build);
+        }
+        return list;
     }
 }

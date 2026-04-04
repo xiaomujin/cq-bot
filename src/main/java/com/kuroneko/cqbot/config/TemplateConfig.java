@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.config;
 
+import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.service.aiTool.AiHelpTool;
 import com.kuroneko.cqbot.service.aiTool.AiTimeTool;
 import com.kuroneko.cqbot.service.aiTool.AiWebSearchTool;
@@ -70,8 +71,8 @@ public class TemplateConfig {
                                    ChatMemory chatMemory,
                                    AiWebSearchTool aiWebSearchTool,
                                    AiTimeTool aiTimeTool,
-                                   AiHelpTool aiHelpTool,
-                                   @Value("${bot.ai.system-prompt:你是一个QQ群聊机器人，请使用简洁、自然、友好的中文回答问题。}") String systemPrompt) {
+                                   AiHelpTool aiHelpTool) {
+        String systemPrompt = ConfigManager.ins.getAdminCfg().getSystemPrompt();
         return ChatClient.builder(chatModel)
                 .defaultSystem(systemPrompt)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
