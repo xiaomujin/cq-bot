@@ -1,7 +1,6 @@
 package com.kuroneko.cqbot.controller;
 
 import com.kuroneko.cqbot.entity.WordCloud;
-import com.kuroneko.cqbot.enums.Regex;
 import com.kuroneko.cqbot.exception.BotException;
 import com.kuroneko.cqbot.service.*;
 import com.kuroneko.cqbot.utils.HttpUtil;
@@ -11,14 +10,11 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.URI;
@@ -82,7 +78,7 @@ public class TestController {
 
     @RequestMapping(value = "/testAi")
     public String testAi() {
-        String scnetDS = aiService.getScnetDS2(1, "现在的时间是");
+        String scnetDS = aiService.getAiAnswer(1, "帮助,调用help工具");
         log.info(scnetDS);
         return scnetDS;
     }

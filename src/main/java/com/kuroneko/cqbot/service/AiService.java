@@ -1,234 +1,88 @@
 package com.kuroneko.cqbot.service;
 
-import cn.hutool.crypto.digest.DigestUtil;
-import com.kuroneko.cqbot.constant.Constant;
-import com.kuroneko.cqbot.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import net.jodah.expiringmap.ExpiringMap;
+import net.jodah.expiringmap.ExpirationPolicy;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import tools.jackson.databind.JsonNode;
+import org.springframework.util.StringUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
 public class AiService {
-    private final RestTemplate restTemplate;
+    private static final String DEFAULT_ANSWER = "我暂时不知道该怎么回答。";
 
-    public AiService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private final ChatClient chatClient;
+    private final ChatMemory chatMemory;
+    private final boolean enabled;
+    private final ExpiringMap<String, Boolean> activeConversations;
+    private final ConcurrentHashMap<String, Object> conversationLocks = new ConcurrentHashMap<>();
 
-
-    public String getWuGuoKai(long groupId, String text) {
-        long now = System.currentTimeMillis();
-        Long room = Constant.AI_ROOM.getOrDefault(groupId, now);
-        if (room + 3600000 < now) {
-            room = now;
-        }
-        Constant.AI_ROOM.put(groupId, room);
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("prompt", text);
-        map.put("userId", "#/chat/" + room);
-        map.put("network", true);
-        map.put("system", "");
-        map.put("withoutContext", false);
-        map.put("stream", false);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Connection", "keep-alive");
-        headers.set("Referer", "https://chat18.aichatos.xyz/");
-        headers.setOrigin("https://chat18.aichatos.xyz");
-        headers.set(HttpHeaders.USER_AGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36");
-
-        HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-        byte[] bytes;
-        try {
-            ResponseEntity<Resource> entity = restTemplate.postForEntity("https://api.binjie.fun/api/generateStream", requestEntity, Resource.class);
-            assert entity.getBody() != null;
-            bytes = entity.getBody().getInputStream().readAllBytes();
-        } catch (IOException e) {
-            log.error("提问获取失败", e);
-            return "emmmm，出错了";
-        }
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
-
-    public String getFreeGpt(long groupId, String text) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("content", text);
-        map.put("role", "user");
-        ArrayList<Object> messages = new ArrayList<>();
-        messages.add(map);
-        long time = System.currentTimeMillis();
-        String sign = DigestUtil.sha256Hex(time + ":" + text + ":undefined");
-
-        HashMap<String, Object> request = new HashMap<>();
-        request.put("messages", messages);
-        request.put("time", time);
-        request.put("sign", sign);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
-        byte[] bytes;
-        try {
-            ResponseEntity<Resource> entity = restTemplate.postForEntity("https://freegpt.chinaproxy.top/api/generate", requestEntity, Resource.class);
-            assert entity.getBody() != null;
-            bytes = entity.getBody().getInputStream().readAllBytes();
-        } catch (IOException e) {
-            log.error("提问获取失败", e);
-            return "emmmm，出错了";
-        }
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
-
-    private HashMap<Long, TokenTime> DS_TOKEN_MAP = new HashMap<>();
-
-    public String getScnetDS(long groupId, String text) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Referer", "https://chat.scnet.cn/");
-        headers.set("Origin", "https://chat.scnet.cn");
-        headers.set("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1");
-        HashMap<String, Object> request = new HashMap<>();
-        TokenTime tokenTime = DS_TOKEN_MAP.get(groupId);
-        if (tokenTime == null || tokenTime.time + 86400000 < System.currentTimeMillis()) {
-            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
-            ResponseEntity<String> loginTmp = restTemplate.postForEntity("https://chat.scnet.cn/api/oauth/LoginTemp", requestEntity, String.class);
-            JsonNode loginTmpObject = JsonUtil.toNode(loginTmp.getBody());
-            assert loginTmpObject != null;
-            String das_app_client_token_id = loginTmpObject.get("data").asString();
-            tokenTime = new TokenTime();
-            tokenTime.token = das_app_client_token_id;
-            tokenTime.time = System.currentTimeMillis();
-            DS_TOKEN_MAP.put(groupId, tokenTime);
-            log.info("group:{} 获取新Token：{}", groupId, das_app_client_token_id);
-        }
-        String modelType = "DeepSeek-R1-Distill-Qwen-7B";
-//        String modelType = "DeepSeek-R1-Distill-Qwen-32B";
-        request.put("modelType", modelType);
-        request.put("query", text);
-        request.put("conversationId", tokenTime.conversationId);
-        headers.set("Cookie", "das_app_client_token_id=" + tokenTime.token);
-
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
-        ResponseEntity<String> ask = restTemplate.postForEntity("https://chat.scnet.cn/api/chat/Ask", requestEntity, String.class);
-        JsonNode askObject = JsonUtil.toNode(ask.getBody());
-        assert askObject != null;
-        JsonNode askData = askObject.get("data");
-        String messageId = askData.get("messageId").asString();
-        tokenTime.conversationId = askData.get("conversation").get("ConversationId").asString();
-        request.clear();
-        requestEntity = new HttpEntity<>(request, headers);
-
-        BufferedReader reader = null;
-        StringBuilder resBody = new StringBuilder();
-        try {
-            ResponseEntity<Resource> entity = restTemplate.exchange("https://chat.scnet.cn/api/chat/GetReplay?messageId=" + messageId + "&query=&modelType=" + modelType, HttpMethod.GET, requestEntity, Resource.class);
-            assert entity.getBody() != null;
-            reader = new BufferedReader(new InputStreamReader(entity.getBody().getInputStream(), StandardCharsets.UTF_8));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.startsWith("data: ")) {
-                    String data = line.substring("data: ".length());
-                    // 处理接收到的数据
-//                        log.info("Received data: {}", data);
-                    if (data.startsWith("\"")) {
-                        resBody.append(data, 1, data.length() - 1);
+    public AiService(ObjectProvider<ChatClient> chatClientProvider,
+                     ObjectProvider<ChatMemory> chatMemoryProvider,
+                     @Value("${bot.ai.enabled:false}") boolean enabled,
+                     @Value("${bot.ai.session-expire-minutes:30}") long sessionExpireMinutes) {
+        ChatClient resolvedChatClient = chatClientProvider.getIfAvailable();
+        ChatMemory resolvedChatMemory = chatMemoryProvider.getIfAvailable();
+        this.chatClient = resolvedChatClient;
+        this.chatMemory = resolvedChatMemory;
+        this.enabled = enabled;
+        long expireMinutes = Math.max(1, sessionExpireMinutes);
+        this.activeConversations = ExpiringMap.builder()
+                .expiration(expireMinutes, TimeUnit.MINUTES)
+                .expirationPolicy(ExpirationPolicy.ACCESSED)
+                .expirationListener((conversationId, ignored) -> {
+                    String conversationKey = String.valueOf(conversationId);
+                    if (resolvedChatMemory != null) {
+                        resolvedChatMemory.clear(conversationKey);
                     }
-                }
-            }
-        } catch (Exception e) {
-            log.error("提问获取失败", e);
-            return "emmmm，出错了";
-        } finally {
-            IOUtils.closeQuietly(reader);
-        }
-        String bodyString = resBody.toString();
-        String answer = bodyString.substring(bodyString.lastIndexOf("think") + 15);
-        String replace = answer.replace("\\n\\n", "\n").replace("\\n", "\n").replace("\\\"", "\"");
-        return replace;
+                    this.conversationLocks.remove(conversationKey);
+                })
+                .build();
     }
 
-    public String getScnetDS2(long groupId, String text) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Referer", "https://www.scnet.cn/ui/chatbot/");
-        headers.set("Origin", "https://www.scnet.cn");
-        headers.set("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1");
-        HashMap<String, Object> request = new HashMap<>();
-        TokenTime tokenTime = DS_TOKEN_MAP.get(groupId);
-        if (tokenTime == null || tokenTime.time + 86400000 < System.currentTimeMillis()) {
-            tokenTime = new TokenTime();
-            tokenTime.time = System.currentTimeMillis();
-            DS_TOKEN_MAP.put(groupId, tokenTime);
+    public boolean isEnabled() {
+        return enabled && chatClient != null && chatMemory != null;
+    }
+
+    public String getAiAnswer(long groupId, String text) {
+        if (!enabled) {
+            return "AI 功能未启用，请先配置 BOT_AI_ENABLED=true 以及 OpenAI 参数";
         }
-//        int modelId = 120;
-        int modelId = 10;
-        request.put("modelId", modelId);
-        request.put("conversationId", tokenTime.conversationId);
-        request.put("content", text);
-        request.put("onlineEnable", true);
-        request.put("thinkingEnable", false);
-        request.put("textFile", Collections.emptyList());
-        request.put("imageFile", Collections.emptyList());
-        request.put("clusterId", "");
+        if (chatClient == null || chatMemory == null) {
+            return "AI 模型未初始化，请检查 Spring AI starter、ChatClient 与 ChatMemory 配置";
+        }
+        if (!StringUtils.hasText(text)) {
+            return "你想问什么呢";
+        }
 
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(request, headers);
+        String question = text.trim();
+        String conversationId = String.valueOf(groupId);
+        Object lock = conversationLocks.computeIfAbsent(conversationId, key -> new Object());
 
-        BufferedReader reader = null;
-        StringBuilder resBody = new StringBuilder();
-        ArrayList<JsonNode> resList = new ArrayList<>();
+        synchronized (lock) {
+            activeConversations.put(conversationId, Boolean.TRUE);
             try {
-                ResponseEntity<Resource> entity = restTemplate.exchange("https://www.scnet.cn/acx/chatbot/v1/chat/completion", HttpMethod.POST, requestEntity, Resource.class);
-                assert entity.getBody() != null;
-                reader = new BufferedReader(new InputStreamReader(entity.getBody().getInputStream(), StandardCharsets.UTF_8));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("data:")) {
-                        String data = line.substring("data:".length());
-                        resList.add(JsonUtil.toNode(data));
-                    }
-                }
+                String answer = chatClient.prompt()
+                        .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, conversationId))
+                        .user(question)
+                        .call()
+                        .content();
+                return normalizeAnswer(answer);
             } catch (Exception e) {
-                log.error("提问获取失败", e);
-                return "emmmm，出错了";
-            } finally {
-                IOUtils.closeQuietly(reader);
+                log.error("群 {} AI 提问失败: {}", groupId, question, e);
+                return "emmmm，AI 暂时不可用，请稍后再试";
             }
-            String conversationId = "";
-            for (JsonNode jsonObject : resList) {
-                conversationId = jsonObject.get("conversationId").asString();
-                resBody.append(jsonObject.get("content").asString());
-            }
-        tokenTime.conversationId = conversationId;
-        String bodyString = resBody.toString();
-        int lastIndexOfT = bodyString.lastIndexOf("</think>");
-        if (lastIndexOfT != -1) {
-            bodyString = bodyString.substring(lastIndexOfT + 8);
         }
-        int lastIndexOf = bodyString.lastIndexOf("[done]");
-        if (lastIndexOf != -1) {
-            bodyString = bodyString.substring(0, lastIndexOf);
-        }
-        return bodyString.trim();
     }
 
-    static class TokenTime {
-        public String conversationId = "";
-        public String token;
-        public long time;
+    private String normalizeAnswer(String answer) {
+        return StringUtils.hasText(answer) ? answer.trim() : DEFAULT_ANSWER;
     }
-
 }

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.1.0-M4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.kuroneko</groupId>
@@ -24,6 +24,7 @@
         <ik-analyzer.version>9.0.0</ik-analyzer.version>
         <commons-io.version>2.21.0</commons-io.version>
         <kumo-core.version>1.28</kumo-core.version>
+        <spring-ai.version>2.0.0-M4</spring-ai.version>
     </properties>
     <dependencies>
         <dependency>
@@ -46,6 +47,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
             <version>4.0.0-M2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
@@ -180,6 +185,10 @@
             <url>https://maven.aliyun.com/repository/central</url>
         </repository>
         <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+        <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
@@ -187,6 +196,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-bom</artifactId>

@@ -1,5 +1,18 @@
 package com.kuroneko.cqbot.config;
 
+import com.kuroneko.cqbot.service.aiTool.AiHelpTool;
+import com.kuroneko.cqbot.service.aiTool.AiTimeTool;
+import com.kuroneko.cqbot.service.aiTool.AiWebSearchTool;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
+import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
+import org.springframework.ai.openai.OpenAiChatModel;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -38,6 +51,32 @@ public class TemplateConfig {
             }
         });
         return restTemplate;
+    }
+
+    @Bean
+    public ChatMemory chatMemory(ObjectProvider<ChatMemoryRepository> chatMemoryRepositoryProvider,
+                                 @Value("${bot.ai.max-history-pairs:8}") int maxHistoryPairs) {
+        ChatMemoryRepository chatMemoryRepository = chatMemoryRepositoryProvider
+                .getIfAvailable(InMemoryChatMemoryRepository::new);
+        return MessageWindowChatMemory.builder()
+                .chatMemoryRepository(chatMemoryRepository)
+                .maxMessages(Math.max(1, maxHistoryPairs) * 2)
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(prefix = "bot.ai", name = "enabled", havingValue = "true")
+    public ChatClient aiChatClient(OpenAiChatModel chatModel,
+                                   ChatMemory chatMemory,
+                                   AiWebSearchTool aiWebSearchTool,
+                                   AiTimeTool aiTimeTool,
+                                   AiHelpTool aiHelpTool,
+                                   @Value("${bot.ai.system-prompt:你是一个QQ群聊机器人，请使用简洁、自然、友好的中文回答问题。}") String systemPrompt) {
+        return ChatClient.builder(chatModel)
+                .defaultSystem(systemPrompt)
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .defaultTools(aiWebSearchTool, aiTimeTool, aiHelpTool)
+                .build();
     }
 
 //    @Bean

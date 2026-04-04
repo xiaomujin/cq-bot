@@ -22,25 +22,28 @@ public class AiPlugin extends BotPlugin {
 
     @Override
     public int onAnyMessage(Bot bot, AnyMessageEvent event) {
-        if (BotUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
-            log.info("qq：{} 请求 {}", event.getUserId(), CmdConst.TIWAN_AI);
-            var msgId = event.getMessageId();
-            try {
-                bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
-                MsgUtils msg = getMsg(event.getGroupId(), msgId, BotUtil.getText(event.getArrayMsg()));
-                bot.sendMsg(event, msg.build(), false);
-            } finally {
-                bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
-            }
-            return MESSAGE_BLOCK;
+        if (!aiService.isEnabled()) {
+            return MESSAGE_IGNORE;
         }
-        return MESSAGE_IGNORE;
+        if (!BotUtil.isAtMe(event.getArrayMsg(), bot.getSelfId())) {
+            return MESSAGE_IGNORE;
+        }
+        log.info("groupId：{} qq：{} 请求 {}", event.getGroupId(), event.getUserId(), CmdConst.TIWAN_AI);
+        var msgId = event.getMessageId();
+        try {
+            bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
+            MsgUtils msg = getMsg(event.getGroupId(), msgId, BotUtil.getText(event.getArrayMsg()));
+            bot.sendMsg(event, msg.build(), false);
+        } finally {
+            bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
+        }
+        return MESSAGE_BLOCK;
     }
 
     private MsgUtils getMsg(long groupId, int msgId, String text) {
         String answer = "你想问什么呢";
         if (!ObjectUtils.isEmpty(text)) {
-            answer = aiService.getScnetDS2(groupId, text);
+            answer = aiService.getAiAnswer(groupId, text);
         }
         log.info("问题：{} 的ai回答 {}", text, answer);
         return MsgUtils.builder().reply(msgId).text(answer);

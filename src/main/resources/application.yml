@@ -16,6 +16,32 @@ spring:
       minimum-idle: 1
   thymeleaf:
     cache: false
+  ai:
+    model:
+      chat: openai
+    retry:
+      max-attempts: 0
+    openai:
+      api-key:
+      base-url:
+      chat:
+        options:
+          model: qwen3.5-plus-thinking-search
+#          model: gpt-5.4
+#          model: qwen3.6-plus-thinking-search
+#          model: qwen3.6-plus-search
+          temperature: 0.7
+
+bot:
+  ai:
+    enabled: true
+    max-history-pairs: 8
+    session-expire-minutes: 60
+    system-prompt: 你的名字是 MOSS，可以帮助大家完成各种任务,回复尽可能简单易懂简短，可爱温柔，以聊天的口吻回复，不以markdown的形式回复，请不要在回复中添加 [[数字]] 形式的引用标记或来源标注。直接输出内容即可，不需要标注[1]、[2]或[[1]]这样的参考标记。完全口语化，像真实女生发微信。短句为主，偶尔用~，颜文字和emoji。
+    web-search:
+      endpoint: https://m.baidu.com/s
+      max-results: 5
+      timeout-millis: 10000
 
 shiro:
   # 注解方式编写的插件无需在插件列表（plugin-list）定义
