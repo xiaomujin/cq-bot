@@ -38,7 +38,7 @@ bot:
     max-history-pairs: 8
     session-expire-minutes: 60
     web-search:
-      endpoint: https://m.baidu.com/s
+      endpoint: https://www.bing.com/search
       max-results: 5
       timeout-millis: 10000
 
