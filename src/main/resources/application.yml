@@ -7,7 +7,7 @@ spring:
   main:
     banner-mode: log
   application:
-    name: @project.artifactId@
+    name: cq-bot
   datasource:
     url: jdbc:sqlite:bot.db
     type: com.zaxxer.hikari.HikariDataSource
@@ -26,10 +26,9 @@ spring:
       base-url:
       chat:
         options:
-#          model: mimo-v2-flash
-#          model: gpt-5.4
+          model: gpt-5.4-xhigh
 #          model: qwen3.6-plus-thinking-search
-          model: qwen3.6-plus-search
+#          model: qwen3.6-plus-search
           temperature: 0.7
 
 bot:
@@ -38,7 +37,6 @@ bot:
     max-history-pairs: 8
     session-expire-minutes: 60
     web-search:
-      endpoint: https://www.bing.com/search
       max-results: 5
       timeout-millis: 10000
 

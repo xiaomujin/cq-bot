@@ -9,8 +9,8 @@ class CqBotApplicationTests {
 
     @Test
     void contextLoads() {
-        AiWebSearchTool aiWebSearchTool = new AiWebSearchTool(10, 10000, "https://www.bing.com/search");
-        String springBoot = aiWebSearchTool.webSearch("终末地 莱万汀 爱好", 5);
+        AiWebSearchTool aiWebSearchTool = new AiWebSearchTool(10, 10000);
+        String springBoot = aiWebSearchTool.webSearch("游戏 原神 版本 最新", 10);
         System.out.println(springBoot);
     }
 

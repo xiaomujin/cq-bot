@@ -35,6 +35,7 @@ wait-to-delete-temp-user-dir.txt
 
 ### Project ###
 .local-browser
+.worktrees/
 configs
 bot.db
 
@@ -42,3 +43,4 @@ bot.db
 .trae
 
 .codebuddy
+.claude
