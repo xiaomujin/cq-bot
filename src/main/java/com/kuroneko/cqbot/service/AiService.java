@@ -9,6 +9,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -66,11 +67,14 @@ public class AiService {
         synchronized (lock) {
             activeConversations.put(conversationId, Boolean.TRUE);
             try {
-                String answer = chatClient.prompt()
+                Flux<String> answerFlux = chatClient.prompt()
                         .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, conversationId))
                         .user(question)
-                        .call()
+                        .stream()
                         .content();
+                String answer = answerFlux.collect(StringBuilder::new, StringBuilder::append)
+                        .map(StringBuilder::toString)
+                        .block();
                 return normalizeAnswer(answer);
             } catch (Exception e) {
                 log.error("群 {} AI 提问失败: {}", groupId, question, e);
