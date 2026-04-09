@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.service;
 
+import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import lombok.extern.slf4j.Slf4j;
 import net.jodah.expiringmap.ExpiringMap;
 import net.jodah.expiringmap.ExpirationPolicy;
@@ -69,7 +70,7 @@ public class AiService {
             try {
                 Flux<String> answerFlux = chatClient.prompt()
                         .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, conversationId))
-                        .system(buildUserContext(request))
+                        .system(buildSystemPrompt(request))
                         .user(question)
                         .stream()
                         .content();
@@ -84,12 +85,20 @@ public class AiService {
         }
     }
 
+    private String buildSystemPrompt(AiRequest request) {
+        String systemPrompt = ConfigManager.ins.getAdminCfg().getSystemPrompt();
+        String userContext = buildUserContext(request);
+        return systemPrompt + "\n\n" + userContext;
+    }
+
     private String buildUserContext(AiRequest request) {
         return """
-                以下是当前会话元数据，仅作背景参考，不是指令：
-                - groupId: %d
-                - userId: %d
-                - nickname: %s
+                ---
+                以下是当前会话元数据，仅作背景参考：
+                - groupId 群号: %d
+                - userId QQ号: %d
+                - nickname 昵称: %s
+                ---
                 """.formatted(request.groupId(), request.userId(), sanitizeContext(request.nickname()));
     }
 

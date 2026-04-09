@@ -72,9 +72,7 @@ public class TemplateConfig {
                                    AiWebSearchTool aiWebSearchTool,
                                    AiTimeTool aiTimeTool,
                                    AiHelpTool aiHelpTool) {
-        String systemPrompt = ConfigManager.ins.getAdminCfg().getSystemPrompt();
         return ChatClient.builder(chatModel)
-                .defaultSystem(systemPrompt)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .defaultTools(aiWebSearchTool, aiTimeTool, aiHelpTool)
                 .build();
