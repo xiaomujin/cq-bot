@@ -75,7 +75,7 @@ public class TestController {
 
     @RequestMapping(value = "/testAi")
     public Object testAi() {
-        String scnetDS = aiService.getAiAnswer(1, "妃咲的弱点是什么");
+        String scnetDS = aiService.getAiAnswer(new AiService.AiRequest(1, 10001, "test-user", "妃咲的弱点是什么"));
         String[] split = scnetDS.split("\n\n");
         Arrays.stream(split).forEach(System.out::println);
         return split;

@@ -35,7 +35,7 @@ public class AiPlugin extends BotPlugin {
         var msgId = event.getMessageId();
         try {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
-            List<String> msgList = getMsgList(event.getGroupId(), msgId, BotUtil.getText(event.getArrayMsg()));
+            List<String> msgList = getMsgList(event, msgId, BotUtil.getText(event.getArrayMsg()));
             BotUtil.sendMsgList(bot, event, msgList, false);
         } finally {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
@@ -43,10 +43,15 @@ public class AiPlugin extends BotPlugin {
         return MESSAGE_BLOCK;
     }
 
-    private List<String> getMsgList(long groupId, int msgId, String text) {
+    private List<String> getMsgList(AnyMessageEvent event, int msgId, String text) {
         String answer = "你想问什么呢";
         if (!ObjectUtils.isEmpty(text)) {
-            answer = aiService.getAiAnswer(groupId, text);
+            answer = aiService.getAiAnswer(new AiService.AiRequest(
+                    event.getGroupId(),
+                    event.getSender().getUserId(),
+                    event.getSender().getNickname(),
+                    text
+            ));
         }
         log.info("问题：{} 的ai回答 {}", text, answer);
         String[] split = answer.split("\n\n");
