@@ -37,6 +37,7 @@ bot:
     max-history-pairs: 8
     session-expire-minutes: 60
     web-search:
+      api-key:
       max-results: 5
       timeout-millis: 10000
 

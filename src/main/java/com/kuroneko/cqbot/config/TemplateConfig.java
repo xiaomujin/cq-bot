@@ -1,6 +1,5 @@
 package com.kuroneko.cqbot.config;
 
-import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import com.kuroneko.cqbot.service.aiTool.AiHelpTool;
 import com.kuroneko.cqbot.service.aiTool.AiTimeTool;
 import com.kuroneko.cqbot.service.aiTool.AiWebSearchTool;

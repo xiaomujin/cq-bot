@@ -1,272 +1,236 @@
 package com.kuroneko.cqbot.service.aiTool;
 
+import com.kuroneko.cqbot.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.Parser;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
-import java.net.URLEncoder;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.Duration;
+import java.util.*;
 
 @Component
 @Slf4j
 public class AiWebSearchTool {
-    private static final String BING_ENDPOINT = "https://cn.bing.com/search";
-    private static final String BING_REFERER = "https://cn.bing.com/";
-    private static final String DESKTOP_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36";
-    private static final Pattern ABSOLUTE_URL_PATTERN = Pattern.compile("https?://[^\\s\"'<>]+", Pattern.CASE_INSENSITIVE);
+    private static final String DEFAULT_TAVILY_SEARCH_ENDPOINT = "https://api.tavily.com/search";
+    private static final String DEFAULT_TAVILY_EXTRACT_ENDPOINT = "https://api.tavily.com/extract";
+    private static final String TOPIC_GENERAL = "general";
+    private static final String TOPIC_NEWS = "news";
+    private static final String SEARCH_DEPTH = "advanced";
+    private static final String EXTRACT_DEPTH = "basic";
+    private static final String EXTRACT_FORMAT = "markdown";
+    private static final int MAX_ALLOWED_RESULTS = 10;
+    private static final int EXTRACT_CHUNKS_PER_SOURCE = 3;
+    private static final List<String> FRESHNESS_KEYWORDS = List.of(
+            "最新", "今天", "今日", "最近", "近期", "刚刚", "版本", "更新", "发布", "新闻",
+            "latest", "news", "release", "released", "update", "updated", "announcement"
+    );
 
     private final int defaultMaxResults;
     private final int timeoutMillis;
+    private final String apiKey;
+    private final String searchEndpoint;
+    private final String extractEndpoint;
+    private final HttpClient httpClient;
 
     public AiWebSearchTool(@Value("${bot.ai.web-search.max-results:5}") int defaultMaxResults,
-                           @Value("${bot.ai.web-search.timeout-millis:10000}") int timeoutMillis) {
-        this.defaultMaxResults = Math.max(1, Math.min(defaultMaxResults, 10));
+                           @Value("${bot.ai.web-search.timeout-millis:10000}") int timeoutMillis,
+                           @Value("${bot.ai.web-search.api-key:}") String apiKey) {
+        this.defaultMaxResults = Math.max(1, Math.min(defaultMaxResults, MAX_ALLOWED_RESULTS));
         this.timeoutMillis = Math.max(1000, timeoutMillis);
+        this.apiKey = cleanText(apiKey);
+        this.searchEndpoint = DEFAULT_TAVILY_SEARCH_ENDPOINT;
+        this.extractEndpoint = DEFAULT_TAVILY_EXTRACT_ENDPOINT;
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofMillis(this.timeoutMillis))
+                .build();
     }
 
     @Tool(name = "web_search", description = "搜索互联网最新信息并返回简明结果。适用于新闻、版本发布、价格、官网、文档、当前事件、比赛结果等需要实时网络信息的问题。query 是搜索关键词；maxResults 是返回结果数量，范围 1 到 10，可选。")
     public String webSearch(@ToolParam(description = "搜索关键词，应尽量具体，必要时包含时间、版本、网站名或主体") String query,
-                            @Nullable @ToolParam(description = "返回结果数量，范围 1 到 10，可选", required = false) Integer maxResults) {
+                            @ToolParam(description = "返回结果数量，范围 1 到 10，可选", required = false) Integer maxResults) {
         if (!StringUtils.hasText(query)) {
-            return "搜索关键词不能为空";
+            return buildLocalErrorResponse("搜索关键词不能为空");
         }
-        String normalizedQuery = query.trim();
+        String normalizedQuery = cleanText(query);
+        boolean freshnessSensitive = isFreshnessSensitiveQuery(normalizedQuery);
+        int limit = Math.max(1, Math.min(maxResults == null ? defaultMaxResults : maxResults, MAX_ALLOWED_RESULTS));
         log.info("web_search 执行, query={}", normalizedQuery);
-        int limit = Math.max(1, Math.min(maxResults == null ? defaultMaxResults : maxResults, 10));
+
+        if (!StringUtils.hasText(apiKey)) {
+            log.warn("web_search 缺少 Tavily API key, query={}", normalizedQuery);
+            return buildLocalErrorResponse("web_search 缺少 Tavily API key");
+        }
 
         try {
-            Document document = fetch(buildSearchUrl(normalizedQuery));
-            List<SearchResult> results = parseResults(document, limit);
-            if (!results.isEmpty()) {
-                return formatResults(normalizedQuery, results);
+            TavilyResponse searchResponse = executeTavilySearch(normalizedQuery, freshnessSensitive, limit);
+            if (!searchResponse.isSuccessful()) {
+                log.warn("web_search Tavily search 失败, query={}, statusCode={}", normalizedQuery, searchResponse.statusCode());
+                return StringUtils.hasText(searchResponse.body()) ? searchResponse.body() : buildLocalErrorResponse("web_search 执行失败，请稍后再试");
             }
-            log.warn("web_search 未解析到结果, query={}", normalizedQuery);
-            return "未找到与“" + normalizedQuery + "”相关的网页结果。";
+            String responseBody = StringUtils.hasText(searchResponse.body()) ? searchResponse.body() : buildLocalErrorResponse("web_search 执行失败，请稍后再试");
+//            responseBody = enrichSearchResponseWithExtract(responseBody, normalizedQuery);
+            log.info("web_search 执行完成, query={}", normalizedQuery);
+            return responseBody;
         } catch (Exception e) {
-            log.warn("web_search 搜索源执行失败, query={}", normalizedQuery, e);
-            return "web_search 执行失败，请稍后再试";
+            log.warn("web_search Tavily 执行失败, query={}", normalizedQuery, e);
+            return buildLocalErrorResponse("web_search 执行失败，请稍后再试");
         }
     }
 
-    private Document fetch(String url) throws Exception {
-        return Jsoup.connect(url)
-                .userAgent(DESKTOP_USER_AGENT)
-                .referrer(BING_REFERER)
-                .header("Accept-Language", "zh-CN,zh;q=0.9,en;q=0.8")
-                .timeout(timeoutMillis)
-                .followRedirects(true)
-                .get();
+    protected TavilyResponse executeTavilySearch(String query, boolean freshnessSensitive, int maxResults) throws Exception {
+        Map<String, Object> requestBody = new LinkedHashMap<>();
+        requestBody.put("query", query);
+        requestBody.put("topic", freshnessSensitive ? TOPIC_NEWS : TOPIC_GENERAL);
+        requestBody.put("search_depth", SEARCH_DEPTH);
+        requestBody.put("include_answer", false);
+        requestBody.put("include_images", false);
+        requestBody.put("include_favicon", false);
+        requestBody.put("include_raw_content", false);
+        requestBody.put("max_results", maxResults);
+        return executeTavilyRequest(searchEndpoint, requestBody);
     }
 
-    private String buildSearchUrl(String query) {
-        return BING_ENDPOINT + "?q=" + URLEncoder.encode(query, StandardCharsets.UTF_8);
+    protected TavilyResponse executeTavilyExtract(List<String> urls, String query) throws Exception {
+        Map<String, Object> requestBody = new LinkedHashMap<>();
+        requestBody.put("urls", urls);
+        requestBody.put("query", query);
+        requestBody.put("chunks_per_source", EXTRACT_CHUNKS_PER_SOURCE);
+        requestBody.put("extract_depth", EXTRACT_DEPTH);
+        requestBody.put("include_images", true);
+        requestBody.put("include_favicon", true);
+        requestBody.put("format", EXTRACT_FORMAT);
+        return executeTavilyRequest(extractEndpoint, requestBody);
     }
 
-    private List<SearchResult> parseResults(Document document, int limit) {
-        List<SearchResult> results = parseBingResults(document, limit);
-        if (!results.isEmpty()) {
-            return results;
+    boolean isFreshnessSensitiveQuery(String query) {
+        if (!StringUtils.hasText(query)) {
+            return false;
         }
-        return parseGenericResults(document, limit);
-    }
-
-    private List<SearchResult> parseBingResults(Document document, int limit) {
-        List<SearchResult> results = new ArrayList<>();
-        for (Element block : document.select("li.b_algo, .b_algo")) {
-            SearchResult result = extractBingResult(block);
-            if (result == null || containsUrl(results, result.url())) {
-                continue;
-            }
-            results.add(result);
-            if (results.size() >= limit) {
-                break;
-            }
-        }
-        return results;
-    }
-
-    private SearchResult extractBingResult(Element block) {
-        if (block == null) {
-            return null;
-        }
-        Element anchor = block.selectFirst("h2 a[href], a[href]");
-        if (anchor == null) {
-            return null;
-        }
-        String title = cleanText(anchor.text());
-        String url = extractUrl(anchor, block);
-        if (!StringUtils.hasText(title) || !StringUtils.hasText(url)) {
-            return null;
-        }
-        return new SearchResult(title, extractSnippet(block, ".b_caption p, .b_snippet, p"), url);
-    }
-
-    private List<SearchResult> parseGenericResults(Document document, int limit) {
-        List<SearchResult> results = new ArrayList<>();
-        for (Element block : document.select("article, li.b_algo, .b_algo, .result, .c-result, .result-container, .c-container, .c-result-content")) {
-            SearchResult result = extractGenericResult(block);
-            if (result == null || containsUrl(results, result.url())) {
-                continue;
-            }
-            results.add(result);
-            if (results.size() >= limit) {
-                break;
-            }
-        }
-        return results;
-    }
-
-    private SearchResult extractGenericResult(Element block) {
-        if (block == null) {
-            return null;
-        }
-        Element titleElement = block.selectFirst("h2 a[href], h3 a[href], h2, h3, a[href]");
-        if (titleElement == null) {
-            return null;
-        }
-
-        String title = cleanText(titleElement.text());
-        String url = extractUrl(titleElement, block);
-        if (!StringUtils.hasText(title) || !StringUtils.hasText(url)) {
-            return null;
-        }
-
-        return new SearchResult(title, extractSnippet(block, ".b_caption p, .b_snippet, .result-desc, .c-color-text, p, div[class*=content], div[class*=abstract], span[class*=content]"), url);
-    }
-
-    private String extractUrl(Element... elements) {
-        for (Element element : elements) {
-            String url = extractUrl(element);
-            if (StringUtils.hasText(url)) {
-                return url;
-            }
-        }
-        return "";
-    }
-
-    private String extractUrl(Element element) {
-        if (element == null) {
-            return "";
-        }
-
-        String direct = firstNonBlank(
-                normalizeUrl(element.attr("abs:href")),
-                normalizeUrl(element.attr("href")),
-                normalizeUrl(element.attr("rl-link-data-url")),
-                normalizeUrl(element.attr("data-url")),
-                normalizeUrl(element.attr("rl-link-href")),
-                extractUrlFromSerializedData(element.attr("rl-link-data-log")),
-                extractUrlFromSerializedData(element.attr("data-log")),
-                extractUrlFromSerializedData(element.attr("data-click-info"))
-        );
-        if (StringUtils.hasText(direct)) {
-            return direct;
-        }
-
-        Element nested = element.selectFirst("[rl-link-data-url], [data-url], [rl-link-href], a[href]");
-        if (nested != null && nested != element) {
-            return extractUrl(nested);
-        }
-        return "";
-    }
-
-    private String extractUrlFromSerializedData(String raw) {
-        if (!StringUtils.hasText(raw)) {
-            return "";
-        }
-        String decoded = Parser.unescapeEntities(raw, true).replace("\\/", "/").replace("&amp;", "&");
-        Matcher matcher = ABSOLUTE_URL_PATTERN.matcher(decoded);
-        while (matcher.find()) {
-            String url = normalizeUrl(matcher.group());
-            if (StringUtils.hasText(url)) {
-                return url;
-            }
-        }
-        return "";
-    }
-
-    private String extractSnippet(Element container, String selectors) {
-        if (container == null) {
-            return "";
-        }
-        Element snippetElement = StringUtils.hasText(selectors) ? container.selectFirst(selectors) : null;
-        String snippet = snippetElement != null ? snippetElement.text() : container.text();
-        return shorten(cleanText(snippet), 220);
-    }
-
-    private String normalizeUrl(String url) {
-        if (!StringUtils.hasText(url)) {
-            return "";
-        }
-
-        String candidate = Parser.unescapeEntities(url.trim(), true).replace("&amp;", "&");
-        if (!StringUtils.hasText(candidate)
-                || candidate.startsWith("javascript:")
-                || candidate.startsWith("#")) {
-            return "";
-        }
-        if (candidate.startsWith("//")) {
-            return "https:" + candidate;
-        }
-        return candidate;
-    }
-
-    private boolean containsUrl(List<SearchResult> results, String url) {
-        for (SearchResult result : results) {
-            if (result.url().equals(url)) {
+        String normalized = query.toLowerCase(Locale.ROOT);
+        for (String keyword : FRESHNESS_KEYWORDS) {
+            if (normalized.contains(keyword.toLowerCase(Locale.ROOT))) {
                 return true;
             }
         }
         return false;
     }
 
-    private String formatResults(String query, List<SearchResult> results) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("以下是关于“").append(query).append("”的联网搜索结果：");
-        for (int i = 0; i < results.size(); i++) {
-            SearchResult result = results.get(i);
-            sb.append("\n").append(i + 1).append(". ").append(shorten(result.title(), 120));
-            if (StringUtils.hasText(result.snippet())) {
-                sb.append("\n   摘要：").append(result.snippet());
-            }
-            sb.append("\n   链接：").append(result.url());
+    private TavilyResponse executeTavilyRequest(String endpoint, Map<String, Object> requestBody) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint))
+                .timeout(Duration.ofMillis(timeoutMillis))
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(JsonUtil.toString(requestBody), StandardCharsets.UTF_8))
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        return new TavilyResponse(response.statusCode(), response.body());
+    }
+
+    private String enrichSearchResponseWithExtract(String searchResponseBody, String query) {
+        JsonNode searchRootNode = JsonUtil.toNode(searchResponseBody);
+        if (!(searchRootNode instanceof ObjectNode searchRoot)) {
+            return searchResponseBody;
         }
-        log.info("web_search 执行完成, query={}, resultCount={}", query, results.size());
-        return sb.toString();
+        if (!(searchRoot.path("results") instanceof ArrayNode searchResults) || searchResults.isEmpty()) {
+            return searchResponseBody;
+        }
+        List<String> urls = collectResultUrls(searchResults);
+        if (urls.isEmpty()) {
+            return searchResponseBody;
+        }
+
+        try {
+            TavilyResponse extractResponse = executeTavilyExtract(urls, query);
+            if (!extractResponse.isSuccessful() || !StringUtils.hasText(extractResponse.body())) {
+                log.warn("web_search Tavily extract 失败, query={}, statusCode={}", query, extractResponse.statusCode());
+                return searchResponseBody;
+            }
+            JsonNode extractRootNode = JsonUtil.toNode(extractResponse.body());
+            if (!(extractRootNode instanceof ObjectNode extractRoot)) {
+                return searchResponseBody;
+            }
+            if (!(extractRoot.path("results") instanceof ArrayNode extractResults) || extractResults.isEmpty()) {
+                return searchResponseBody;
+            }
+            Map<String, ObjectNode> extractResultsByUrl = indexExtractResults(extractResults);
+            for (JsonNode searchResultNode : searchResults) {
+                if (!(searchResultNode instanceof ObjectNode searchResult)) {
+                    continue;
+                }
+                ObjectNode extractResult = extractResultsByUrl.get(cleanText(searchResult.path("url").asText("")));
+                if (extractResult == null) {
+                    continue;
+                }
+                copyExtractField(extractResult, searchResult, "raw_content");
+                copyExtractField(extractResult, searchResult, "favicon");
+                copyExtractField(extractResult, searchResult, "images");
+            }
+            return JsonUtil.toString(searchRoot);
+        } catch (Exception e) {
+            log.warn("web_search Tavily extract 执行失败, query={}", query, e);
+            return searchResponseBody;
+        }
+    }
+
+    private List<String> collectResultUrls(ArrayNode results) {
+        List<String> urls = new ArrayList<>();
+        Set<String> seenUrls = new LinkedHashSet<>();
+        for (JsonNode resultNode : results) {
+            String url = cleanText(resultNode.path("url").asText(""));
+            if (StringUtils.hasText(url) && seenUrls.add(url)) {
+                urls.add(url);
+            }
+        }
+        return urls;
+    }
+
+    private Map<String, ObjectNode> indexExtractResults(ArrayNode extractResults) {
+        Map<String, ObjectNode> resultsByUrl = new LinkedHashMap<>();
+        for (JsonNode extractResultNode : extractResults) {
+            if (!(extractResultNode instanceof ObjectNode extractResult)) {
+                continue;
+            }
+            String url = cleanText(extractResult.path("url").asText(""));
+            if (StringUtils.hasText(url)) {
+                resultsByUrl.put(url, extractResult);
+            }
+        }
+        return resultsByUrl;
+    }
+
+    private void copyExtractField(ObjectNode extractResult, ObjectNode searchResult, String fieldName) {
+        JsonNode fieldValue = extractResult.get(fieldName);
+        if (fieldValue != null && !fieldValue.isNull()) {
+            searchResult.set(fieldName, fieldValue.deepCopy());
+        }
+    }
+
+    private String buildLocalErrorResponse(String message) {
+        ObjectNode root = JsonUtil.mapper.createObjectNode();
+        root.putObject("detail").put("error", message);
+        return JsonUtil.toString(root);
     }
 
     private String cleanText(String text) {
         return text == null ? "" : text.replace('\u00A0', ' ').replaceAll("\\s+", " ").trim();
     }
 
-    private String shorten(String text, int maxLength) {
-        if (!StringUtils.hasText(text) || text.length() <= maxLength) {
-            return text;
+    record TavilyResponse(int statusCode, String body) {
+        boolean isSuccessful() {
+            return statusCode >= 200 && statusCode < 300;
         }
-        return text.substring(0, maxLength - 1) + "…";
-    }
-
-    private String firstNonBlank(String... values) {
-        for (String value : values) {
-            if (StringUtils.hasText(value)) {
-                return value;
-            }
-        }
-        return "";
-    }
-
-    private record SearchResult(String title, String snippet, String url) {
     }
 }
