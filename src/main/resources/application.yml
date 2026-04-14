@@ -20,7 +20,7 @@ spring:
     model:
       chat: openai
     retry:
-      max-attempts: 0
+      max-attempts: 2
     openai:
       api-key:
       base-url:

@@ -49,6 +49,20 @@ public class BotUtil {
                 .collect(Collectors.joining(join)).trim();
     }
 
+    public static List<String> getImgUrls(List<ArrayMsg> arrayMsg) {
+        return arrayMsg.stream()
+                .filter(it -> MsgTypeEnum.image == it.getType())
+                .map(it -> it.getStringData("url"))
+                .collect(Collectors.toList());
+    }
+
+    public static int getReplyMsgId(List<ArrayMsg> arrayMsg) {
+        return arrayMsg.stream()
+                .filter(it -> MsgTypeEnum.reply == it.getType())
+                .map(it -> it.getData().get("id").asInt())
+                .findFirst().orElse(0);
+    }
+
     public static Optional<String> getOneParam(String cmd, String msg) {
         List<String> params = getParams(cmd, msg, 1);
         if (params.isEmpty()) {

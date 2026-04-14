@@ -6,7 +6,10 @@ import com.kuroneko.cqbot.utils.BotUtil;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
+import com.mikuac.shiro.dto.action.common.ActionData;
+import com.mikuac.shiro.dto.action.response.MsgResp;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.mikuac.shiro.model.ArrayMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -35,7 +38,7 @@ public class AiPlugin extends BotPlugin {
         var msgId = event.getMessageId();
         try {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", true);
-            List<String> msgList = getMsgList(event, msgId, BotUtil.getText(event.getArrayMsg()));
+            List<String> msgList = getMsgList(bot, event, msgId, BotUtil.getText(event.getArrayMsg()));
             BotUtil.sendMsgList(bot, event, msgList, false);
         } finally {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
@@ -43,14 +46,27 @@ public class AiPlugin extends BotPlugin {
         return MESSAGE_BLOCK;
     }
 
-    private List<String> getMsgList(AnyMessageEvent event, int msgId, String text) {
+    private List<String> getMsgList(Bot bot, AnyMessageEvent event, int msgId, String text) {
         String answer = "你想问什么呢";
+        List<String> imgUrls = BotUtil.getImgUrls(event.getArrayMsg());
+        if (imgUrls.isEmpty()) {
+            int replyMsgId = BotUtil.getReplyMsgId(event.getArrayMsg());
+            if (replyMsgId != 0) {
+                ActionData<MsgResp> replyMsg = bot.getMsg(replyMsgId);
+                if (replyMsg != null && replyMsg.getRetCode().equals(0)) {
+                    List<ArrayMsg> arrayMsg = replyMsg.getData().getArrayMsg();
+                    imgUrls = BotUtil.getImgUrls(arrayMsg);
+                }
+            }
+        }
+
         if (!ObjectUtils.isEmpty(text)) {
             answer = aiService.getAiAnswer(new AiService.AiRequest(
                     event.getGroupId(),
                     event.getSender().getUserId(),
                     event.getSender().getNickname(),
-                    text
+                    text,
+                    imgUrls
             ));
         }
         log.info("问题：{} 的ai回答 {}", text, answer);

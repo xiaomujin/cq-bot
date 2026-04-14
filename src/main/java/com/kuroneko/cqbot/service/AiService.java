@@ -2,16 +2,24 @@ package com.kuroneko.cqbot.service;
 
 import com.kuroneko.cqbot.core.cfg.ConfigManager;
 import lombok.extern.slf4j.Slf4j;
-import net.jodah.expiringmap.ExpiringMap;
 import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.content.Media;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -63,16 +71,26 @@ public class AiService {
 
         String question = request.text().trim();
         String conversationId = String.valueOf(request.groupId());
-        Object lock = conversationLocks.computeIfAbsent(conversationId, key -> new Object());
+        List<String> imageUrls = request.imageUrls();
+        Optional<URI> uri = Optional.empty();
+        if (!CollectionUtils.isEmpty(imageUrls)) {
+            try {
+                uri = Optional.of(URI.create(imageUrls.getFirst()));
+            } catch (IllegalArgumentException e) {
+                log.error("群 {} 用户 {} 图片地址 {} 格式不正确", request.groupId(), request.userId(), imageUrls.getFirst(), e);
+            }
+        }
+        Object lock = conversationLocks.computeIfAbsent(conversationId, _ -> new Object());
 
         synchronized (lock) {
             activeConversations.put(conversationId, Boolean.TRUE);
             try {
-                Flux<String> answerFlux = chatClient.prompt()
+                ChatClient.ChatClientRequestSpec spec = chatClient.prompt()
                         .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, conversationId))
                         .system(buildSystemPrompt(request))
-                        .user(question)
-                        .stream()
+                        .user(question);
+                uri.ifPresent(u -> spec.user(p -> p.media(new Media(MimeTypeUtils.IMAGE_PNG, u))));
+                Flux<String> answerFlux = spec.stream()
                         .content();
                 String answer = answerFlux.collect(StringBuilder::new, StringBuilder::append)
                         .map(StringBuilder::toString)
@@ -106,7 +124,7 @@ public class AiService {
         return StringUtils.hasText(value) ? value.replaceAll("\\s+", " ").trim() : "unknown";
     }
 
-    public record AiRequest(long groupId, long userId, String nickname, String text) {
+    public record AiRequest(long groupId, long userId, String nickname, String text, List<String> imageUrls) {
     }
 
     private String normalizeAnswer(String answer) {

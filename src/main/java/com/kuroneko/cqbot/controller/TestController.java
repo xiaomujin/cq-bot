@@ -76,7 +76,7 @@ public class TestController {
     @RequestMapping(value = "/testAi")
     public Object testAi() {
         String scnetDS = aiService.getAiAnswer(
-                new AiService.AiRequest(1, 10001, "黑猫", "真厉害，该你夸夸我了"
+                new AiService.AiRequest(1, 10001, "黑猫", "这是谁", List.of("https://img0.baidu.com/it/u=2246773870,2763938481&fm=253&fmt=auto&app=138&f=PNG?w=514&h=500")
                 ));
         String[] split = scnetDS.split("\n\n");
         Arrays.stream(split).forEach(System.out::println);
