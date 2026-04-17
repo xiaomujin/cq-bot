@@ -10,11 +10,13 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.net.URI;
@@ -73,14 +75,17 @@ public class TestController {
         return Collections.emptyList();
     }
 
-    @RequestMapping(value = "/testAi")
-    public Object testAi() {
-        String scnetDS = aiService.getAiAnswer(
-                new AiService.AiRequest(1, 10001, "黑猫", "这是谁", List.of("https://img0.baidu.com/it/u=2246773870,2763938481&fm=253&fmt=auto&app=138&f=PNG?w=514&h=500")
-                ));
-        String[] split = scnetDS.split("\n\n");
-        Arrays.stream(split).forEach(System.out::println);
-        return split;
+    @RequestMapping(value = "/testAi", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> testAi() {
+        return aiService.getAiAnswer(
+                new AiService.AiRequest(1,
+                        10001,
+                        "黑猫",
+                        "这是谁",
+                        List.of("https://img0.baidu.com/it/u=2246773870,2763938481&fm=253&fmt=auto&app=138&f=PNG?w=514&h=500"
+                        )
+                )
+        );
     }
 
     @RequestMapping(value = "/testTarKovMarket")

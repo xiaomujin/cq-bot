@@ -61,12 +61,18 @@ public class AiService {
         return enabled && chatClient != null && chatMemory != null;
     }
 
-    public String getAiAnswer(AiRequest request) {
+    /**
+     * 获取 AI 回答，流式返回
+     * 
+     * @param request AI 请求对象
+     * @return Flux<String> 流式 AI 回答文本片段
+     */
+    public Flux<String> getAiAnswer(AiRequest request) {
         if (!enabled) {
-            return "AI 功能未启用";
+            return Flux.just("AI 功能未启用");
         }
         if (request == null || !StringUtils.hasText(request.text())) {
-            return "你想问什么呢";
+            return Flux.just("你想问什么呢");
         }
 
         String question = request.text().trim();
@@ -90,15 +96,16 @@ public class AiService {
                         .system(buildSystemPrompt(request))
                         .user(question);
                 uri.ifPresent(u -> spec.user(p -> p.media(new Media(MimeTypeUtils.IMAGE_PNG, u))));
-                Flux<String> answerFlux = spec.stream()
-                        .content();
-                String answer = answerFlux.collect(StringBuilder::new, StringBuilder::append)
-                        .map(StringBuilder::toString)
-                        .block();
-                return normalizeAnswer(answer);
+                return spec.stream()
+                        .content()
+                        .doOnError(e -> log.error("群 {} 用户 {} AI 流式响应异常", request.groupId(), request.userId(), e))
+                        .onErrorResume(e -> {
+                            log.error("群 {} 用户 {} AI 提问失败: {}", request.groupId(), request.userId(), question, e);
+                            return Flux.just("emmmm，AI 暂时不可用，请稍后再试");
+                        });
             } catch (Exception e) {
                 log.error("群 {} 用户 {} AI 提问失败: {}", request.groupId(), request.userId(), question, e);
-                return "emmmm，AI 暂时不可用，请稍后再试";
+                return Flux.just("emmmm，AI 暂时不可用，请稍后再试");
             }
         }
     }
