@@ -76,13 +76,13 @@ public class TestController {
     }
 
     @RequestMapping(value = "/testAi", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> testAi() {
+    public Flux<String> testAi(String q) {
         return aiService.getAiAnswer(
                 new AiService.AiRequest(1,
                         10001,
                         "黑猫",
-                        "这是谁",
-                        List.of("https://img0.baidu.com/it/u=2246773870,2763938481&fm=253&fmt=auto&app=138&f=PNG?w=514&h=500"
+                        q,
+                        List.of(
                         )
                 )
         );

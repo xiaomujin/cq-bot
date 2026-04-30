@@ -42,7 +42,7 @@ public class AiPlugin extends BotPlugin {
         } finally {
             bot.setGroupReaction(event.getGroupId(), msgId, "424", false);
         }
-        return MESSAGE_BLOCK;
+        return MESSAGE_IGNORE;
     }
 
     /**

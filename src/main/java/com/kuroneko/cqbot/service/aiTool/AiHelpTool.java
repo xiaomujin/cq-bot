@@ -18,6 +18,6 @@ public class AiHelpTool {
     @Tool(name = "help", description = "获取ai的帮助信息。适用于询问ai的功能、指令、帮助列表。")
     public List<String> help() {
         log.info("help 执行");
-        return List.of("我的本周词云", "任务流程图", "任务物品图", "日报", "日历");
+        return List.of("查询塔科夫跳蚤市场");
     }
 }

@@ -1,5 +1,6 @@
 package com.kuroneko.cqbot.config;
 
+import com.kuroneko.cqbot.service.aiTool.AiFleaMarketTool;
 import com.kuroneko.cqbot.service.aiTool.AiHelpTool;
 import com.kuroneko.cqbot.service.aiTool.AiTimeTool;
 import com.kuroneko.cqbot.service.aiTool.AiWebSearchTool;
@@ -70,10 +71,11 @@ public class TemplateConfig {
                                    ChatMemory chatMemory,
                                    AiWebSearchTool aiWebSearchTool,
                                    AiTimeTool aiTimeTool,
-                                   AiHelpTool aiHelpTool) {
+                                   AiHelpTool aiHelpTool,
+                                   AiFleaMarketTool aiFleaMarketTool) {
         return ChatClient.builder(chatModel)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
-                .defaultTools(aiWebSearchTool, aiTimeTool, aiHelpTool)
+                .defaultTools(aiWebSearchTool, aiTimeTool, aiHelpTool, aiFleaMarketTool)
                 .build();
     }
 
